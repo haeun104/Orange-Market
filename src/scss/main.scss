@@ -1,2 +1,13 @@
 // Reset
 @import "./setting/reset";
+
+// Tailwind
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// Variables
+@import "./setting/variables";
+
+// Elements
+@import "./elements/base";

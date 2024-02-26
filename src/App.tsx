@@ -1,7 +1,7 @@
 function App() {
   return (
     <>
-      <h2>Orange Market</h2>
+      <h1>Orange Market</h1>
     </>
   );
 }
