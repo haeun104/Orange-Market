@@ -39,14 +39,14 @@ export default function Nav() {
                       src="src\assets\logo_orange.png"
                       alt="company logo"
                     />
-                    <h1 className="text-lg sm:text-xl">Orange Market</h1>
+                    <h1 className="text-xl sm:text-2xl">Orange Market</h1>
                   </a>
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
                     <a
                       href="#"
-                      className="text-black-300 hover:bg-slate-200 rounded-md px-3 py-2 text-sm font-medium"
+                      className="text-black-300 hover:bg-slate-200 rounded-md px-3 py-2 text-sm font-bold"
                     >
                       Products
                     </a>
