@@ -1,4 +1,18 @@
+html {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: $main-font;
+}
+
 h1 {
   font-family: $logo-font;
+  font-size: 24px;
   font-weight: 600;
+}
+
+.container {
+  max-width: 1024px;
+  margin: 0 auto;
 }

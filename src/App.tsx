@@ -1,9 +1,6 @@
-function App() {
-  return (
-    <>
-      <h1>Orange Market</h1>
-    </>
-  );
-}
+import Home from "./pages/Home";
 
+function App() {
+  return <Home />;
+}
 export default App;
