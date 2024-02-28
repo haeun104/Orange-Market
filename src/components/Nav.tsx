@@ -1,11 +1,12 @@
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Link } from "react-router-dom";
 
 const navigation = [
-  { name: "Products", href: "#", current: false },
-  { name: "Login", href: "#", current: false },
-  { name: "Sign Up", href: "#", current: false },
+  { name: "Products", href: "/products", current: false },
+  { name: "Login", href: "/login", current: false },
+  { name: "Sign Up", href: "/signup", current: false },
 ];
 
 function classNames(...classes: string[]) {
@@ -39,29 +40,22 @@ export default function Nav() {
                       src="src\assets\logo_orange.png"
                       alt="company logo"
                     />
-                    <h1 className="text-xl sm:text-2xl">Orange Market</h1>
+                    <h1 className="text-xl sm:text-2xl font-semibold">
+                      Orange Market
+                    </h1>
                   </a>
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
-                    <a
-                      href="#"
-                      className="text-black-300 hover:bg-slate-200 rounded-md px-3 py-2 text-sm font-bold"
-                    >
+                    <div className="text-black-300 hover:bg-slate-200 rounded-md px-3 py-2 text-sm font-bold">
                       Products
-                    </a>
-                    <a
-                      href="#"
-                      className="text-white hover:bg-slate-200 hover:text-black rounded-md px-3 py-2 text-sm font-medium bg-main-orange"
-                    >
-                      Login
-                    </a>
-                    <a
-                      href="#"
-                      className="text-main-orange hover:bg-slate-200 hover:border-slate-200 hover:text-black rounded-md px-3 py-2 text-sm font-medium border-solid border-main-orange border-2"
-                    >
-                      Sign Up
-                    </a>
+                    </div>
+                    <div className="text-white hover:bg-slate-200 hover:text-black rounded-md px-3 py-2 text-sm font-medium bg-main-orange">
+                      <Link to="/login">Login</Link>
+                    </div>
+                    <div className="text-main-orange hover:bg-slate-200 hover:border-slate-200 hover:text-black rounded-md px-3 py-2 text-sm font-medium border-solid border-main-orange border-2">
+                      <Link to="/signup">Sign Up</Link>
+                    </div>
                   </div>
                 </div>
               </div>
