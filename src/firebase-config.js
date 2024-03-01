@@ -14,3 +14,4 @@ const app = initializeApp(firebaseConfig);
 
 // Get information about an authenticated user
 export const auth = getAuth(app);
+

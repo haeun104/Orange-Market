@@ -5,6 +5,8 @@ export default {
     extend: {
       colors: {
         "main-orange": "#ff8911",
+        "accent-purple": "#713ABE",
+        "accent-grey": "#C7C8CC",
       },
     },
   },
