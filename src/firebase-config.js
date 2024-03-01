@@ -1,5 +1,13 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import {
+  getFirestore,
+  addDoc,
+  collection,
+  getDocs,
+  where,
+  query,
+} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -15,3 +23,33 @@ const app = initializeApp(firebaseConfig);
 // Get information about an authenticated user
 export const auth = getAuth(app);
 
+// Get access to DB
+export const db = getFirestore(app);
+
+// Create a new user in DB
+export async function createUserInDb(user) {
+  try {
+    await addDoc(collection(db, "user"), user);
+    console.log("successfully created a user.");
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Check if nickname already exists in DB
+export async function checkNicknameInDb(name) {
+  const collectionRef = collection(db, "user");
+  const q = query(collectionRef, where("nickname", "==", name));
+  try {
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+      const userData = querySnapshot.docs[0].data();
+      console.log(userData);
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}

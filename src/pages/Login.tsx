@@ -9,15 +9,17 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [openModal, setOpenModal] = useState(false);
 
+  //Login
   const login = async () => {
     try {
       const user = await signInWithEmailAndPassword(auth, email, password);
-      console.log(user);
+      console.log("successfully logged in");
     } catch (error) {
       console.log(error.message);
     }
   };
 
+  // Execute login
   const handleLogin = (e) => {
     e.preventDefault();
     login();

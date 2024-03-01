@@ -15,6 +15,7 @@ const Nav = () => {
     setLoggedInUser(currentUser);
   });
 
+  // logout
   const logout = async () => {
     try {
       await signOut(auth);
@@ -24,6 +25,7 @@ const Nav = () => {
     }
   };
 
+  // Execute logout
   const handleLogout = (e) => {
     e.preventDefault();
     logout();
