@@ -1,25 +1,55 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Disclosure, Menu } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../../../src/firebase-config";
 import Modal from "../Modal";
+import { useDispatch, useSelector } from "react-redux";
+import { userActions } from "../../store/user-slice";
+import { DataContext } from "../../App";
 
 const Nav = () => {
   const [loggedInUser, setLoggedInUser] = useState({});
   const [openModal, setOpenModal] = useState(false);
 
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  const { usersList } = useContext(DataContext);
+
+  // Fetch current user's data
+  const fetchUserData = (email) => {
+    const currentUser = usersList.find((user) => user.email === email);
+    return currentUser;
+  };
+
   //Update user data whenever login status is changed
   onAuthStateChanged(auth, (currentUser) => {
+    console.log(currentUser);
     setLoggedInUser(currentUser);
+    dispatch(userActions.updateCurrentUser(fetchUserData(currentUser.email)));
   });
+
+  const initialUserData = {
+    id: "",
+    nickname: "",
+    email: "",
+    firstname: "",
+    surname: "",
+    city: "",
+    district: "",
+    street: "",
+    postalCode: 0,
+    phone: 0,
+  };
 
   // logout
   const logout = async () => {
     try {
       await signOut(auth);
       console.log("successfully logged out");
+      dispatch(userActions.updateCurrentUser(initialUserData));
     } catch (error) {
       console.log(error.message);
     }
@@ -96,48 +126,47 @@ const Nav = () => {
                     <Menu as="div" className="relative ml-3">
                       <div>
                         <Menu.Button className="relative flex">
-                          <span>{loggedInUser.email}</span>
+                          <span>{user.nickname}</span>
                         </Menu.Button>
                       </div>
                       <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <Link to={`/profile/${user.id}`}>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <div
+                                className={classNames(
+                                  active ? "bg-gray-100" : "",
+                                  "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
+                                )}
+                              >
+                                Your Profile
+                              </div>
+                            )}
+                          </Menu.Item>
+                        </Link>
                         <Menu.Item>
                           {({ active }) => (
-                            <a
-                              href="#"
+                            <div
                               className={classNames(
                                 active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700"
-                              )}
-                            >
-                              Your Profile
-                            </a>
-                          )}
-                        </Menu.Item>
-                        <Menu.Item>
-                          {({ active }) => (
-                            <a
-                              href="#"
-                              className={classNames(
-                                active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700"
+                                "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
                               )}
                             >
                               Settings
-                            </a>
+                            </div>
                           )}
                         </Menu.Item>
                         <Menu.Item>
                           {({ active }) => (
-                            <a
-                              href="/"
+                            <div
                               className={classNames(
                                 active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700"
+                                "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
                               )}
                               onClick={handleLogout}
                             >
                               Sign out
-                            </a>
+                            </div>
                           )}
                         </Menu.Item>
                       </Menu.Items>

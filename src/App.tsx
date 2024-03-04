@@ -19,7 +19,7 @@ function App() {
       const userList: (string | number)[] = [];
       snapshot.forEach((doc) => {
         userList.push({ ...doc.data(), id: doc.id });
-      });
+      });     
       setUsersList(userList);
     });
     return () => unsubscribe();
@@ -35,7 +35,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/user/:id" element={<UserProfile />} />
+            <Route path="/user/profile/:id" element={<UserProfile />} />
           </Routes>
         </DataContext.Provider>
       </BrowserRouter>
