@@ -21,7 +21,19 @@ const SignUp = () => {
     try {
       const user = await createUserWithEmailAndPassword(auth, email, password);
       console.log(user);
-      navigate("/", { replace: true });
+      const newUser = {
+        nickname: nickname,
+        email: email,
+        firstname: "",
+        surname: "",
+        city: "",
+        district: "",
+        street: "",
+        postalCode: 0,
+        phone: 0,
+      };
+      createUserInDb(newUser);
+      setOpenModal(true);
     } catch (error) {
       console.log(error.message);
       setErrorMsg(error.message);
@@ -44,19 +56,6 @@ const SignUp = () => {
       return;
     }
     registerUser();
-    const newUser = {
-      nickname: nickname,
-      email: email,
-      firstname: "",
-      surname: "",
-      city: "",
-      district: "",
-      street: "",
-      postalCode: 0,
-      phone: 0,
-    };
-    createUserInDb(newUser);
-    setOpenModal(true);
   };
 
   // Go back to Home page
