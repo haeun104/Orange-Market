@@ -7,6 +7,8 @@ import {
   getDocs,
   where,
   query,
+  doc,
+  updateDoc,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -51,5 +53,16 @@ export async function checkNicknameInDb(name) {
   } catch (error) {
     console.log(error);
     return null;
+  }
+}
+
+// Update user data changes
+export async function updateUserProfile(userData) {
+  try {
+    const docRef = doc(collection(db, "user"), userData.id);
+    await updateDoc(docRef, userData);
+    console.log("successfully updated user data.");
+  } catch (error) {
+    console.error(error);
   }
 }

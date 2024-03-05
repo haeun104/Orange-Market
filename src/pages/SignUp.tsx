@@ -29,8 +29,8 @@ const SignUp = () => {
         city: "",
         district: "",
         street: "",
-        postalCode: 0,
-        phone: 0,
+        postalCode: "",
+        phone: "",
       };
       createUserInDb(newUser);
       setOpenModal(true);

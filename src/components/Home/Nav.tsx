@@ -1,55 +1,23 @@
 import { useContext, useState } from "react";
 import { Disclosure, Menu } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Link } from "react-router-dom";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { Link, useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
 import { auth } from "../../../src/firebase-config";
 import Modal from "../Modal";
-import { useDispatch, useSelector } from "react-redux";
-import { userActions } from "../../store/user-slice";
 import { DataContext } from "../../App";
 
 const Nav = () => {
-  const [loggedInUser, setLoggedInUser] = useState({});
   const [openModal, setOpenModal] = useState(false);
 
-  const user = useSelector((state) => state.user);
-  const dispatch = useDispatch();
-
-  const { usersList } = useContext(DataContext);
-
-  // Fetch current user's data
-  const fetchUserData = (email) => {
-    const currentUser = usersList.find((user) => user.email === email);
-    return currentUser;
-  };
-
-  //Update user data whenever login status is changed
-  onAuthStateChanged(auth, (currentUser) => {
-    console.log(currentUser);
-    setLoggedInUser(currentUser);
-    dispatch(userActions.updateCurrentUser(fetchUserData(currentUser.email)));
-  });
-
-  const initialUserData = {
-    id: "",
-    nickname: "",
-    email: "",
-    firstname: "",
-    surname: "",
-    city: "",
-    district: "",
-    street: "",
-    postalCode: 0,
-    phone: 0,
-  };
+  const { loggedInUser, loggedInUserData } = useContext(DataContext);
+  const navigate = useNavigate();
 
   // logout
   const logout = async () => {
     try {
       await signOut(auth);
       console.log("successfully logged out");
-      dispatch(userActions.updateCurrentUser(initialUserData));
     } catch (error) {
       console.log(error.message);
     }
@@ -61,6 +29,17 @@ const Nav = () => {
     logout();
     alert("successfully logged out");
     // setOpenModal(true);
+    navigate("/", { replace: true });
+  };
+
+  // Go to user profile page
+  const goToUserProfile = () => {
+    navigate(`/myprofile`);
+  };
+
+  // Go to user market page
+  const goToUserMarket = () => {
+    navigate(`/mymarket`);
   };
 
   function classNames(...classes: string[]) {
@@ -99,9 +78,11 @@ const Nav = () => {
                   </div>
                   <div className="hidden sm:ml-6 sm:block">
                     <div className="flex space-x-4">
-                      <div className="text-black-300 hover:bg-slate-200 rounded-md px-3 py-2 text-sm font-bold">
-                        Products
-                      </div>
+                      <Link to="/products">
+                        <div className="text-black-300 hover:bg-slate-200 rounded-md px-3 py-2 text-sm font-bold">
+                          Products
+                        </div>
+                      </Link>
                       {!loggedInUser && (
                         <>
                           <Link to="/login">
@@ -126,24 +107,13 @@ const Nav = () => {
                     <Menu as="div" className="relative ml-3">
                       <div>
                         <Menu.Button className="relative flex">
-                          <span>{user.nickname}</span>
+                          <span>
+                            {loggedInUserData !== undefined &&
+                              loggedInUserData.nickname}
+                          </span>
                         </Menu.Button>
                       </div>
                       <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <Link to={`/profile/${user.id}`}>
-                          <Menu.Item>
-                            {({ active }) => (
-                              <div
-                                className={classNames(
-                                  active ? "bg-gray-100" : "",
-                                  "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
-                                )}
-                              >
-                                Your Profile
-                              </div>
-                            )}
-                          </Menu.Item>
-                        </Link>
                         <Menu.Item>
                           {({ active }) => (
                             <div
@@ -151,8 +121,22 @@ const Nav = () => {
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
                               )}
+                              onClick={goToUserProfile}
                             >
-                              Settings
+                              My Profile
+                            </div>
+                          )}
+                        </Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
+                            <div
+                              className={classNames(
+                                active ? "bg-gray-100" : "",
+                                "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
+                              )}
+                              onClick={goToUserMarket}
+                            >
+                              My Market
                             </div>
                           )}
                         </Menu.Item>

@@ -4,32 +4,19 @@ import { Link } from "react-router-dom";
 import { auth } from "../../src/firebase-config";
 import Modal from "../components/Modal";
 import { DataContext } from "../App";
-import { useDispatch } from "react-redux";
-import { userActions } from "../store/user-slice";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [openModal, setOpenModal] = useState(false);
 
-  const { usersList } = useContext(DataContext);
-
-  const dispatch = useDispatch();
-
-  // Fetch current user's data
-  const fetchUserData = (email) => {
-    const currentUser = usersList.find((user) => user.email === email);
-    return currentUser;
-  };
-
   //Login
   const login = async () => {
     try {
       const user = await signInWithEmailAndPassword(auth, email, password);
-      console.log(user);
+      // console.log(user);
       console.log("successfully logged in");
       setOpenModal(true);
-      dispatch(userActions.updateCurrentUser(fetchUserData(email)));
     } catch (error) {
       console.log(error.message);
     }
