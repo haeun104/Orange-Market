@@ -1,8 +1,9 @@
 import { useContext, useState } from "react";
 import { DataContext } from "../App";
 import Modal from "../components/Modal";
-import { updateUserProfile } from "../firebase-config";
+import { db } from "../firebase-config";
 import { useNavigate } from "react-router-dom";
+import { updateDoc, collection, doc } from "firebase/firestore";
 
 const MyProfile = () => {
   const [editClicked, setEditClicked] = useState(false);
@@ -24,11 +25,21 @@ const MyProfile = () => {
     }));
   };
 
+  // Update user data changes
+  async function updateUserProfile(userData) {
+    try {
+      const docRef = doc(collection(db, "user"), userData.id);
+      await updateDoc(docRef, userData);
+      setOpenModal(true);
+      console.log("successfully updated user data.");
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   const handleSubmitUserData = (e) => {
     e.preventDefault();
     updateUserProfile(updatedUserData);
-    setOpenModal(true);
-    navigate("/");
   };
 
   const handleCancelClick = () => {

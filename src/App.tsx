@@ -6,8 +6,6 @@ import Nav from "./components/Home/Nav";
 import React, { useEffect, useState } from "react";
 import { onSnapshot, collection } from "firebase/firestore";
 import { db } from "../src/firebase-config";
-import { useDispatch, useSelector } from "react-redux";
-import { userActions } from "./store/user-slice";
 import { auth } from "../src/firebase-config";
 import { onAuthStateChanged } from "firebase/auth";
 import MyProfile from "./pages/MyProfile";
@@ -18,25 +16,23 @@ import AddProduct from "./pages/AddProduct";
 export const DataContext = React.createContext();
 export const DispatchContext = React.createContext();
 
-const initialUserData = {
-  id: "",
-  nickname: "",
-  email: "",
-  firstname: "",
-  surname: "",
-  city: "",
-  district: "",
-  street: "",
-  postalCode: 0,
-  phone: 0,
-};
+// const initialUserData = {
+//   id: "",
+//   nickname: "",
+//   email: "",
+//   firstname: "",
+//   surname: "",
+//   city: "",
+//   district: "",
+//   street: "",
+//   postalCode: 0,
+//   phone: 0,
+// };
 
 function App() {
   const [usersList, setUsersList] = useState([]);
   const [loggedInUserData, setLoggedInUserData] = useState({});
   const [loggedInUser, setLoggedInUser] = useState({});
-
-  const dispatch = useDispatch();
 
   // Real-time synchronization of Firestore data
   useEffect(() => {
@@ -58,7 +54,6 @@ function App() {
   useEffect(() => {
     const getCurrentUserData = (email: string) => {
       const user = usersList.find((user) => user.email === email);
-      // console.log(user);
       return user;
     };
     if (loggedInUser !== null) {

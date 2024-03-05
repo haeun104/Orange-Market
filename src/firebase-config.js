@@ -10,6 +10,8 @@ import {
   doc,
   updateDoc,
 } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+// import firebase from "firebase/app";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -27,6 +29,19 @@ export const auth = getAuth(app);
 
 // Get access to DB
 export const db = getFirestore(app);
+
+// Get access to storage
+export const storage = getStorage(app);
+
+// Upload image into DB
+export const uploadImageToDb = async (fileName) => {
+  const uploadFile = await uploadBytes(
+    ref(storage, `images/${fileName}`),
+    fileName
+  );
+  // const fileURL = await getDownloadURL(uploadFile.ref);
+  // console.log(fileURL);
+};
 
 // Create a new user in DB
 export async function createUserInDb(user) {
@@ -56,13 +71,3 @@ export async function checkNicknameInDb(name) {
   }
 }
 
-// Update user data changes
-export async function updateUserProfile(userData) {
-  try {
-    const docRef = doc(collection(db, "user"), userData.id);
-    await updateDoc(docRef, userData);
-    console.log("successfully updated user data.");
-  } catch (error) {
-    console.error(error);
-  }
-}
