@@ -33,16 +33,6 @@ export const db = getFirestore(app);
 // Get access to storage
 export const storage = getStorage(app);
 
-// Upload image into DB
-export const uploadImageToDb = async (fileName) => {
-  const uploadFile = await uploadBytes(
-    ref(storage, `images/${fileName}`),
-    fileName
-  );
-  // const fileURL = await getDownloadURL(uploadFile.ref);
-  // console.log(fileURL);
-};
-
 // Create a new user in DB
 export async function createUserInDb(user) {
   try {
@@ -70,4 +60,3 @@ export async function checkNicknameInDb(name) {
     return null;
   }
 }
-

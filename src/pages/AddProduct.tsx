@@ -1,9 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { DataContext } from "../App";
 import { getFormattedDate } from "../../src/utils";
-import { db, uploadImageToDb } from "../../src/firebase-config";
+import { db, storage } from "../../src/firebase-config";
 import { addDoc, collection } from "firebase/firestore";
 import Modal from "../components/Modal";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useNavigate } from "react-router-dom";
 
 const categories = [
   { value: "Electronics", label: "Electronics" },
@@ -31,14 +33,14 @@ const AddProduct = () => {
     seller: "",
     buyer: "",
     isSold: false,
+    imgURL: "",
   });
-
-  //   const [imageFile, setImageFile] = useState(null);
   const [imageName, setImageName] = useState(null);
-
   const [openModal, setOpenModal] = useState(false);
 
   const { loggedInUserData } = useContext(DataContext);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (loggedInUserData !== undefined) {
@@ -47,7 +49,7 @@ const AddProduct = () => {
         seller: loggedInUserData.nickname,
       }));
     }
-  }, []);
+  }, [loggedInUserData]);
 
   // Update input value
   const handleOnChangeNewProduct = (e) => {
@@ -60,8 +62,7 @@ const AddProduct = () => {
   // Update image value
   const handleOnChangeImage = (e) => {
     const file = e.target.files[0];
-    // setImageFile(file);
-    setImageName(file.name);
+    setImageName(`${newProduct.seller}_${file.name}`);
   };
 
   // Create a new product in DB
@@ -75,11 +76,26 @@ const AddProduct = () => {
     }
   }
 
+  // Upload image into DB
+  const uploadImageToDb = async (fileName) => {
+    const uploadFile = await uploadBytes(
+      ref(storage, `images/${fileName}`),
+      fileName
+    );
+    const fileURL = await getDownloadURL(uploadFile.ref);
+    console.log(fileURL);
+  };
+
   // Send product data to DB
   const handleSubmitNewProduct = (e) => {
     e.preventDefault();
     createProductInDb(newProduct);
     uploadImageToDb(imageName);
+  };
+
+  // Go back
+  const handleCancelClick = () => {
+    navigate(-1);
   };
 
   if (!loggedInUserData) {
@@ -163,7 +179,16 @@ const AddProduct = () => {
                 </option>
               ))}
             </select>
-            <button className="btn-purple w-1/2 self-center">Save</button>
+            <div className="flex pt-3 justify-between space-x-4">
+              <button className="btn-purple flex-1">Submit</button>
+              <button
+                type="button"
+                className="btn-orange flex-1"
+                onClick={handleCancelClick}
+              >
+                Cancel
+              </button>
+            </div>
           </form>
         </div>
         <Modal
