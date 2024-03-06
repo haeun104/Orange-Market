@@ -1,9 +1,8 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { auth } from "../../src/firebase-config";
 import Modal from "../components/Modal";
-import { DataContext } from "../App";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -27,7 +26,6 @@ const Login = () => {
     e.preventDefault();
     login();
   };
-
 
   return (
     <>

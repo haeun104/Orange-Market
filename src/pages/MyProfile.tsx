@@ -13,11 +13,13 @@ const MyProfile = () => {
 
   const navigate = useNavigate();
 
+  // Switch to edit mode
   const handleEditClick = (e) => {
     e.preventDefault();
     setEditClicked(true);
   };
 
+  // Update state of user data
   const handleOnChangeUserData = (e) => {
     setUpdatedUserData((prev) => ({
       ...prev,
@@ -25,7 +27,7 @@ const MyProfile = () => {
     }));
   };
 
-  // Update user data changes
+  // Update user data changes in DB
   async function updateUserProfile(userData) {
     try {
       const docRef = doc(collection(db, "user"), userData.id);
@@ -37,13 +39,19 @@ const MyProfile = () => {
     }
   }
 
+  // Send update commend to DB
   const handleSubmitUserData = (e) => {
     e.preventDefault();
     updateUserProfile(updatedUserData);
   };
 
-  const handleCancelClick = () => {
-    navigate("/");
+  // Go back to a previous page
+  const handleCancelClick = (type: string) => {
+    if (type === "edit") {
+      navigate(-1);
+    } else {
+      setEditClicked(false);
+    }
   };
 
   if (!loggedInUserData) {
@@ -81,7 +89,7 @@ const MyProfile = () => {
             <input
               type="text"
               id="first-name"
-              className="basic-input"
+              className="basic-input disabled:bg-gray-200"
               value={email}
               disabled
             />
@@ -89,7 +97,7 @@ const MyProfile = () => {
             <input
               type="text"
               id="nickname"
-              className="basic-input"
+              className="basic-input disabled:bg-gray-200"
               value={nickname}
               disabled
             />
@@ -97,7 +105,7 @@ const MyProfile = () => {
             <input
               type="text"
               id="first-name"
-              className="basic-input"
+              className="basic-input disabled:bg-gray-200"
               value={firstname}
               disabled={editClicked ? false : true}
               name="firstname"
@@ -107,7 +115,7 @@ const MyProfile = () => {
             <input
               type="text"
               id="last-name"
-              className="basic-input"
+              className="basic-input disabled:bg-gray-200"
               value={surname}
               disabled={editClicked ? false : true}
               name="surname"
@@ -118,7 +126,7 @@ const MyProfile = () => {
             <input
               type="phone"
               id="mobile"
-              className="basic-input"
+              className="basic-input disabled:bg-gray-200"
               value={phone}
               disabled={editClicked ? false : true}
               name="phone"
@@ -130,7 +138,7 @@ const MyProfile = () => {
               <input
                 type="text"
                 id="street"
-                className="basic-input"
+                className="basic-input disabled:bg-gray-200"
                 value={street}
                 disabled={editClicked ? false : true}
                 name="street"
@@ -140,7 +148,7 @@ const MyProfile = () => {
               <input
                 type="text"
                 id="district"
-                className="basic-input"
+                className="basic-input disabled:bg-gray-200"
                 value={district}
                 disabled={editClicked ? false : true}
                 name="district"
@@ -150,7 +158,7 @@ const MyProfile = () => {
               <input
                 type="text"
                 id="city"
-                className="basic-input"
+                className="basic-input disabled:bg-gray-200"
                 value={city}
                 disabled={editClicked ? false : true}
                 name="city"
@@ -160,7 +168,7 @@ const MyProfile = () => {
               <input
                 type="text"
                 id="postal-code"
-                className="basic-input"
+                className="basic-input disabled:bg-gray-200"
                 value={postalCode}
                 disabled={editClicked ? false : true}
                 name="postalCode"
@@ -180,13 +188,22 @@ const MyProfile = () => {
                   <button
                     type="button"
                     className="btn-orange flex-1"
-                    onClick={handleCancelClick}
+                    onClick={() => handleCancelClick("edit")}
                   >
                     Cancel
                   </button>
                 </>
               ) : (
-                <button className="btn-purple flex-1">Submit</button>
+                <>
+                  <button className="btn-purple flex-1">Submit</button>
+                  <button
+                    type="button"
+                    className="btn-orange flex-1"
+                    onClick={() => handleCancelClick("submit")}
+                  >
+                    Cancel
+                  </button>
+                </>
               )}
             </div>
           </form>

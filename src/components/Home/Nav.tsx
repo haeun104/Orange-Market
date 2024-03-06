@@ -18,6 +18,7 @@ const Nav = () => {
     try {
       await signOut(auth);
       console.log("successfully logged out");
+      setOpenModal(true);
     } catch (error) {
       console.log(error.message);
     }
@@ -27,9 +28,6 @@ const Nav = () => {
   const handleLogout = (e) => {
     e.preventDefault();
     logout();
-    alert("successfully logged out");
-    // setOpenModal(true);
-    navigate("/", { replace: true });
   };
 
   // Go to user profile page

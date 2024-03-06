@@ -16,19 +16,6 @@ import AddProduct from "./pages/AddProduct";
 export const DataContext = React.createContext();
 export const DispatchContext = React.createContext();
 
-// const initialUserData = {
-//   id: "",
-//   nickname: "",
-//   email: "",
-//   firstname: "",
-//   surname: "",
-//   city: "",
-//   district: "",
-//   street: "",
-//   postalCode: 0,
-//   phone: 0,
-// };
-
 function App() {
   const [usersList, setUsersList] = useState([]);
   const [loggedInUserData, setLoggedInUserData] = useState({});
@@ -37,7 +24,7 @@ function App() {
   // Real-time synchronization of Firestore data
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "user"), (snapshot) => {
-      const userList: (string | number)[] = [];
+      const userList = [];
       snapshot.forEach((doc) => {
         userList.push({ ...doc.data(), id: doc.id });
       });
@@ -46,11 +33,12 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  //Update user data whenever login status is changed
+  // Update user data whenever login status is changed
   onAuthStateChanged(auth, (currentUser) => {
     setLoggedInUser(currentUser);
   });
 
+  // Find a user currently logged in
   useEffect(() => {
     const getCurrentUserData = (email: string) => {
       const user = usersList.find((user) => user.email === email);

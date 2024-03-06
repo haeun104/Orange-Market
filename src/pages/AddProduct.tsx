@@ -19,6 +19,7 @@ const categories = [
   { value: "Beauty", label: "Beauty" },
   { value: "Health", label: "Health" },
   { value: "Groceries", label: "Groceries" },
+  { value: "Other", label: "Other" },
 ];
 
 const AddProduct = () => {
@@ -42,11 +43,12 @@ const AddProduct = () => {
 
   const navigate = useNavigate();
 
+  // Update state whenever a current user is changed
   useEffect(() => {
     if (loggedInUserData !== undefined) {
       setNewProduct((prev) => ({
         ...prev,
-        seller: loggedInUserData.nickname,
+        seller: loggedInUserData.id,
       }));
     }
   }, [loggedInUserData]);
