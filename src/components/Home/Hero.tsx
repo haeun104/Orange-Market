@@ -13,12 +13,12 @@ const Hero = () => {
           </span>
           <div className="flex justify-center space-x-4">
             <Link to="/products">
-              <div className="text-gray-500 px-3 py-2 text-sm font-medium border-solid border-gray-500 border-2 w-28 text-center lg:text-xl lg:w-40">
+              <div className="text-gray-500 px-3 py-2 text-sm font-medium border-solid border-gray-500 border-2 w-28 h-[75px] text-center lg:text-xl lg:w-40">
                 See new offers
               </div>
             </Link>
             <Link to="/login">
-              <div className="text-gray-500 px-3 py-2 text-sm font-medium border-solid border-main-orange border-2 w-28 text-center lg:text-xl lg:w-40">
+              <div className="text-gray-500 px-3 py-2 text-sm font-medium border-solid border-main-orange border-2 w-28 h-[75px] text-center lg:text-xl lg:w-40">
                 Log in for more details
               </div>
             </Link>

@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { DataContext } from "../App";
-import { getFormattedDate } from "../../src/utils";
-import { db, storage } from "../../src/firebase-config";
+import { getFormattedDate } from "./../utils";
+import { db, storage } from "./../firebase-config";
 import { addDoc, collection } from "firebase/firestore";
 import Modal from "../components/Modal";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -35,6 +35,8 @@ const AddProduct = () => {
     buyer: "",
     isSold: false,
     imgURL: "",
+    city: "",
+    district: "",
   });
   const [imageName, setImageName] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -86,12 +88,12 @@ const AddProduct = () => {
     );
     const fileURL = await getDownloadURL(uploadFile.ref);
     console.log(fileURL);
+    createProductInDb({ ...newProduct, imgURL: fileURL });
   };
 
   // Send product data to DB
   const handleSubmitNewProduct = (e) => {
     e.preventDefault();
-    createProductInDb(newProduct);
     uploadImageToDb(imageName);
   };
 
@@ -157,6 +159,31 @@ const AddProduct = () => {
               value={newProduct.price}
               required
             />
+            <div className="flex flex-col space-y-2">
+              <span className="">Selling Location</span>
+
+              <label htmlFor="city flex flex-col">City</label>
+              <input
+                type="text"
+                id="city"
+                className="basic-input"
+                name="city"
+                onChange={(e) => handleOnChangeNewProduct(e)}
+                value={newProduct.city}
+                required
+              />
+
+              <label htmlFor="district">District</label>
+              <input
+                type="text"
+                id="district"
+                className="basic-input"
+                name="district"
+                onChange={(e) => handleOnChangeNewProduct(e)}
+                value={newProduct.district}
+                required
+              />
+            </div>
 
             <label htmlFor="image">Image file</label>
             <input

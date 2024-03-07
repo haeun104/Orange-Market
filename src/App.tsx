@@ -12,14 +12,16 @@ import MyProfile from "./pages/MyProfile";
 import MyMarket from "./pages/MyMarket";
 import Products from "./pages/Products";
 import AddProduct from "./pages/AddProduct";
+import ProductDetail from "./components/Products/ProductDetail";
+import ProductsBySeller from "./components/Products/ProductsBySeller";
 
 export const DataContext = React.createContext();
-export const DispatchContext = React.createContext();
 
 function App() {
   const [usersList, setUsersList] = useState([]);
   const [loggedInUserData, setLoggedInUserData] = useState({});
   const [loggedInUser, setLoggedInUser] = useState({});
+  const [productsList, setProductList] = useState([]);
 
   // Real-time synchronization of Firestore data
   useEffect(() => {
@@ -29,6 +31,17 @@ function App() {
         userList.push({ ...doc.data(), id: doc.id });
       });
       setUsersList(userList);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, "product"), (snapshot) => {
+      const productList = [];
+      snapshot.forEach((doc) => {
+        productList.push({ ...doc.data(), id: doc.id });
+      });
+      setProductList(productList);
     });
     return () => unsubscribe();
   }, []);
@@ -57,6 +70,7 @@ function App() {
             usersList,
             loggedInUser,
             loggedInUserData,
+            productsList,
           }}
         >
           <Nav />
@@ -65,6 +79,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
             <Route path="/products/new" element={<AddProduct />} />
+            <Route path="/products/:id" element={<ProductDetail />} />
+            <Route path="/products/:seller" element={<ProductsBySeller />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/myprofile" element={<MyProfile />} />

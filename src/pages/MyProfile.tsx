@@ -195,7 +195,7 @@ const MyProfile = () => {
                 </>
               ) : (
                 <>
-                  <button className="btn-purple flex-1">Submit</button>
+                  <button className="btn-purple flex-1">Save</button>
                   <button
                     type="button"
                     className="btn-orange flex-1"
