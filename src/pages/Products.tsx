@@ -1,8 +1,10 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DataContext } from "../App";
+import { categories } from "./../utils";
 
 const Products = () => {
+  const [category, setCategory] = useState("All");
   const navigate = useNavigate();
   const { productsList } = useContext(DataContext);
 
@@ -12,6 +14,10 @@ const Products = () => {
 
   const goToProductDetailPage = (id) => {
     navigate(`/products/${id}`);
+  };
+
+  const handleCategoryClick = (category: string) => {
+    setCategory(category);
   };
 
   if (productsList.length === 0) {
@@ -29,6 +35,30 @@ const Products = () => {
     return (
       <div className="container max-w-[1280px] relative">
         <h2 className="text-lg font-bold text-center mb-8">PRODUCT LIST</h2>
+        <div className="max-w-[640px] mx-auto mb-[40px]">
+          <ul className="flex space-x-4 flex-wrap justify-center mx-[20px]">
+            <li
+              className={`cursor-pointer ${
+                category === "All" && "font-bold border-black"
+              } border-white border-solid border-b-[2px] hover:border-black active:border-black`}
+              value="All"
+              onClick={() => handleCategoryClick("All")}
+            >
+              All
+            </li>
+            {categories.map((item, index) => (
+              <li
+                key={index}
+                className={`cursor-pointer ${
+                  category === item.value && "font-bold border-black"
+                } border-white border-solid border-b-[2px] hover:border-black active:border-black`}
+                onClick={() => handleCategoryClick(item.value)}
+              >
+                {item.value}
+              </li>
+            ))}
+          </ul>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8 lg:px-[150px]">
           {productsList.map((item) => (
             <div

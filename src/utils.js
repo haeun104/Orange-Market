@@ -11,3 +11,18 @@ export const getFormattedDate = (date) => {
 
   return `${year}-${month}-${day}`;
 };
+
+export const categories = [
+  { value: "Electronics", label: "Electronics" },
+  { value: "Furniture", label: "Furniture" },
+  { value: "Clothing", label: "Clothing" },
+  { value: "Accessories", label: "Accessories" },
+  { value: "Vehicle", label: "Vehicle" },
+  { value: "Sports", label: "Sports" },
+  { value: "Books", label: "Books" },
+  { value: "Kids", label: "Kids" },
+  { value: "Beauty", label: "Beauty" },
+  { value: "Health", label: "Health" },
+  { value: "Groceries", label: "Groceries" },
+  { value: "Other", label: "Other" },
+];

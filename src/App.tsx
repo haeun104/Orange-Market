@@ -7,7 +7,7 @@ import React, { useEffect, useState } from "react";
 import { onSnapshot, collection } from "firebase/firestore";
 import { db } from "../src/firebase-config";
 import { auth } from "../src/firebase-config";
-import { onAuthStateChanged } from "firebase/auth";
+import { User, onAuthStateChanged } from "firebase/auth";
 import MyProfile from "./pages/MyProfile";
 import MyMarket from "./pages/MyMarket";
 import Products from "./pages/Products";
@@ -16,6 +16,34 @@ import ProductDetail from "./components/Products/ProductDetail";
 import ProductsBySeller from "./components/Products/ProductsBySeller";
 
 export const DataContext = React.createContext();
+
+type UserType = {
+  nickname: string;
+  email: string;
+  firstname: string;
+  surname: string;
+  city: string;
+  district: string;
+  street: string;
+  postalCode: string;
+  phone: string;
+};
+
+type ProductType = {
+  title: string;
+  description: string;
+  price: number;
+  category: string;
+  date: string;
+  clickCount: number;
+  likeCount: number;
+  seller: string;
+  buyer: string;
+  isSold: boolean;
+  imgURL: string;
+  city: string;
+  district: string;
+};
 
 function App() {
   const [usersList, setUsersList] = useState([]);
@@ -26,7 +54,7 @@ function App() {
   // Real-time synchronization of Firestore data
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "user"), (snapshot) => {
-      const userList = [];
+      const userList: UserType[] = [];
       snapshot.forEach((doc) => {
         userList.push({ ...doc.data(), id: doc.id });
       });
@@ -37,7 +65,7 @@ function App() {
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "product"), (snapshot) => {
-      const productList = [];
+      const productList: ProductType[] = [];
       snapshot.forEach((doc) => {
         productList.push({ ...doc.data(), id: doc.id });
       });
@@ -80,7 +108,7 @@ function App() {
             <Route path="/products" element={<Products />} />
             <Route path="/products/new" element={<AddProduct />} />
             <Route path="/products/:id" element={<ProductDetail />} />
-            <Route path="/products/:seller" element={<ProductsBySeller />} />
+            <Route path="/products/seller/:seller" element={<ProductsBySeller />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/myprofile" element={<MyProfile />} />

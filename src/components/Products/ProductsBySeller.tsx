@@ -1,5 +1,9 @@
+import { useParams } from "react-router-dom";
+
 const ProductsBySeller = () => {
-  return <div>Products by seller page</div>;
+  const { seller } = useParams();
+
+  return <div>products by {seller}</div>;
 };
 
 export default ProductsBySeller;

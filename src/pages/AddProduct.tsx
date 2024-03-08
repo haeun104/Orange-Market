@@ -1,26 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import { DataContext } from "../App";
-import { getFormattedDate } from "./../utils";
+import { getFormattedDate, categories } from "./../utils";
 import { db, storage } from "./../firebase-config";
 import { addDoc, collection } from "firebase/firestore";
 import Modal from "../components/Modal";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
 
-const categories = [
-  { value: "Electronics", label: "Electronics" },
-  { value: "Furniture", label: "Furniture" },
-  { value: "Clothing", label: "Clothing" },
-  { value: "Accessories", label: "Accessories" },
-  { value: "Vehicle", label: "Vehicle" },
-  { value: "Sports", label: "Sports" },
-  { value: "Books", label: "Books" },
-  { value: "Kids", label: "Kids" },
-  { value: "Beauty", label: "Beauty" },
-  { value: "Health", label: "Health" },
-  { value: "Groceries", label: "Groceries" },
-  { value: "Other", label: "Other" },
-];
 
 const AddProduct = () => {
   const [newProduct, setNewProduct] = useState({

@@ -1,6 +1,13 @@
 import { useNavigate } from "react-router-dom";
 
-const Modal = ({ openModal, setOpenModal, message }) => {
+type ModalProps = {
+  openModal: boolean;
+  setOpenModal: (a: boolean) => boolean;
+  message: string;
+};
+
+const Modal = (props: ModalProps) => {
+  const { openModal, setOpenModal, message } = props;
   const navigate = useNavigate();
 
   const handleCloseClick = () => {

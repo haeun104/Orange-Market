@@ -21,7 +21,7 @@ const ProductDetail = () => {
   }, [productsList, productId, usersList]);
 
   const goToSellerProductList = (sellerId: string) => {
-    navigate(`/products/${sellerId}`);
+    navigate(`/products/seller/${sellerId}`);
   };
 
   if (!product) {
