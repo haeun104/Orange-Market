@@ -1,18 +1,43 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DataContext } from "../App";
 import { categories } from "./../utils";
+import { ProductType } from "../App";
 
 const Products = () => {
   const [category, setCategory] = useState("All");
+  const [products, setProducts] = useState();
+  const [emptyProducts, setEmptyProducts] = useState(false);
   const navigate = useNavigate();
   const { productsList } = useContext(DataContext);
+
+  useEffect(() => {
+    setProducts(productsList);
+  }, []);
+
+  useEffect(() => {
+    setEmptyProducts(false);
+    if (productsList.length === 0) {
+      setEmptyProducts(true);
+    }
+    if (category === "All") {
+      setProducts(productsList);
+    } else {
+      const filteredProducts = productsList.filter(
+        (item: ProductType) => item.category === category
+      );
+      if (filteredProducts.length === 0) {
+        setEmptyProducts(true);
+      }
+      setProducts(filteredProducts);
+    }
+  }, [category, productsList]);
 
   const goToNewProductPage = () => {
     navigate("/products/new");
   };
 
-  const goToProductDetailPage = (id) => {
+  const goToProductDetailPage = (id: string) => {
     navigate(`/products/${id}`);
   };
 
@@ -20,7 +45,7 @@ const Products = () => {
     setCategory(category);
   };
 
-  if (productsList.length === 0) {
+  if (!products) {
     return (
       <div
         className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
@@ -59,8 +84,11 @@ const Products = () => {
             ))}
           </ul>
         </div>
+        {emptyProducts && (
+          <div className="text-center">There is no product registered yet.</div>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8 lg:px-[150px]">
-          {productsList.map((item) => (
+          {products.map((item) => (
             <div
               key={item.id}
               className="flex flex-col justify-center mx-auto w-[250px] cursor-pointer"

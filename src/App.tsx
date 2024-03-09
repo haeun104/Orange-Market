@@ -7,7 +7,7 @@ import React, { useEffect, useState } from "react";
 import { onSnapshot, collection } from "firebase/firestore";
 import { db } from "../src/firebase-config";
 import { auth } from "../src/firebase-config";
-import { User, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import MyProfile from "./pages/MyProfile";
 import MyMarket from "./pages/MyMarket";
 import Products from "./pages/Products";
@@ -29,7 +29,7 @@ type UserType = {
   phone: string;
 };
 
-type ProductType = {
+export interface ProductType {
   title: string;
   description: string;
   price: number;
@@ -43,13 +43,13 @@ type ProductType = {
   imgURL: string;
   city: string;
   district: string;
-};
+}
 
 function App() {
-  const [usersList, setUsersList] = useState([]);
+  const [usersList, setUsersList] = useState<UserType[]>([]);
   const [loggedInUserData, setLoggedInUserData] = useState({});
   const [loggedInUser, setLoggedInUser] = useState({});
-  const [productsList, setProductList] = useState([]);
+  const [productsList, setProductList] = useState<ProductType[]>([]);
 
   // Real-time synchronization of Firestore data
   useEffect(() => {
@@ -108,7 +108,10 @@ function App() {
             <Route path="/products" element={<Products />} />
             <Route path="/products/new" element={<AddProduct />} />
             <Route path="/products/:id" element={<ProductDetail />} />
-            <Route path="/products/seller/:seller" element={<ProductsBySeller />} />
+            <Route
+              path="/products/seller/:seller"
+              element={<ProductsBySeller />}
+            />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/myprofile" element={<MyProfile />} />
