@@ -1,12 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { DataContext } from "../App";
-import { getFormattedDate, categories } from "./../utils";
+import { getFormattedDate, productRegisterCategories } from "./../utils";
 import { db, storage } from "./../firebase-config";
 import { addDoc, collection } from "firebase/firestore";
 import Modal from "../components/Modal";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
-
 
 const AddProduct = () => {
   const [newProduct, setNewProduct] = useState({
@@ -188,7 +187,7 @@ const AddProduct = () => {
               value={newProduct.category}
               required
             >
-              {categories.map((item, index) => (
+              {productRegisterCategories.map((item, index) => (
                 <option key={index} value={item.value}>
                   {item.value}
                 </option>

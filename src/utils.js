@@ -12,7 +12,7 @@ export const getFormattedDate = (date) => {
   return `${year}-${month}-${day}`;
 };
 
-export const categories = [
+export const productRegisterCategories = [
   { value: "Electronics", label: "Electronics" },
   { value: "Furniture", label: "Furniture" },
   { value: "Clothing", label: "Clothing" },
@@ -25,4 +25,21 @@ export const categories = [
   { value: "Health", label: "Health" },
   { value: "Groceries", label: "Groceries" },
   { value: "Other", label: "Other" },
+];
+
+export const productFilterCategories = [
+  { value: "All" },
+  { value: "My Location" },
+  { value: "Electronics" },
+  { value: "Furniture" },
+  { value: "Clothing" },
+  { value: "Accessories" },
+  { value: "Vehicle" },
+  { value: "Sports" },
+  { value: "Books" },
+  { value: "Kids" },
+  { value: "Beauty" },
+  { value: "Health" },
+  { value: "Groceries" },
+  { value: "Other" },
 ];

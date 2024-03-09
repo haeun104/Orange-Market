@@ -87,6 +87,8 @@ function App() {
     };
     if (loggedInUser !== null) {
       setLoggedInUserData(() => getCurrentUserData(loggedInUser.email));
+    } else {
+      setLoggedInUserData({});
     }
   }, [loggedInUser, usersList]);
 

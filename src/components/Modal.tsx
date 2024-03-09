@@ -3,16 +3,27 @@ import { useNavigate } from "react-router-dom";
 type ModalProps = {
   openModal: boolean;
   setOpenModal: (a: boolean) => boolean;
+  setCategory: (a: string) => string;
   message: string;
+  type: string;
 };
 
 const Modal = (props: ModalProps) => {
-  const { openModal, setOpenModal, message } = props;
+  const { openModal, setOpenModal, setCategory, message, type } = props;
   const navigate = useNavigate();
 
   const handleCloseClick = () => {
     setOpenModal(false);
-    navigate("/", { replace: true });
+    if (type === "login") {
+      setCategory("All");
+    } else {
+      navigate("/", { replace: true });
+    }
+  };
+
+  const goToLogin = () => {
+    setOpenModal(false);
+    navigate("/login");
   };
 
   return (
@@ -35,13 +46,15 @@ const Modal = (props: ModalProps) => {
                   >
                     Close
                   </button>
-                  {/* <button
-                    className="btn-purple flex-1"
-                    type="button"
-                    onClick={() => setShowModal(false)}
-                  >
-                    Confirm
-                  </button> */}
+                  {type === "login" && (
+                    <button
+                      className="btn-purple flex-1 text-nowrap"
+                      type="button"
+                      onClick={goToLogin}
+                    >
+                      Go to login
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
