@@ -18,6 +18,7 @@ const Products = () => {
     setProducts(productsList);
   }, []);
 
+  // Fetch a product list and filter as per a selected category
   useEffect(() => {
     setEmptyProducts(false);
     if (productsList.length === 0) {
@@ -46,14 +47,17 @@ const Products = () => {
     }
   }, [category, productsList]);
 
+  // Go to the product register page
   const goToNewProductPage = () => {
     navigate("/products/new");
   };
 
+  // Go to product details
   const goToProductDetailPage = (id: string) => {
     navigate(`/products/${id}`);
   };
 
+  // Update state as per a selected category
   const handleCategoryClick = (category: string) => {
     setCategory(category);
   };

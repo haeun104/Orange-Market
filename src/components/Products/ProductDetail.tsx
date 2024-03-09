@@ -10,6 +10,7 @@ const ProductDetail = () => {
 
   const navigate = useNavigate();
 
+  // Find product details based on product id
   useEffect(() => {
     const product = productsList.find((prod) => prod.id === productId.id);
     setProduct(product);
@@ -20,6 +21,7 @@ const ProductDetail = () => {
     }
   }, [productsList, productId, usersList]);
 
+  // Go to seller's product list
   const goToSellerProductList = (sellerId: string) => {
     navigate(`/products/seller/${sellerId}`);
   };
@@ -58,9 +60,24 @@ const ProductDetail = () => {
             </div>
           </div>
           <div className="flex flex-col space-y-2 mt-4 mb-4">
-            <button className="btn-orange">Add to your favorite list</button>
-            <button className="btn-orange">Chat with a seller</button>
-            <button className="btn-purple">Make a purchase request</button>
+            <button
+              className="btn-orange disabled:bg-gray-300 cursor-not-allowed disabled:hover:opacity-100"
+              disabled={product.isSold ? true : false}
+            >
+              Add to your favorite list
+            </button>
+            <button
+              className="btn-orange disabled:bg-gray-300 cursor-not-allowed disabled:hover:opacity-100"
+              disabled={product.isSold ? true : false}
+            >
+              Chat with a seller
+            </button>
+            <button
+              className="btn-purple disabled:bg-gray-300 cursor-not-allowed disabled:hover:opacity-100"
+              disabled={product.isSold ? true : false}
+            >
+              Make a purchase request
+            </button>
           </div>
         </div>
       </div>
