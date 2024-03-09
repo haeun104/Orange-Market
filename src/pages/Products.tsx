@@ -27,7 +27,6 @@ const Products = () => {
     if (category === "All") {
       setProducts(productsList);
     } else if (category === "My Location") {
-      console.log(loggedInUserData);
       if (!loggedInUserData.city) {
         setOpenModal(true);
       } else {
