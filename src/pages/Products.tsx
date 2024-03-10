@@ -5,6 +5,10 @@ import { productFilterCategories } from "./../utils";
 import { ProductType } from "../App";
 import Modal from "../components/Modal";
 
+interface ProductList {
+  [key: string]: string | number | boolean;
+}
+
 const Products = () => {
   const [category, setCategory] = useState("All");
   const [products, setProducts] = useState();
@@ -31,7 +35,7 @@ const Products = () => {
         setOpenModal(true);
       } else {
         const userLocationProduct = productsList.filter(
-          (item) => item.city === loggedInUserData.city
+          (item: ProductList) => item.city === loggedInUserData.city
         );
         setProducts(userLocationProduct);
       }

@@ -26,6 +26,9 @@ const ProductDetail = () => {
     navigate(`/products/seller/${sellerId}`);
   };
 
+  //
+  const addToFavorites = () => {};
+
   if (!product) {
     return (
       <div
@@ -61,19 +64,20 @@ const ProductDetail = () => {
           </div>
           <div className="flex flex-col space-y-2 mt-4 mb-4">
             <button
-              className="btn-orange disabled:bg-gray-300 cursor-not-allowed disabled:hover:opacity-100"
+              className="btn-orange disabled:bg-gray-300 disabled:cursor-not-allowed disabled:hover:opacity-100"
               disabled={product.isSold ? true : false}
+              onClick={addToFavorites}
             >
               Add to your favorite list
             </button>
             <button
-              className="btn-orange disabled:bg-gray-300 cursor-not-allowed disabled:hover:opacity-100"
+              className="btn-orange disabled:bg-gray-300 disabled:cursor-not-allowed disabled:hover:opacity-100"
               disabled={product.isSold ? true : false}
             >
               Chat with a seller
             </button>
             <button
-              className="btn-purple disabled:bg-gray-300 cursor-not-allowed disabled:hover:opacity-100"
+              className="btn-purple disabled:bg-gray-300 disabled:cursor-not-allowed disabled:hover:opacity-100"
               disabled={product.isSold ? true : false}
             >
               Make a purchase request

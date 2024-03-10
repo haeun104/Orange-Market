@@ -32,12 +32,12 @@ const Nav = () => {
 
   // Go to user profile page
   const goToUserProfile = () => {
-    navigate(`/myprofile`);
+    navigate(`/my-profile`);
   };
 
   // Go to user market page
   const goToUserMarket = () => {
-    navigate(`/mymarket`);
+    navigate(`/my-market`);
   };
 
   function classNames(...classes: string[]) {
@@ -49,7 +49,7 @@ const Nav = () => {
       <Disclosure as="nav" className="bg-white-800">
         {({ open }) => (
           <>
-            <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+            <div className="mx-auto px-2 sm:px-6 lg:px-8">
               <div className="relative flex h-16 items-center justify-between">
                 <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
                   {/* Mobile menu button*/}
@@ -159,7 +159,7 @@ const Nav = () => {
             </div>
             <Disclosure.Panel className="sm:hidden">
               <div className="space-y-1 px-2 pb-3 pt-2">
-                <Link to="/">
+                <Link to="/products">
                   <Disclosure.Button className="text-black-300 hover:bg-slate-200 block rounded-md px-3 py-2 text-base font-medium">
                     Products
                   </Disclosure.Button>
