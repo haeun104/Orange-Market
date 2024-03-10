@@ -1,12 +1,16 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { DataContext } from "../../App";
+import { addDoc, collection, query, getDocs, where } from "firebase/firestore";
+import { db } from "../../firebase-config";
 
 const ProductDetail = () => {
   const [product, setProduct] = useState();
   const [sellerName, setSellerName] = useState("");
+  const [message, setMessage] = useState("");
+
   const productId = useParams();
-  const { productsList, usersList } = useContext(DataContext);
+  const { productsList, usersList, loggedInUserData } = useContext(DataContext);
 
   const navigate = useNavigate();
 
@@ -26,8 +30,46 @@ const ProductDetail = () => {
     navigate(`/products/seller/${sellerId}`);
   };
 
-  //
-  const addToFavorites = () => {};
+  // Add a product to favorites in DB
+  async function addFavoriteInDb(favorite) {
+    try {
+      await addDoc(collection(db, "favorite"), favorite);
+      console.log("successfully added favorite.");
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // Check if nickname already exists in DB
+  async function checkFavoriteInDb(favorite) {
+    const collectionRef = collection(db, "favorite");
+    const q = query(
+      collectionRef,
+      where("productId", "==", favorite.productId),
+      where("userId", "==", favorite.userId)
+    );
+    try {
+      const querySnapshot = await getDocs(q);
+      console.log(querySnapshot);
+      if (!querySnapshot.empty) {
+        setMessage("Remove from your favorite list");
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  // Send favorite to DB
+  const addToFavorites = () => {
+    const favorite = {
+      userId: loggedInUserData.id,
+      productId: productId.id,
+    };
+    addFavoriteInDb(favorite);
+  };
 
   if (!product) {
     return (
@@ -48,8 +90,8 @@ const ProductDetail = () => {
             <img src="src\assets\chair.jpg" alt={product.title} />
           </div>
           <div className="flex flex-col text-gray-400">
-            <h4 className="text-black">{product.title}</h4>
-            <span className="text-black">{product.price} PLN</span>
+            <h4 className="text-black font-bold">{product.title}</h4>
+            <span className="text-black font-bold">{product.price} PLN</span>
             <span
               className="cursor-pointer underline"
               onClick={() => goToSellerProductList(product.seller)}
@@ -57,6 +99,7 @@ const ProductDetail = () => {
               {sellerName}
             </span>
             <span>{`${product.city}, ${product.district}`}</span>
+            <p className="my-[20px]">{product.description}</p>
             <div className="flex space-x-2 text-sm">
               <span>Click {product.clickCount}</span>
               <span>Like {product.likeCount}</span>
