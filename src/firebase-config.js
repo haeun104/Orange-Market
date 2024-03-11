@@ -59,17 +59,13 @@ export async function checkNicknameInDb(name) {
 }
 
 // Check if nickname already exists in DB
-async function checkFavoriteInDb(favorite) {
+export async function checkFavoriteInDb(userId) {
   const collectionRef = collection(db, "favorite");
-  const q = query(
-    collectionRef,
-    where("productId", "==", favorite.productId),
-    where("userId", "==", favorite.userId)
-  );
+  const q = query(collectionRef, where("userId", "==", userId));
   try {
     const querySnapshot = await getDocs(q);
     if (!querySnapshot.empty) {
-      console.log("Remove from your favorite list");
+      console.log(querySnapshot);
     } else {
       return null;
     }

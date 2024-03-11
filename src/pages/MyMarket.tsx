@@ -12,6 +12,7 @@ const MyMarket = () => {
             Go to details
           </span>
         </Link>
+        <div></div>
       </div>
       <div className="mt-[50px] relative">
         <h2 className="uppercase font-bold text-[18px] border-black border-solid border-b-[2px]">

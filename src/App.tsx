@@ -5,8 +5,7 @@ import SignUp from "./pages/SignUp";
 import Nav from "./components/Home/Nav";
 import React, { useEffect, useState } from "react";
 import { onSnapshot, collection } from "firebase/firestore";
-import { db } from "../src/firebase-config";
-import { auth } from "../src/firebase-config";
+import { db, auth } from "../src/firebase-config";
 import { onAuthStateChanged } from "firebase/auth";
 import MyProfile from "./pages/MyProfile";
 import MyMarket from "./pages/MyMarket";
@@ -14,22 +13,14 @@ import Products from "./pages/Products";
 import AddProduct from "./pages/AddProduct";
 import ProductDetail from "./components/Products/ProductDetail";
 import ProductsBySeller from "./components/Products/ProductsBySeller";
-import MyFavorite from "./components/MyMarket/MyFavorite";
-import PurchaseHistory from "./components/MyMarket/PurchaseHistory";
-import SalesHistory from "./components/MyMarket/SalesHistory";
+import MyFavorite from "./pages/MyFavorite";
+import PurchaseHistory from "./pages/PurchaseHistory";
+import SalesHistory from "./pages/SalesHistory";
 
 export const DataContext = React.createContext();
 
 type UserType = {
-  nickname: string;
-  email: string;
-  firstname: string;
-  surname: string;
-  city: string;
-  district: string;
-  street: string;
-  postalCode: string;
-  phone: string;
+  [key: string]: string;
 };
 
 export interface ProductType {
@@ -60,7 +51,7 @@ function App() {
   const [productsList, setProductList] = useState<ProductType[]>([]);
   const [favoriteList, setFavoriteList] = useState([]);
 
-  // Real-time synchronization of Firestore data
+  // Real-time synchronization of user data
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "user"), (snapshot) => {
       const userList: UserType[] = [];
@@ -72,6 +63,7 @@ function App() {
     return () => unsubscribe();
   }, []);
 
+  // Real-time synchronization of product data
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "product"), (snapshot) => {
       const productList: ProductType[] = [];
@@ -83,16 +75,22 @@ function App() {
     return () => unsubscribe();
   }, []);
 
+  // Real-time synchronization of favorite data
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "favorite"), (snapshot) => {
       const favoriteList: FavoriteType[] = [];
       snapshot.forEach((doc) => {
         favoriteList.push({ ...doc.data(), docId: doc.id });
       });
-      setFavoriteList(favoriteList);
+      if (loggedInUserData) {
+        const currentUserFavorite = favoriteList.filter(
+          (item) => item.userId === loggedInUserData.id
+        );
+        setFavoriteList(currentUserFavorite);
+      }
     });
     return () => unsubscribe();
-  }, []);
+  }, [loggedInUserData]);
 
   // Update user data whenever login status is changed
   onAuthStateChanged(auth, (currentUser) => {

@@ -29,16 +29,13 @@ const ProductDetail = () => {
   }, [productsList, productId, usersList]);
 
   useEffect(() => {
-    if (loggedInUserData) {
-      const currentUserFavorite = favoriteList.find(
-        (item) =>
-          item.productId === productId.id && item.userId === loggedInUserData.id
-      );
-      if (currentUserFavorite) {
-        setExistingFavorite(true);
-      }
+    const isExisitingFavorite = favoriteList.find(
+      (item) => item.productId === productId.id
+    );
+    if (isExisitingFavorite) {
+      setExistingFavorite(true);
     }
-  }, [favoriteList, loggedInUserData, productId]);
+  }, [favoriteList, productId]);
 
   // Go to seller's product list
   const goToSellerProductList = (sellerId: string) => {
@@ -77,11 +74,10 @@ const ProductDetail = () => {
       productId: productId.id,
     };
     if (existingFavorite) {
-      const currentUserFavorite = favoriteList.find(
-        (item) =>
-          item.productId === productId.id && item.userId === loggedInUserData.id
+      const isExisitingFavorite = favoriteList.find(
+        (item) => item.productId === productId.id
       );
-      deleteFavoriteInDb(currentUserFavorite.docId);
+      deleteFavoriteInDb(isExisitingFavorite.docId);
     } else {
       addFavoriteInDb(favorite);
     }
