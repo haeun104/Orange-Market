@@ -16,7 +16,7 @@ const Modal = (props: ModalProps) => {
     setOpenModal(false);
     if (type === "login") {
       setCategory("All");
-    } else {
+    } else if (type !== "favorite") {
       navigate("/", { replace: true });
     }
   };

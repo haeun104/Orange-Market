@@ -48,11 +48,17 @@ export interface ProductType {
   district: string;
 }
 
+type FavoriteType = {
+  productId: string;
+  userId: string;
+};
+
 function App() {
   const [usersList, setUsersList] = useState<UserType[]>([]);
   const [loggedInUserData, setLoggedInUserData] = useState({});
   const [loggedInUser, setLoggedInUser] = useState({});
   const [productsList, setProductList] = useState<ProductType[]>([]);
+  const [favoriteList, setFavoriteList] = useState([]);
 
   // Real-time synchronization of Firestore data
   useEffect(() => {
@@ -73,6 +79,17 @@ function App() {
         productList.push({ ...doc.data(), id: doc.id });
       });
       setProductList(productList);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, "favorite"), (snapshot) => {
+      const favoriteList: FavoriteType[] = [];
+      snapshot.forEach((doc) => {
+        favoriteList.push({ ...doc.data(), docId: doc.id });
+      });
+      setFavoriteList(favoriteList);
     });
     return () => unsubscribe();
   }, []);
@@ -104,6 +121,7 @@ function App() {
             loggedInUser,
             loggedInUserData,
             productsList,
+            favoriteList,
           }}
         >
           <Nav />

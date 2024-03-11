@@ -57,3 +57,24 @@ export async function checkNicknameInDb(name) {
     return null;
   }
 }
+
+// Check if nickname already exists in DB
+async function checkFavoriteInDb(favorite) {
+  const collectionRef = collection(db, "favorite");
+  const q = query(
+    collectionRef,
+    where("productId", "==", favorite.productId),
+    where("userId", "==", favorite.userId)
+  );
+  try {
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+      console.log("Remove from your favorite list");
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
