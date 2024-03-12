@@ -1,8 +1,8 @@
-import MyMarketList from "./MyMarketList";
+import MyMarketList from "../components/MyMarket/MyMarketList";
 
 const MyFavorite = () => {
   return (
-    <div>
+    <div className="container">
       <MyMarketList />
     </div>
   );

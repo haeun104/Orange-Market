@@ -1,4 +1,4 @@
-import MyMarketList from "./MyMarketList";
+import MyMarketList from "../components/MyMarket/MyMarketList";
 
 const SalesHistory = () => {
   return (
