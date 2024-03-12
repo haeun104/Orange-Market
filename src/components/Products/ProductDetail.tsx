@@ -12,7 +12,7 @@ const ProductDetail = () => {
   const [openModal, setOpenModal] = useState(false);
 
   const productId = useParams();
-  const { productsList, usersList, loggedInUserData, favoriteList } =
+  const { productsList, usersList, loggedInUserData, currentUserFavorite } =
     useContext(DataContext);
 
   const navigate = useNavigate();
@@ -29,13 +29,13 @@ const ProductDetail = () => {
   }, [productsList, productId, usersList]);
 
   useEffect(() => {
-    const isExisitingFavorite = favoriteList.find(
+    const isExisitingFavorite = currentUserFavorite.find(
       (item) => item.productId === productId.id
     );
     if (isExisitingFavorite) {
       setExistingFavorite(true);
     }
-  }, [favoriteList, productId]);
+  }, [currentUserFavorite, productId]);
 
   // Go to seller's product list
   const goToSellerProductList = (sellerId: string) => {
@@ -55,9 +55,9 @@ const ProductDetail = () => {
 
   // Remove a product from favorites in DB
 
-  async function deleteFavoriteInDb(docId: string) {
+  async function deleteFavoriteInDb(id: string) {
     try {
-      const docRef = doc(db, "favorite", docId);
+      const docRef = doc(db, "favorite", id);
       await deleteDoc(docRef);
       setExistingFavorite(false);
       setOpenModal(true);
@@ -70,14 +70,15 @@ const ProductDetail = () => {
   // Send favorite to DB
   const addToFavorites = () => {
     const favorite = {
+      ...product,
       userId: loggedInUserData.id,
       productId: productId.id,
     };
     if (existingFavorite) {
-      const isExisitingFavorite = favoriteList.find(
+      const isExisitingFavorite = currentUserFavorite.find(
         (item) => item.productId === productId.id
       );
-      deleteFavoriteInDb(isExisitingFavorite.docId);
+      deleteFavoriteInDb(isExisitingFavorite.id);
     } else {
       addFavoriteInDb(favorite);
     }

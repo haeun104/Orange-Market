@@ -39,76 +39,58 @@ export interface ProductType {
   district: string;
 }
 
-type FavoriteType = {
-  productId: string;
-  userId: string;
-};
-
 function App() {
   const [usersList, setUsersList] = useState<UserType[]>([]);
   const [loggedInUserData, setLoggedInUserData] = useState({});
+  const [currentUserFavorite, setCurrentUserFavorite] = useState([]);
   const [loggedInUser, setLoggedInUser] = useState({});
   const [productsList, setProductList] = useState<ProductType[]>([]);
   const [favoriteList, setFavoriteList] = useState([]);
 
-  // Real-time synchronization of user data
+  // Real-time synchronization of firebase data
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "user"), (snapshot) => {
-      const userList: UserType[] = [];
-      snapshot.forEach((doc) => {
-        userList.push({ ...doc.data(), id: doc.id });
-      });
-      setUsersList(userList);
-    });
-    return () => unsubscribe();
+    const fetchDataFromDb = (collectionName, state) => {
+      const unsubscribe = onSnapshot(
+        collection(db, collectionName),
+        (snapshot) => {
+          const dataList = [];
+          snapshot.forEach((doc) => {
+            dataList.push({ ...doc.data(), id: doc.id });
+          });
+          state(dataList);
+        }
+      );
+      return () => unsubscribe();
+    };
+    fetchDataFromDb("user", setUsersList);
+    fetchDataFromDb("product", setProductList);
+    fetchDataFromDb("favorite", setFavoriteList);
   }, []);
 
-  // Real-time synchronization of product data
+  // filter a current user's favorite
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "product"), (snapshot) => {
-      const productList: ProductType[] = [];
-      snapshot.forEach((doc) => {
-        productList.push({ ...doc.data(), id: doc.id });
-      });
-      setProductList(productList);
-    });
-    return () => unsubscribe();
-  }, []);
+    if (loggedInUserData) {
+      const currentUserFavorite = favoriteList.filter(
+        (item) => item.userId === loggedInUserData.id
+      );
+      setCurrentUserFavorite(currentUserFavorite);
+    }
+  }, [loggedInUserData, favoriteList]);
 
-  // Real-time synchronization of favorite data
+  // Find a user currently logged in
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "favorite"), (snapshot) => {
-      const favoriteList: FavoriteType[] = [];
-      snapshot.forEach((doc) => {
-        favoriteList.push({ ...doc.data(), docId: doc.id });
-      });
-      if (loggedInUserData) {
-        const currentUserFavorite = favoriteList.filter(
-          (item) => item.userId === loggedInUserData.id
-        );
-        setFavoriteList(currentUserFavorite);
-      }
-    });
-    return () => unsubscribe();
-  }, [loggedInUserData]);
+    if (loggedInUser !== null) {
+      const user = usersList.find((user) => user.email === loggedInUser.email);
+      setLoggedInUserData(user);
+    } else {
+      setLoggedInUserData({});
+    }
+  }, [loggedInUser, usersList]);
 
   // Update user data whenever login status is changed
   onAuthStateChanged(auth, (currentUser) => {
     setLoggedInUser(currentUser);
   });
-
-  // Find a user currently logged in
-  useEffect(() => {
-    const getCurrentUserData = (email: string) => {
-      const user = usersList.find((user) => user.email === email);
-      return user;
-    };
-    if (loggedInUser !== null) {
-      setLoggedInUserData(() => getCurrentUserData(loggedInUser.email));
-    } else {
-      setLoggedInUserData({});
-    }
-  }, [loggedInUser, usersList]);
 
   return (
     <>
@@ -119,7 +101,7 @@ function App() {
             loggedInUser,
             loggedInUserData,
             productsList,
-            favoriteList,
+            currentUserFavorite,
           }}
         >
           <Nav />

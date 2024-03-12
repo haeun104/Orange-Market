@@ -1,6 +1,10 @@
+import { useContext } from "react";
 import { Link } from "react-router-dom";
+import { DataContext } from "../App";
 
 const MyMarket = () => {
+  const { currentUserFavorite } = useContext(DataContext);
+
   return (
     <div className="container">
       <div className="mt-[50px] relative">
@@ -12,7 +16,18 @@ const MyMarket = () => {
             Go to details
           </span>
         </Link>
-        <div></div>
+        <div>
+          {currentUserFavorite.map((item) => (
+            <ul key={item.id} className="flex space-x-4">
+              <li className="">
+                <img src={item.imgURL} alt={item.title} />
+              </li>
+              <li className="flex-1 text-center">{item.title}</li>
+              <li>{item.price}PLN</li>
+              <li>{item.isSold ? "sold" : "onSale"}</li>
+            </ul>
+          ))}
+        </div>
       </div>
       <div className="mt-[50px] relative">
         <h2 className="uppercase font-bold text-[18px] border-black border-solid border-b-[2px]">
