@@ -1,9 +1,22 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { DataContext } from "../App";
 
 const MyMarket = () => {
-  const { currentUserFavorite } = useContext(DataContext);
+  const [requestList, setRequestList] = useState([]);
+
+  const { currentUserFavorite, currentUserRequest, productsList } =
+    useContext(DataContext);
+
+  useEffect(() => {
+    const requestedProducts = currentUserRequest.map((item) => item.product);
+    const filteredProducts = productsList.filter((item) =>
+      requestedProducts.includes(item.id)
+    );
+    if (filteredProducts) {
+      setRequestList(filteredProducts);
+    }
+  }, [currentUserRequest, productsList]);
 
   return (
     <div className="container">
@@ -58,6 +71,18 @@ const MyMarket = () => {
             Go to details
           </span>
         </Link>
+        <div>
+          {requestList.map((item) => (
+            <ul key={item.id} className="flex space-x-4">
+              <li className="">
+                <img src={item.imgURL} alt={item.title} />
+              </li>
+              <li className="flex-1 text-center">{item.title}</li>
+              <li>{item.price}PLN</li>
+              <li>{item.isSold ? "sold" : "onSale"}</li>
+            </ul>
+          ))}
+        </div>
       </div>
     </div>
   );

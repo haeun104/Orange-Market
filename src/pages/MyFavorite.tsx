@@ -29,29 +29,27 @@ const MyFavorite = () => {
         <MyMarketList />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mt-[20px]">
           {currentUserFavorite.map((item) => (
-            <>
-              <div key={item.id}>
-                <div className="h-[200px]">
-                  <img
-                    src="src\assets\chair.jpg"
-                    alt={item.title}
-                    className="h-[100%]"
-                  />
-                </div>
-                <div
-                  className="flex flex-col text-gray-400 cursor-pointer"
-                  onClick={() => goToProducDetail(item.productId)}
-                >
-                  <h4 className="text-black font-bold">{item.title}</h4>
-                  <span className="text-black font-bold">{item.price} PLN</span>
-                  <span>{`${item.city}, ${item.district}`}</span>
-                  <div className="flex space-x-2 text-sm">
-                    <span>Click {item.clickCount}</span>
-                    <span>Like {item.likeCount}</span>
-                  </div>
+            <div key={item.id}>
+              <div className="h-[200px]">
+                <img
+                  src="src\assets\chair.jpg"
+                  alt={item.title}
+                  className="h-[100%]"
+                />
+              </div>
+              <div
+                className="flex flex-col text-gray-400 cursor-pointer"
+                onClick={() => goToProducDetail(item.productId)}
+              >
+                <h4 className="text-black font-bold">{item.title}</h4>
+                <span className="text-black font-bold">{item.price} PLN</span>
+                <span>{`${item.city}, ${item.district}`}</span>
+                <div className="flex space-x-2 text-sm">
+                  <span>Click {item.clickCount}</span>
+                  <span>Like {item.likeCount}</span>
                 </div>
               </div>
-            </>
+            </div>
           ))}
         </div>
       </div>

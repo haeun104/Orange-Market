@@ -2,7 +2,7 @@ import MyMarketList from "../components/MyMarket/MyMarketList";
 
 const PurchaseHistory = () => {
   return (
-    <div>
+    <div className="container">
       <MyMarketList />
     </div>
   );

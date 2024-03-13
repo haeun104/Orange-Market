@@ -9,11 +9,18 @@ const ProductDetail = () => {
   const [product, setProduct] = useState();
   const [sellerName, setSellerName] = useState("");
   const [existingFavorite, setExistingFavorite] = useState(false);
+  const [existingRequest, setExistingRequest] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [modalMsg, setModalMsg] = useState("");
 
   const productId = useParams();
-  const { productsList, usersList, loggedInUserData, currentUserFavorite } =
-    useContext(DataContext);
+  const {
+    productsList,
+    usersList,
+    loggedInUserData,
+    currentUserFavorite,
+    currentUserRequest,
+  } = useContext(DataContext);
 
   const navigate = useNavigate();
 
@@ -28,14 +35,27 @@ const ProductDetail = () => {
     }
   }, [productsList, productId, usersList]);
 
+  // Check if the product already exists on the favorite list
   useEffect(() => {
-    const isExisitingFavorite = currentUserFavorite.find(
+    const isExistingFavorite = currentUserFavorite.find(
       (item) => item.productId === productId.id
     );
-    if (isExisitingFavorite) {
+    if (isExistingFavorite) {
       setExistingFavorite(true);
     }
   }, [currentUserFavorite, productId]);
+
+  // Check if the product already exists on the request list
+  useEffect(() => {
+    const isExistingRequest = currentUserRequest.find(
+      (item) => item.product === productId.id
+    );
+    if (isExistingRequest) {
+      if (isExistingRequest.isClosed === false) {
+        setExistingRequest(true);
+      }
+    }
+  }, [currentUserRequest, productId]);
 
   // Go to seller's product list
   const goToSellerProductList = (sellerId: string) => {
@@ -46,6 +66,7 @@ const ProductDetail = () => {
   async function addFavoriteInDb(favorite) {
     try {
       await addDoc(collection(db, "favorite"), favorite);
+      setModalMsg("successfully added favorite!");
       setOpenModal(true);
       console.log("successfully added favorite.");
     } catch (error) {
@@ -60,6 +81,7 @@ const ProductDetail = () => {
       const docRef = doc(db, "favorite", id);
       await deleteDoc(docRef);
       setExistingFavorite(false);
+      setModalMsg("successfully deleted favorite!");
       setOpenModal(true);
       console.log("successfully deleted favorite.");
     } catch (error) {
@@ -82,6 +104,29 @@ const ProductDetail = () => {
     } else {
       addFavoriteInDb(favorite);
     }
+  };
+
+  // Create a purchase request in DB
+  async function createPurchaseRequestInDb(request) {
+    try {
+      await addDoc(collection(db, "purchase request"), request);
+      setModalMsg("successfully send a purchase request!");
+      setOpenModal(true);
+      console.log("successfully created a purchase request.");
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  // Send a purchase request to DB
+  const sendPurchaseRequest = () => {
+    const request = {
+      product: productId.id,
+      requestor: loggedInUserData.id,
+      seller: product.seller,
+      isClosed: false,
+      isChosenBySeller: false,
+    };
+    createPurchaseRequestInDb(request);
   };
 
   if (!product) {
@@ -137,9 +182,12 @@ const ProductDetail = () => {
               </button>
               <button
                 className="btn-purple disabled:bg-gray-300 disabled:cursor-not-allowed disabled:hover:opacity-100"
-                disabled={product.isSold ? true : false}
+                disabled={product.isSold || existingRequest ? true : false}
+                onClick={sendPurchaseRequest}
               >
-                Make a purchase request
+                {existingRequest
+                  ? "waiting for response on purchase request"
+                  : "Make a purchase request"}
               </button>
             </div>
           </div>
@@ -147,12 +195,8 @@ const ProductDetail = () => {
         <Modal
           openModal={openModal}
           setOpenModal={setOpenModal}
-          message={
-            existingFavorite
-              ? "successfully added favorite."
-              : "successfully deleted favorite!"
-          }
-          type="favorite"
+          message={modalMsg}
+          type="productDetail"
         />
       </>
     );

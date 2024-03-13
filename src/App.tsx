@@ -43,9 +43,11 @@ function App() {
   const [usersList, setUsersList] = useState<UserType[]>([]);
   const [loggedInUserData, setLoggedInUserData] = useState({});
   const [currentUserFavorite, setCurrentUserFavorite] = useState([]);
+  const [currentUserRequest, setCurrentUserRequest] = useState([]);
   const [loggedInUser, setLoggedInUser] = useState({});
   const [productsList, setProductList] = useState<ProductType[]>([]);
   const [favoriteList, setFavoriteList] = useState([]);
+  const [requestList, setRequestList] = useState([]);
 
   // Real-time synchronization of firebase data
   useEffect(() => {
@@ -65,6 +67,7 @@ function App() {
     fetchDataFromDb("user", setUsersList);
     fetchDataFromDb("product", setProductList);
     fetchDataFromDb("favorite", setFavoriteList);
+    fetchDataFromDb("purchase request", setRequestList);
   }, []);
 
   // filter a current user's favorite
@@ -73,9 +76,13 @@ function App() {
       const currentUserFavorite = favoriteList.filter(
         (item) => item.userId === loggedInUserData.id
       );
+      const currentUserRequest = requestList.filter(
+        (item) => item.requestor === loggedInUserData.id
+      );
       setCurrentUserFavorite(currentUserFavorite);
+      setCurrentUserRequest(currentUserRequest);
     }
-  }, [loggedInUserData, favoriteList]);
+  }, [loggedInUserData, favoriteList, requestList]);
 
   // Find a user currently logged in
   useEffect(() => {
@@ -102,6 +109,7 @@ function App() {
             loggedInUserData,
             productsList,
             currentUserFavorite,
+            currentUserRequest,
           }}
         >
           <Nav />
