@@ -58,7 +58,7 @@ export async function checkNicknameInDb(name) {
   }
 }
 
-// Check if nickname already exists in DB
+// Check if favorite already exists in DB
 export async function checkFavoriteInDb(userId) {
   const collectionRef = collection(db, "favorite");
   const q = query(collectionRef, where("userId", "==", userId));
@@ -72,5 +72,22 @@ export async function checkFavoriteInDb(userId) {
   } catch (error) {
     console.log(error);
     return null;
+  }
+}
+
+// Fetch product data from DB
+export async function fetchProductData(collectionName, id) {
+  try {
+    const querySnapshot = await getDocs(collection(db, collectionName));
+    let data;
+    querySnapshot.forEach((doc) => {
+      if (doc.id === id) {
+        data = doc.data();
+      }
+    });
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
   }
 }

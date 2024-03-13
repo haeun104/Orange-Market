@@ -4,7 +4,7 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Nav from "./components/Home/Nav";
 import React, { useEffect, useState } from "react";
-import { onSnapshot, collection } from "firebase/firestore";
+import { onSnapshot, collection, getDocs } from "firebase/firestore";
 import { db, auth } from "../src/firebase-config";
 import { onAuthStateChanged } from "firebase/auth";
 import MyProfile from "./pages/MyProfile";
@@ -40,14 +40,27 @@ export interface ProductType {
 }
 
 function App() {
-  const [usersList, setUsersList] = useState<UserType[]>([]);
-  const [loggedInUserData, setLoggedInUserData] = useState({});
+  const [usersList, setUsersList] = useState([]);
   const [currentUserFavorite, setCurrentUserFavorite] = useState([]);
   const [currentUserRequest, setCurrentUserRequest] = useState([]);
   const [loggedInUser, setLoggedInUser] = useState({});
-  const [productsList, setProductList] = useState<ProductType[]>([]);
-  const [favoriteList, setFavoriteList] = useState([]);
-  const [requestList, setRequestList] = useState([]);
+  const [productsList, setProductList] = useState([]);
+  const [currentUser, setCurrentUser] = useState({});
+
+  // Update user data whenever login status is changed
+  onAuthStateChanged(auth, (currentUser) => {
+    setLoggedInUser(currentUser);
+  });
+
+  // Update a user currently logged in
+  useEffect(() => {
+    if (loggedInUser !== null) {
+      const user = usersList.find((user) => user.email === loggedInUser.email);
+      setCurrentUser(user);
+    } else {
+      setCurrentUser({});
+    }
+  }, [loggedInUser, usersList]);
 
   // Real-time synchronization of firebase data
   useEffect(() => {
@@ -66,38 +79,40 @@ function App() {
     };
     fetchDataFromDb("user", setUsersList);
     fetchDataFromDb("product", setProductList);
-    fetchDataFromDb("favorite", setFavoriteList);
-    fetchDataFromDb("purchase request", setRequestList);
   }, []);
 
-  // filter a current user's favorite
+  // Fetch user's market data from DB
   useEffect(() => {
-    if (loggedInUserData) {
-      const currentUserFavorite = favoriteList.filter(
-        (item) => item.userId === loggedInUserData.id
-      );
-      const currentUserRequest = requestList.filter(
-        (item) => item.requestor === loggedInUserData.id
-      );
-      setCurrentUserFavorite(currentUserFavorite);
-      setCurrentUserRequest(currentUserRequest);
+    if (currentUser) {
+      fetchMarketData(currentUser.id);
     }
-  }, [loggedInUserData, favoriteList, requestList]);
+  }, [currentUser]);
 
-  // Find a user currently logged in
-  useEffect(() => {
-    if (loggedInUser !== null) {
-      const user = usersList.find((user) => user.email === loggedInUser.email);
-      setLoggedInUserData(user);
-    } else {
-      setLoggedInUserData({});
+  async function fetchMarketData(id) {
+    try {
+      const requestSnapshot = await getDocs(collection(db, "purchase request"));
+      const requestList = requestSnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      const currentUserRequests = requestList.filter(
+        (item) => item.requestor === id
+      );
+      setCurrentUserRequest(currentUserRequests);
+
+      const favoriteSnapshot = await getDocs(collection(db, "favorite"));
+      const favoriteList = favoriteSnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      const currentUserFavorites = favoriteList.filter(
+        (item) => item.userId === id
+      );
+      setCurrentUserFavorite(currentUserFavorites);
+    } catch (error) {
+      console.log(error);
     }
-  }, [loggedInUser, usersList]);
-
-  // Update user data whenever login status is changed
-  onAuthStateChanged(auth, (currentUser) => {
-    setLoggedInUser(currentUser);
-  });
+  }
 
   return (
     <>
@@ -106,10 +121,10 @@ function App() {
           value={{
             usersList,
             loggedInUser,
-            loggedInUserData,
             productsList,
             currentUserFavorite,
             currentUserRequest,
+            currentUser,
           }}
         >
           <Nav />

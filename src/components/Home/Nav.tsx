@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Disclosure, Menu } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, useNavigate } from "react-router-dom";
@@ -8,9 +8,11 @@ import Modal from "../Modal";
 import { DataContext } from "../../App";
 
 const Nav = () => {
+  // const [userData, setUserData] = useState();
   const [openModal, setOpenModal] = useState(false);
 
-  const { loggedInUser, loggedInUserData } = useContext(DataContext);
+  const { loggedInUser, currentUser } = useContext(DataContext);
+
   const navigate = useNavigate();
 
   // logout
@@ -105,10 +107,7 @@ const Nav = () => {
                     <Menu as="div" className="relative ml-3">
                       <div>
                         <Menu.Button className="relative flex">
-                          <span>
-                            {loggedInUserData !== undefined &&
-                              loggedInUserData.nickname}
-                          </span>
+                          <span>{currentUser && currentUser.nickname}</span>
                         </Menu.Button>
                       </div>
                       <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">

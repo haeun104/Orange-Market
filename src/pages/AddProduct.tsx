@@ -26,19 +26,19 @@ const AddProduct = () => {
   const [imageName, setImageName] = useState(null);
   const [openModal, setOpenModal] = useState(false);
 
-  const { loggedInUserData } = useContext(DataContext);
+  const { currentUser } = useContext(DataContext);
 
   const navigate = useNavigate();
 
   // Update state whenever a current user is changed
   useEffect(() => {
-    if (loggedInUserData !== undefined) {
+    if (currentUser) {
       setNewProduct((prev) => ({
         ...prev,
-        seller: loggedInUserData.id,
+        seller: currentUser.id,
       }));
     }
-  }, [loggedInUserData]);
+  }, [currentUser]);
 
   // Update input value
   const handleOnChangeNewProduct = (e) => {
@@ -87,7 +87,7 @@ const AddProduct = () => {
     navigate(-1);
   };
 
-  if (!loggedInUserData) {
+  if (!currentUser) {
     return (
       <div
         className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"

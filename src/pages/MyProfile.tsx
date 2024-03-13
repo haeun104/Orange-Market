@@ -7,8 +7,8 @@ import { updateDoc, collection, doc } from "firebase/firestore";
 
 const MyProfile = () => {
   const [editClicked, setEditClicked] = useState(false);
-  const { loggedInUserData } = useContext(DataContext);
-  const [updatedUserData, setUpdatedUserData] = useState(loggedInUserData);
+  const { currentUser } = useContext(DataContext);
+  const [updatedUserData, setUpdatedUserData] = useState(currentUser);
   const [openModal, setOpenModal] = useState(false);
 
   const navigate = useNavigate();
@@ -54,7 +54,7 @@ const MyProfile = () => {
     }
   };
 
-  if (!loggedInUserData) {
+  if (!currentUser) {
     return (
       <div
         className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
@@ -66,18 +66,6 @@ const MyProfile = () => {
       </div>
     );
   } else {
-    const {
-      firstname,
-      surname,
-      city,
-      district,
-      street,
-      postalCode,
-      phone,
-      email,
-      nickname,
-    } = updatedUserData;
-
     return (
       <>
         <div className="input-section max-w-[300px] h-screen mx-auto flex flex-col align-middle space-y-4">
@@ -90,7 +78,7 @@ const MyProfile = () => {
               type="text"
               id="first-name"
               className="basic-input disabled:bg-gray-200"
-              value={email}
+              value={updatedUserData.email}
               disabled
             />
             <label htmlFor="nickname">Nickname</label>
@@ -98,7 +86,7 @@ const MyProfile = () => {
               type="text"
               id="nickname"
               className="basic-input disabled:bg-gray-200"
-              value={nickname}
+              value={updatedUserData.nickname}
               disabled
             />
             <label htmlFor="first-name">First Name</label>
@@ -106,7 +94,7 @@ const MyProfile = () => {
               type="text"
               id="first-name"
               className="basic-input disabled:bg-gray-200"
-              value={firstname}
+              value={updatedUserData.firstname}
               disabled={editClicked ? false : true}
               name="firstname"
               onChange={(e) => handleOnChangeUserData(e)}
@@ -116,7 +104,7 @@ const MyProfile = () => {
               type="text"
               id="last-name"
               className="basic-input disabled:bg-gray-200"
-              value={surname}
+              value={updatedUserData.surname}
               disabled={editClicked ? false : true}
               name="surname"
               onChange={(e) => handleOnChangeUserData(e)}
@@ -127,7 +115,7 @@ const MyProfile = () => {
               type="phone"
               id="mobile"
               className="basic-input disabled:bg-gray-200"
-              value={phone}
+              value={updatedUserData.phone}
               disabled={editClicked ? false : true}
               name="phone"
               onChange={(e) => handleOnChangeUserData(e)}
@@ -139,7 +127,7 @@ const MyProfile = () => {
                 type="text"
                 id="street"
                 className="basic-input disabled:bg-gray-200"
-                value={street}
+                value={updatedUserData.street}
                 disabled={editClicked ? false : true}
                 name="street"
                 onChange={(e) => handleOnChangeUserData(e)}
@@ -149,7 +137,7 @@ const MyProfile = () => {
                 type="text"
                 id="district"
                 className="basic-input disabled:bg-gray-200"
-                value={district}
+                value={updatedUserData.district}
                 disabled={editClicked ? false : true}
                 name="district"
                 onChange={(e) => handleOnChangeUserData(e)}
@@ -159,7 +147,7 @@ const MyProfile = () => {
                 type="text"
                 id="city"
                 className="basic-input disabled:bg-gray-200"
-                value={city}
+                value={updatedUserData.city}
                 disabled={editClicked ? false : true}
                 name="city"
                 onChange={(e) => handleOnChangeUserData(e)}
@@ -169,7 +157,7 @@ const MyProfile = () => {
                 type="text"
                 id="postal-code"
                 className="basic-input disabled:bg-gray-200"
-                value={postalCode}
+                value={updatedUserData.postalCode}
                 disabled={editClicked ? false : true}
                 name="postalCode"
                 onChange={(e) => handleOnChangeUserData(e)}

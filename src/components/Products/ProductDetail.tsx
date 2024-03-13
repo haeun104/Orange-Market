@@ -1,7 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { DataContext } from "../../App";
-import { addDoc, collection, doc, deleteDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  deleteDoc,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "../../firebase-config";
 import Modal from "../Modal";
 
@@ -14,26 +20,39 @@ const ProductDetail = () => {
   const [modalMsg, setModalMsg] = useState("");
 
   const productId = useParams();
-  const {
-    productsList,
-    usersList,
-    loggedInUserData,
-    currentUserFavorite,
-    currentUserRequest,
-  } = useContext(DataContext);
+  const { currentUser, currentUserFavorite, currentUserRequest } =
+    useContext(DataContext);
 
   const navigate = useNavigate();
 
-  // Find product details based on product id
   useEffect(() => {
-    const product = productsList.find((prod) => prod.id === productId.id);
-    setProduct(product);
+    fetchProductData(productId.id);
+  }, [productId]);
 
-    if (product) {
-      const seller = usersList.find((user) => user.id === product.seller);
-      setSellerName(seller.nickname);
+  // Fetch product and seller data from DB
+  async function fetchProductData(id) {
+    try {
+      const products = await getDocs(collection(db, "product"));
+      let data;
+      products.forEach((doc) => {
+        if (doc.id === id) {
+          data = doc.data();
+        }
+      });
+      setProduct(data);
+      const users = await getDocs(collection(db, "user"));
+      let seller;
+      users.forEach((doc) => {
+        if (doc.id === data.seller) {
+          const user = doc.data();
+          seller = user.nickname;
+        }
+      });
+      setSellerName(seller);
+    } catch (error) {
+      console.log(error);
     }
-  }, [productsList, productId, usersList]);
+  }
 
   // Check if the product already exists on the favorite list
   useEffect(() => {
@@ -51,14 +70,12 @@ const ProductDetail = () => {
       (item) => item.product === productId.id
     );
     if (isExistingRequest) {
-      if (isExistingRequest.isClosed === false) {
-        setExistingRequest(true);
-      }
+      setExistingRequest(true);
     }
   }, [currentUserRequest, productId]);
 
   // Go to seller's product list
-  const goToSellerProductList = (sellerId: string) => {
+  const goToSellerProductList = (sellerId) => {
     navigate(`/products/seller/${sellerId}`);
   };
 
@@ -68,6 +85,7 @@ const ProductDetail = () => {
       await addDoc(collection(db, "favorite"), favorite);
       setModalMsg("successfully added favorite!");
       setOpenModal(true);
+      setExistingFavorite(true);
       console.log("successfully added favorite.");
     } catch (error) {
       console.error(error);
@@ -75,8 +93,7 @@ const ProductDetail = () => {
   }
 
   // Remove a product from favorites in DB
-
-  async function deleteFavoriteInDb(id: string) {
+  async function deleteFavoriteInDb(id) {
     try {
       const docRef = doc(db, "favorite", id);
       await deleteDoc(docRef);
@@ -88,12 +105,18 @@ const ProductDetail = () => {
       console.error(error);
     }
   }
-
   // Send favorite to DB
   const addToFavorites = () => {
     const favorite = {
-      ...product,
-      userId: loggedInUserData.id,
+      city: product.city,
+      district: product.district,
+      clickCount: product.clickCount,
+      likeCount: product.likeCount,
+      imgURL: product.imgURL,
+      isSold: product.isSold,
+      price: product.price,
+      title: product.title,
+      userId: currentUser.id,
       productId: productId.id,
     };
     if (existingFavorite) {
@@ -112,6 +135,7 @@ const ProductDetail = () => {
       await addDoc(collection(db, "purchase request"), request);
       setModalMsg("successfully send a purchase request!");
       setOpenModal(true);
+      setExistingRequest(true);
       console.log("successfully created a purchase request.");
     } catch (error) {
       console.error(error);
@@ -120,8 +144,11 @@ const ProductDetail = () => {
   // Send a purchase request to DB
   const sendPurchaseRequest = () => {
     const request = {
+      imgURL: product.imgURL,
+      price: product.price,
+      title: product.title,
       product: productId.id,
-      requestor: loggedInUserData.id,
+      requestor: currentUser.id,
       seller: product.seller,
       isClosed: false,
       isChosenBySeller: false,

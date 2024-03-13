@@ -16,11 +16,11 @@ const Products = () => {
   const [openModal, setOpenModal] = useState(false);
 
   const navigate = useNavigate();
-  const { productsList, loggedInUserData } = useContext(DataContext);
+  const { productsList, currentUser } = useContext(DataContext);
 
   useEffect(() => {
     setProducts(productsList);
-  }, []);
+  }, [productsList]);
 
   // Fetch a product list and filter as per a selected category
   useEffect(() => {
@@ -31,11 +31,11 @@ const Products = () => {
     if (category === "All") {
       setProducts(productsList);
     } else if (category === "My Location") {
-      if (!loggedInUserData.city) {
+      if (!currentUser.city) {
         setOpenModal(true);
       } else {
         const userLocationProduct = productsList.filter(
-          (item: ProductList) => item.city === loggedInUserData.city
+          (item: ProductList) => item.city === currentUser.city
         );
         setProducts(userLocationProduct);
       }
