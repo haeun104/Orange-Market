@@ -16,7 +16,7 @@ const Modal = (props: ModalProps) => {
     setOpenModal(false);
     if (type === "login") {
       setCategory("All");
-    } else if (type !== "productDetail") {
+    } else if (type !== "submit" && type !== "error") {
       navigate("/", { replace: true });
     }
   };
@@ -25,6 +25,8 @@ const Modal = (props: ModalProps) => {
     setOpenModal(false);
     navigate("/login");
   };
+
+  const loginRequired = type === "login" || type === "error";
 
   return (
     <>
@@ -46,7 +48,7 @@ const Modal = (props: ModalProps) => {
                   >
                     Close
                   </button>
-                  {type === "login" && (
+                  {loginRequired && (
                     <button
                       className="btn-purple flex-1 text-nowrap"
                       type="button"

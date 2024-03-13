@@ -16,6 +16,7 @@ import ProductsBySeller from "./components/Products/ProductsBySeller";
 import MyFavorite from "./pages/MyFavorite";
 import PurchaseHistory from "./pages/PurchaseHistory";
 import SalesHistory from "./pages/SalesHistory";
+import PurchaseRequest from "./pages/PurchaseRequest";
 
 export const DataContext = React.createContext();
 
@@ -86,7 +87,7 @@ function App() {
     if (currentUser) {
       fetchMarketData(currentUser.id);
     }
-  }, [currentUser]);
+  }, [currentUser, currentUserFavorite, currentUserRequest]);
 
   async function fetchMarketData(id) {
     try {
@@ -96,7 +97,7 @@ function App() {
         id: doc.id,
       }));
       const currentUserRequests = requestList.filter(
-        (item) => item.requestor === id
+        (item) => item.requestor === id || item.seller === id
       );
       setCurrentUserRequest(currentUserRequests);
 
@@ -144,7 +145,7 @@ function App() {
             <Route path="/my-market" element={<MyMarket />} />
             <Route path="/my-favorite" element={<MyFavorite />} />
             <Route path="/purchase-history" element={<PurchaseHistory />} />
-            <Route path="/purchase-request" element={<PurchaseHistory />} />
+            <Route path="/purchase-request" element={<PurchaseRequest />} />
             <Route path="/sales-history" element={<SalesHistory />} />
           </Routes>
         </DataContext.Provider>

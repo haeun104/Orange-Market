@@ -107,6 +107,11 @@ const ProductDetail = () => {
   }
   // Send favorite to DB
   const addToFavorites = () => {
+    if (!currentUser.id) {
+      setModalMsg("Please login first");
+      setOpenModal(true);
+      return;
+    }
     const favorite = {
       city: product.city,
       district: product.district,
@@ -143,6 +148,11 @@ const ProductDetail = () => {
   }
   // Send a purchase request to DB
   const sendPurchaseRequest = () => {
+    if (!currentUser.id) {
+      setModalMsg("Please login first");
+      setOpenModal(true);
+      return;
+    }
     const request = {
       imgURL: product.imgURL,
       price: product.price,
@@ -156,7 +166,7 @@ const ProductDetail = () => {
     createPurchaseRequestInDb(request);
   };
 
-  if (!product) {
+  if (!product || !currentUser) {
     return (
       <div
         className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
@@ -223,7 +233,7 @@ const ProductDetail = () => {
           openModal={openModal}
           setOpenModal={setOpenModal}
           message={modalMsg}
-          type="productDetail"
+          type={currentUser.id ? "submit" : "error"}
         />
       </>
     );

@@ -140,7 +140,7 @@ const Products = () => {
           openModal={openModal}
           setOpenModal={setOpenModal}
           setCategory={setCategory}
-          message={"Please login first"}
+          message="Please login first"
           type="login"
         />
       </>
