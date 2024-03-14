@@ -153,8 +153,6 @@ const ProductDetail = () => {
     const favorite = {
       city: product.city,
       district: product.district,
-      clickCount: product.clickCount,
-      likeCount: product.likeCount,
       imgURL: product.imgURL,
       isSold: product.isSold,
       price: product.price,

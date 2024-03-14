@@ -4,13 +4,7 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Nav from "./components/Home/Nav";
 import React, { useEffect, useState } from "react";
-import {
-  onSnapshot,
-  collection,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db, auth } from "../src/firebase-config";
 import { onAuthStateChanged } from "firebase/auth";
 import MyProfile from "./pages/MyProfile";
@@ -23,6 +17,9 @@ import MyFavorite from "./pages/MyFavorite";
 import PurchaseHistory from "./pages/PurchaseHistory";
 import SalesHistory from "./pages/SalesHistory";
 import PurchaseRequest from "./pages/PurchaseRequest";
+import { useDispatch } from "react-redux";
+import { fetchFavoriteData } from "./store/favorite-slice";
+import { fetchRequestData } from "./store/request-slice";
 
 export const DataContext = React.createContext();
 
@@ -47,12 +44,10 @@ export interface ProductType {
 }
 
 function App() {
-  const [usersList, setUsersList] = useState([]);
-  const [currentUserFavorite, setCurrentUserFavorite] = useState([]);
-  const [currentUserRequest, setCurrentUserRequest] = useState([]);
   const [loggedInUser, setLoggedInUser] = useState({});
-  const [productsList, setProductList] = useState([]);
-  const [currentUser, setCurrentUser] = useState({});
+  const [currentUser, setCurrentUser] = useState();
+
+  const dispatch = useDispatch();
 
   // Update user data whenever login status is changed
   onAuthStateChanged(auth, (currentUser) => {
@@ -62,6 +57,14 @@ function App() {
       setLoggedInUser(null);
     }
   });
+
+  // Dispatch current user data
+  useEffect(() => {
+    if (currentUser) {
+      dispatch(fetchFavoriteData(currentUser.id));
+      dispatch(fetchRequestData(currentUser.id));
+    }
+  }, [currentUser, dispatch]);
 
   // Fetch user data from DB
   useEffect(() => {
@@ -87,76 +90,12 @@ function App() {
     }
   }, [loggedInUser]);
 
-  // // Fetch user's market data from DB
-  // useEffect(() => {
-  //   if (currentUser) {
-  //     fetchMarketData(currentUser.id);
-  //   }
-  // }, [currentUser]);
-
-  // async function fetchMarketData(id) {
-  //   try {
-  //     const requestQuery = query(
-  //       collection(db, "purchase request"),
-  //       where("requestor", "==", id),
-  //       where("seller", "==", id)
-  //     );
-  //     const requestSnapshot = await getDocs(requestQuery);
-  //     const requestList = requestSnapshot.docs.map((doc) => ({
-  //       ...doc.data(),
-  //       id: doc.id,
-  //     }));
-  //     setCurrentUserRequest(requestList);
-
-  //     const favoriteQuery = query(
-  //       collection(db, "favorite"),
-  //       where("userId", "==", id)
-  //     );
-  //     const favoriteSnapshot = await getDocs(favoriteQuery);
-  //     const favoriteList = favoriteSnapshot.docs.map((doc) => ({
-  //       ...doc.data(),
-  //       id: doc.id,
-  //     }));
-  //     setCurrentUserFavorite(favoriteList);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-
-  // try {
-  //   const requestSnapshot = await getDocs(collection(db, "purchase request"));
-  //   const requestList = requestSnapshot.docs.map((doc) => ({
-  //     ...doc.data(),
-  //     id: doc.id,
-  //   }));
-  //   const currentUserRequests = requestList.filter(
-  //     (item) => item.requestor === id || item.seller === id
-  //   );
-  //   setCurrentUserRequest(currentUserRequests);
-
-  //   const favoriteSnapshot = await getDocs(collection(db, "favorite"));
-  //   const favoriteList = favoriteSnapshot.docs.map((doc) => ({
-  //     ...doc.data(),
-  //     id: doc.id,
-  //   }));
-  //   const currentUserFavorites = favoriteList.filter(
-  //     (item) => item.userId === id
-  //   );
-  //   setCurrentUserFavorite(currentUserFavorites);
-  // } catch (error) {
-  //   console.log(error);
-  // }
-  // }
-
   return (
     <>
       <BrowserRouter>
         <DataContext.Provider
           value={{
-            usersList,
             loggedInUser,
-            productsList,
-            currentUserFavorite,
-            currentUserRequest,
             currentUser,
           }}
         >

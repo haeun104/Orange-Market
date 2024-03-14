@@ -1,11 +1,13 @@
-import { useContext } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { DataContext } from "../App";
 
 const MyMarket = () => {
-  const { currentUserFavorite, currentUserRequest } = useContext(DataContext);
+  const favoriteList = useSelector((state) => state.favorite.favoriteItem);
+  const sellingList = useSelector((state) => state.request.sellingRequest);
+  const purchaseList = useSelector((state) => state.request.purchaseRequest);
+  const requests = [...sellingList, ...purchaseList];
 
-  if (!currentUserFavorite) {
+  if (!favoriteList || !requests) {
     return (
       <div
         className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
@@ -29,7 +31,7 @@ const MyMarket = () => {
             </span>
           </Link>
           <div>
-            {currentUserFavorite.map((item) => (
+            {favoriteList.map((item) => (
               <ul key={item.id} className="flex space-x-4">
                 <li className="">
                   <img src={item.imgURL} alt={item.title} />
@@ -71,7 +73,7 @@ const MyMarket = () => {
             </span>
           </Link>
           <div>
-            {currentUserRequest.map((item) => (
+            {requests.map((item) => (
               <ul key={item.id} className="flex space-x-4">
                 <li className="">
                   <img src={item.imgURL} alt={item.title} />
