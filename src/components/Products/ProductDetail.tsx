@@ -6,24 +6,26 @@ import {
   collection,
   doc,
   deleteDoc,
+  getDoc,
   getDocs,
   query,
   where,
 } from "firebase/firestore";
 import { db } from "../../firebase-config";
 import Modal from "../Modal";
+import { getFormattedDate } from "../../utils";
 
 const ProductDetail = () => {
   const [product, setProduct] = useState();
   const [sellerName, setSellerName] = useState("");
   const [existingFavorite, setExistingFavorite] = useState(false);
+  const [existingFavoriteId, setExistingFavoriteId] = useState("");
   const [existingRequest, setExistingRequest] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
 
   const productId = useParams();
-  const { currentUser, currentUserFavorite, currentUserRequest } =
-    useContext(DataContext);
+  const { currentUser } = useContext(DataContext);
 
   const navigate = useNavigate();
 
@@ -34,73 +36,78 @@ const ProductDetail = () => {
   // Fetch product and seller data from DB
   async function fetchProductData(id) {
     try {
-      const productQuery = query(
-        collection(db, "product"),
-        where("id", "==", id)
-      );
-      const productSnapshot = await getDocs(productQuery);
-      if (!productSnapshot.empty) {
-        const productDoc = productSnapshot.docs[0];
-        const productData = productDoc.data();
+      const productRef = doc(db, "product", id);
+      const productSnapshot = await getDoc(productRef);
+
+      if (productSnapshot.exists()) {
+        const productData = productSnapshot.data();
         setProduct(productData);
 
         const sellerId = productData.seller;
-        const userQuery = query(
-          collection(db, "user"),
-          where("id", "==", sellerId)
-        );
-        const userSnapshot = await getDocs(userQuery);
-        if (!userSnapshot.empty) {
-          const userDoc = userSnapshot.docs[0];
-          const userData = userDoc.data();
+        const userRef = doc(db, "user", sellerId);
+        const userSnapshot = await getDoc(userRef);
+
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.data();
           setSellerName(userData.nickname);
+        } else {
+          console.log("There is no seller data");
         }
+      } else {
+        console.log("There is no product data");
       }
     } catch (error) {
       console.log(error);
     }
-    // try {
-    //   const products = await getDocs(collection(db, "product"));
-    //   let data;
-    //   products.forEach((doc) => {
-    //     if (doc.id === id) {
-    //       data = doc.data();
-    //     }
-    //   });
-    //   setProduct(data);
-    //   const users = await getDocs(collection(db, "user"));
-    //   let seller;
-    //   users.forEach((doc) => {
-    //     if (doc.id === data.seller) {
-    //       const user = doc.data();
-    //       seller = user.nickname;
-    //     }
-    //   });
-    //   setSellerName(seller);
-    // } catch (error) {
-    //   console.log(error);
-    // }
   }
 
-  // Check if the product already exists on the favorite list
   useEffect(() => {
-    const isExistingFavorite = currentUserFavorite.find(
-      (item) => item.productId === productId.id
-    );
-    if (isExistingFavorite) {
-      setExistingFavorite(true);
+    if (currentUser && productId) {
+      checkUserFavorite(currentUser.id, productId.id);
+      checkUserRequest(currentUser.id, productId.id);
     }
-  }, [currentUserFavorite, productId]);
+  }, [currentUser, productId]);
+
+  // Check if favorite exists in DB
+  async function checkUserFavorite(userId: string, productId: string) {
+    try {
+      const favoriteQuery = query(
+        collection(db, "favorite"),
+        where("userId", "==", userId)
+      );
+      const favoriteSnapshot = await getDocs(favoriteQuery);
+      const favoriteList = favoriteSnapshot.docs.find((doc) => {
+        const data = doc.data();
+        return data.productId === productId;
+      });
+      if (favoriteList) {
+        setExistingFavorite(true);
+        setExistingFavoriteId(favoriteList.id);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   // Check if the product already exists on the request list
-  useEffect(() => {
-    const isExistingRequest = currentUserRequest.find(
-      (item) => item.product === productId.id
-    );
-    if (isExistingRequest) {
-      setExistingRequest(true);
+  async function checkUserRequest(userId: string, productId: string) {
+    try {
+      const requestQuery = query(
+        collection(db, "purchase request"),
+        where("requestor", "==", userId)
+      );
+      const requestSnapshot = await getDocs(requestQuery);
+      const requestList = requestSnapshot.docs.find((doc) => {
+        const data = doc.data();
+        return data.product === productId;
+      });
+      if (requestList) {
+        setExistingRequest(true);
+      }
+    } catch (error) {
+      console.log(error);
     }
-  }, [currentUserRequest, productId]);
+  }
 
   // Go to seller's product list
   const goToSellerProductList = (sellerId) => {
@@ -153,10 +160,7 @@ const ProductDetail = () => {
       productId: productId.id,
     };
     if (existingFavorite) {
-      const isExisitingFavorite = currentUserFavorite.find(
-        (item) => item.productId === productId.id
-      );
-      deleteFavoriteInDb(isExisitingFavorite.id);
+      deleteFavoriteInDb(existingFavoriteId);
     } else {
       addFavoriteInDb(favorite);
     }
@@ -190,6 +194,7 @@ const ProductDetail = () => {
       seller: product.seller,
       isClosed: false,
       isChosenBySeller: false,
+      date: getFormattedDate(new Date()),
     };
     createPurchaseRequestInDb(request);
   };
