@@ -36,29 +36,31 @@ const PurchaseRequest = () => {
         <MyMarketList />
         <div className="mt-[30px]">
           <h2 className="font-bold mb-[20px]">For Seller</h2>
-          <div className="hidden sm:flex">
-            <div className="flex-1">Photo</div>
+          <div className="hidden sm:flex text-center border-b-[1.5px] border-solid mb-[10px]">
             <div className="flex-1">Title</div>
             <div className="flex-1">Price</div>
+            <div className="flex-1">Requestor</div>            
             <div className="flex-1">Status</div>
             <div className="flex-1">Response</div>
           </div>
           {selling.map((item) => (
-            <div key={item.id}>
-              <div className="flex-1">{item.imgURL}</div>
+            <div key={item.id} className="flex flex-col sm:flex-row sm:text-center">
               <div className="flex-1">{item.title}</div>
-              <div className="flex-1">{item.price}</div>
+              <div className="flex-1">{item.price} PLN</div>
+              <div className="flex-1">{item.requestor}</div>
               <div className="flex-1">
                 {item.isClosed ? "Closed" : "Pending response"}
               </div>
-              <div className="flex-1">...</div>
+              <div className="flex-1">
+                <button>Accept</button>
+                <button>Reject</button>
+              </div>
             </div>
           ))}
         </div>
         <div className="mt-[30px]">
           <h2 className="font-bold mb-[20px]">For Purchaser</h2>
           <div className="hidden sm:flex">
-            <div className="flex-1">Photo</div>
             <div className="flex-1">Title</div>
             <div className="flex-1">Price</div>
             <div className="flex-1">Status</div>

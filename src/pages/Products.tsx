@@ -4,6 +4,8 @@ import { DataContext } from "../App";
 import { productFilterCategories } from "./../utils";
 import { ProductType } from "../App";
 import Modal from "../components/Modal";
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "../firebase-config";
 
 interface ProductList {
   [key: string]: string | number | boolean;
@@ -11,44 +13,56 @@ interface ProductList {
 
 const Products = () => {
   const [category, setCategory] = useState("All");
+  const [filteredProducts, setFilteredProducts] = useState();
   const [products, setProducts] = useState();
   const [emptyProducts, setEmptyProducts] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
   const navigate = useNavigate();
-  const { productsList, currentUser } = useContext(DataContext);
+  const { currentUser } = useContext(DataContext);
 
+  //Fetch product data from DB
   useEffect(() => {
-    setProducts(productsList);
-  }, [productsList]);
+    const unsubscribe = onSnapshot(collection(db, "product"), (snapshot) => {
+      const productList: ProductType[] = [];
+      snapshot.docs.forEach((doc) => {
+        productList.push({
+          ...doc.data(),
+          id: doc.id,
+        });
+      });
+      setProducts(productList);
+    });
+    return () => unsubscribe();
+  }, []);
 
-  // Fetch a product list and filter as per a selected category
+  // Filter a product list as per a selected category
   useEffect(() => {
     setEmptyProducts(false);
-    if (productsList.length === 0) {
-      setEmptyProducts(true);
-    }
     if (category === "All") {
-      setProducts(productsList);
+      setFilteredProducts(products);
     } else if (category === "My Location") {
       if (!currentUser.city) {
         setOpenModal(true);
       } else {
-        const userLocationProduct = productsList.filter(
+        const userLocationProduct = products.filter(
           (item: ProductList) => item.city === currentUser.city
         );
-        setProducts(userLocationProduct);
+        if (userLocationProduct.length === 0) {
+          setEmptyProducts(true);
+        }
+        setFilteredProducts(userLocationProduct);
       }
     } else {
-      const filteredProducts = productsList.filter(
+      const filteredProducts = products.filter(
         (item: ProductType) => item.category === category
       );
       if (filteredProducts.length === 0) {
         setEmptyProducts(true);
       }
-      setProducts(filteredProducts);
+      setFilteredProducts(filteredProducts);
     }
-  }, [category, productsList]);
+  }, [category, products, currentUser]);
 
   // Go to the product register page
   const goToNewProductPage = () => {
@@ -65,7 +79,7 @@ const Products = () => {
     setCategory(category);
   };
 
-  if (!products) {
+  if (!filteredProducts) {
     return (
       <div
         className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
@@ -102,7 +116,7 @@ const Products = () => {
             </div>
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8 lg:px-[150px]">
-            {products.map((item) => (
+            {filteredProducts.map((item: ProductType) => (
               <div
                 key={item.id}
                 className="flex flex-col justify-center mx-auto w-[250px] cursor-pointer"

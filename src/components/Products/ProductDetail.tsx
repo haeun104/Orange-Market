@@ -7,6 +7,8 @@ import {
   doc,
   deleteDoc,
   getDocs,
+  query,
+  where,
 } from "firebase/firestore";
 import { db } from "../../firebase-config";
 import Modal from "../Modal";
@@ -32,26 +34,52 @@ const ProductDetail = () => {
   // Fetch product and seller data from DB
   async function fetchProductData(id) {
     try {
-      const products = await getDocs(collection(db, "product"));
-      let data;
-      products.forEach((doc) => {
-        if (doc.id === id) {
-          data = doc.data();
+      const productQuery = query(
+        collection(db, "product"),
+        where("id", "==", id)
+      );
+      const productSnapshot = await getDocs(productQuery);
+      if (!productSnapshot.empty) {
+        const productDoc = productSnapshot.docs[0];
+        const productData = productDoc.data();
+        setProduct(productData);
+
+        const sellerId = productData.seller;
+        const userQuery = query(
+          collection(db, "user"),
+          where("id", "==", sellerId)
+        );
+        const userSnapshot = await getDocs(userQuery);
+        if (!userSnapshot.empty) {
+          const userDoc = userSnapshot.docs[0];
+          const userData = userDoc.data();
+          setSellerName(userData.nickname);
         }
-      });
-      setProduct(data);
-      const users = await getDocs(collection(db, "user"));
-      let seller;
-      users.forEach((doc) => {
-        if (doc.id === data.seller) {
-          const user = doc.data();
-          seller = user.nickname;
-        }
-      });
-      setSellerName(seller);
+      }
     } catch (error) {
       console.log(error);
     }
+    // try {
+    //   const products = await getDocs(collection(db, "product"));
+    //   let data;
+    //   products.forEach((doc) => {
+    //     if (doc.id === id) {
+    //       data = doc.data();
+    //     }
+    //   });
+    //   setProduct(data);
+    //   const users = await getDocs(collection(db, "user"));
+    //   let seller;
+    //   users.forEach((doc) => {
+    //     if (doc.id === data.seller) {
+    //       const user = doc.data();
+    //       seller = user.nickname;
+    //     }
+    //   });
+    //   setSellerName(seller);
+    // } catch (error) {
+    //   console.log(error);
+    // }
   }
 
   // Check if the product already exists on the favorite list

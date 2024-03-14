@@ -4,7 +4,13 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Nav from "./components/Home/Nav";
 import React, { useEffect, useState } from "react";
-import { onSnapshot, collection, getDocs } from "firebase/firestore";
+import {
+  onSnapshot,
+  collection,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { db, auth } from "../src/firebase-config";
 import { onAuthStateChanged } from "firebase/auth";
 import MyProfile from "./pages/MyProfile";
@@ -50,70 +56,96 @@ function App() {
 
   // Update user data whenever login status is changed
   onAuthStateChanged(auth, (currentUser) => {
-    setLoggedInUser(currentUser);
+    if (currentUser) {
+      setLoggedInUser(currentUser.email);
+    } else {
+      setLoggedInUser(null);
+    }
   });
 
-  // Update a user currently logged in
+  // Fetch user data from DB
   useEffect(() => {
-    if (loggedInUser !== null) {
-      const user = usersList.find((user) => user.email === loggedInUser.email);
-      setCurrentUser(user);
-    } else {
-      setCurrentUser({});
-    }
-  }, [loggedInUser, usersList]);
-
-  // Real-time synchronization of firebase data
-  useEffect(() => {
-    const fetchDataFromDb = (collectionName, state) => {
-      const unsubscribe = onSnapshot(
-        collection(db, collectionName),
-        (snapshot) => {
-          const dataList = [];
-          snapshot.forEach((doc) => {
-            dataList.push({ ...doc.data(), id: doc.id });
-          });
-          state(dataList);
-        }
-      );
-      return () => unsubscribe();
+    const fetchUserDataFromDB = async (email) => {
+      try {
+        const userQuery = query(
+          collection(db, "user"),
+          where("email", "==", email)
+        );
+        const userSnapshot = await getDocs(userQuery);
+        const userList = userSnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+        const user = userList[0];
+        setCurrentUser(user);
+      } catch (error) {
+        console.log(error);
+      }
     };
-    fetchDataFromDb("user", setUsersList);
-    fetchDataFromDb("product", setProductList);
-  }, []);
-
-  // Fetch user's market data from DB
-  useEffect(() => {
-    if (currentUser) {
-      fetchMarketData(currentUser.id);
+    if (loggedInUser !== undefined) {
+      fetchUserDataFromDB(loggedInUser);
     }
-  }, [currentUser, currentUserFavorite, currentUserRequest]);
+  }, [loggedInUser]);
 
-  async function fetchMarketData(id) {
-    try {
-      const requestSnapshot = await getDocs(collection(db, "purchase request"));
-      const requestList = requestSnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
-      const currentUserRequests = requestList.filter(
-        (item) => item.requestor === id || item.seller === id
-      );
-      setCurrentUserRequest(currentUserRequests);
+  // // Fetch user's market data from DB
+  // useEffect(() => {
+  //   if (currentUser) {
+  //     fetchMarketData(currentUser.id);
+  //   }
+  // }, [currentUser]);
 
-      const favoriteSnapshot = await getDocs(collection(db, "favorite"));
-      const favoriteList = favoriteSnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
-      const currentUserFavorites = favoriteList.filter(
-        (item) => item.userId === id
-      );
-      setCurrentUserFavorite(currentUserFavorites);
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  // async function fetchMarketData(id) {
+  //   try {
+  //     const requestQuery = query(
+  //       collection(db, "purchase request"),
+  //       where("requestor", "==", id),
+  //       where("seller", "==", id)
+  //     );
+  //     const requestSnapshot = await getDocs(requestQuery);
+  //     const requestList = requestSnapshot.docs.map((doc) => ({
+  //       ...doc.data(),
+  //       id: doc.id,
+  //     }));
+  //     setCurrentUserRequest(requestList);
+
+  //     const favoriteQuery = query(
+  //       collection(db, "favorite"),
+  //       where("userId", "==", id)
+  //     );
+  //     const favoriteSnapshot = await getDocs(favoriteQuery);
+  //     const favoriteList = favoriteSnapshot.docs.map((doc) => ({
+  //       ...doc.data(),
+  //       id: doc.id,
+  //     }));
+  //     setCurrentUserFavorite(favoriteList);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+
+  // try {
+  //   const requestSnapshot = await getDocs(collection(db, "purchase request"));
+  //   const requestList = requestSnapshot.docs.map((doc) => ({
+  //     ...doc.data(),
+  //     id: doc.id,
+  //   }));
+  //   const currentUserRequests = requestList.filter(
+  //     (item) => item.requestor === id || item.seller === id
+  //   );
+  //   setCurrentUserRequest(currentUserRequests);
+
+  //   const favoriteSnapshot = await getDocs(collection(db, "favorite"));
+  //   const favoriteList = favoriteSnapshot.docs.map((doc) => ({
+  //     ...doc.data(),
+  //     id: doc.id,
+  //   }));
+  //   const currentUserFavorites = favoriteList.filter(
+  //     (item) => item.userId === id
+  //   );
+  //   setCurrentUserFavorite(currentUserFavorites);
+  // } catch (error) {
+  //   console.log(error);
+  // }
+  // }
 
   return (
     <>
