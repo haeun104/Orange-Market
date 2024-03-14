@@ -65,6 +65,9 @@ const ProductDetail = () => {
     if (currentUser && productId) {
       checkUserFavorite(currentUser.id, productId.id);
       checkUserRequest(currentUser.id, productId.id);
+    } else {
+      setExistingFavorite(false);
+      setExistingRequest(false);
     }
   }, [currentUser, productId]);
 
@@ -142,7 +145,7 @@ const ProductDetail = () => {
   }
   // Send favorite to DB
   const addToFavorites = () => {
-    if (!currentUser.id) {
+    if (!currentUser) {
       setModalMsg("Please login first");
       setOpenModal(true);
       return;
@@ -180,7 +183,7 @@ const ProductDetail = () => {
   }
   // Send a purchase request to DB
   const sendPurchaseRequest = () => {
-    if (!currentUser.id) {
+    if (!currentUser) {
       setModalMsg("Please login first");
       setOpenModal(true);
       return;
@@ -199,7 +202,7 @@ const ProductDetail = () => {
     createPurchaseRequestInDb(request);
   };
 
-  if (!product || !currentUser) {
+  if (!product) {
     return (
       <div
         className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
@@ -266,7 +269,7 @@ const ProductDetail = () => {
           openModal={openModal}
           setOpenModal={setOpenModal}
           message={modalMsg}
-          type={currentUser.id ? "submit" : "error"}
+          type={currentUser ? "submit" : "error"}
         />
       </>
     );

@@ -42,7 +42,7 @@ const Products = () => {
     if (category === "All") {
       setFilteredProducts(products);
     } else if (category === "My Location") {
-      if (!currentUser.city) {
+      if (!currentUser) {
         setOpenModal(true);
       } else {
         const userLocationProduct = products.filter(
@@ -66,6 +66,10 @@ const Products = () => {
 
   // Go to the product register page
   const goToNewProductPage = () => {
+    if (!currentUser) {
+      setOpenModal(true);
+      return;
+    }
     navigate("/products/new");
   };
 

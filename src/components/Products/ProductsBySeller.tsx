@@ -1,28 +1,57 @@
-import { useContext, useEffect, useState } from "react";
+import {
+  collection,
+  getDocs,
+  query,
+  doc,
+  getDoc,
+  where,
+} from "firebase/firestore";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { DataContext } from "../../App";
+import { db } from "../../firebase-config";
 
 const ProductsBySeller = () => {
   const [products, setProducts] = useState();
   const [sellerName, setSellerName] = useState("");
   const { seller } = useParams();
-  const { productsList, usersList } = useContext(DataContext);
 
   const navigate = useNavigate();
 
-  // Filter seller's products
   useEffect(() => {
-    const productList = productsList.filter((item) => item.seller === seller);
-    setProducts(productList);
-  }, [productsList, seller]);
-
-  // Find seller's nickname
-  useEffect(() => {
-    if (usersList.length !== 0) {
-      const sellerInfo = usersList.find((user) => user.id === seller);
-      setSellerName(sellerInfo.nickname);
+    if (seller) {
+      fetchProductData(seller);
     }
-  }, [usersList, seller]);
+  }, [seller]);
+
+  // Fetch product and seller data from DB
+  async function fetchProductData(sellerId: string) {
+    try {
+      const userRef = doc(db, "user", sellerId);
+      const userSnapshot = await getDoc(userRef);
+
+      if (userSnapshot.exists()) {
+        const userData = userSnapshot.data();
+        setSellerName(userData.nickname);
+      } else {
+        console.log("There is no seller data");
+        setSellerName("");
+      }
+
+      const productQuery = query(
+        collection(db, "product"),
+        where("seller", "==", sellerId)
+      );
+      const productSnapshot = await getDocs(productQuery);
+
+      const productList = productSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setProducts(productList);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   // Go to product details
   const goToProductDetailPage = (id: string) => {
