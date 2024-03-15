@@ -264,7 +264,7 @@ const ProductDetail = () => {
           openModal={openModal}
           setOpenModal={setOpenModal}
           message={modalMsg}
-          type={currentUser ? "submit" : "error"}
+          type={currentUser ? "goback" : "error"}
         />
       </>
     );

@@ -149,7 +149,7 @@ const PurchaseRequest = () => {
           openModal={openModal}
           setOpenModal={setOpenModal}
           message="successfully updated request"
-          type="closing"
+          type="goback"
         />
       </>
     );
