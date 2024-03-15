@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const MyFavorite = () => {
-  const favoriteList = useSelector(state => state.favorite.favoriteItem) 
+  const favoriteList = useSelector((state) => state.favorite.favoriteItem);
   const navigate = useNavigate();
 
   const goToProducDetail = (productId) => {
@@ -42,10 +42,6 @@ const MyFavorite = () => {
                 <h4 className="text-black font-bold">{item.title}</h4>
                 <span className="text-black font-bold">{item.price} PLN</span>
                 <span>{`${item.city}, ${item.district}`}</span>
-                <div className="flex space-x-2 text-sm">
-                  <span>Click {item.clickCount}</span>
-                  <span>Like {item.likeCount}</span>
-                </div>
               </div>
             </div>
           ))}

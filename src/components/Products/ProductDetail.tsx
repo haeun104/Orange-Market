@@ -41,7 +41,7 @@ const ProductDetail = () => {
     if (currentUser) {
       dispatch(fetchFavoriteData(currentUser.id));
     }
-  }, [existingFavorite]);
+  }, [existingFavorite, currentUser, dispatch]);
 
   // Fetch product and seller data from DB
   async function fetchProductData(id) {

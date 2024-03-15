@@ -16,9 +16,10 @@ const Modal = (props: ModalProps) => {
     setOpenModal(false);
     if (type === "login") {
       setCategory("All");
-    } else if (type !== "submit" && type !== "error") {
-      navigate("/", { replace: true });
     }
+    //  else if (type !== "submit" && type !== "error") {
+    //   navigate("/", { replace: true });
+    // }
   };
 
   const goToLogin = () => {
