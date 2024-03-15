@@ -1,15 +1,28 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import MyMarketList from "../components/MyMarket/MyMarketList";
 import { Link } from "react-router-dom";
-import { collection, doc, updateDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase-config";
 import Modal from "../components/Modal";
-import { useState } from "react";
+import { useContext, useState, useEffect } from "react";
+import { DataContext } from "../App";
+import { fetchRequestData } from "../store/request-slice";
 
 const PurchaseRequest = () => {
   const selling = useSelector((state) => state.request.sellingRequest);
   const purchase = useSelector((state) => state.request.purchaseRequest);
   const [openModal, setOpenModal] = useState(false);
+
+  const { currentUser } = useContext(DataContext);
+  const dispatch = useDispatch();
+
+  // Dispatch current user data
+  useEffect(() => {
+    if (currentUser) {
+      dispatch(fetchRequestData(currentUser.id, "seller"));
+      dispatch(fetchRequestData(currentUser.id, "requestor"));
+    }
+  }, [currentUser, dispatch]);
 
   const handleClosing = (id, type) => {
     closeRequestInDB(id, type);
@@ -24,7 +37,24 @@ const PurchaseRequest = () => {
         await updateDoc(requestRef, { isClosed: true });
       }
       setOpenModal(true);
+      dispatch(fetchRequestData(currentUser.id, "seller"));
       console.log("successfully updated request");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const handleDeleteRequest = (id) => {
+    deleteRequestInDB(id);
+  };
+
+  async function deleteRequestInDB(id) {
+    try {
+      const docRef = doc(db, "purchase request", id);
+      await deleteDoc(docRef);
+      setOpenModal(true);
+      dispatch(fetchRequestData(currentUser.id, "requestor"));
+      console.log("successfully deleted request");
     } catch (error) {
       console.log(error);
     }
@@ -100,7 +130,10 @@ const PurchaseRequest = () => {
                 <div className="w-1/4">{item.price} PLN</div>
                 <div className="w-1/4">{item.seller}</div>
                 <div className="w-1/4 flex space-x-2 justify-center">
-                  <button className="btn-grey px-3 text-[14px]">
+                  <button
+                    className="btn-grey px-3 text-[14px]"
+                    onClick={() => handleDeleteRequest(item.id)}
+                  >
                     Cancel Request
                   </button>
                 </div>

@@ -59,12 +59,12 @@ function App() {
   });
 
   // Dispatch current user data
-  useEffect(() => {
-    if (currentUser) {
-      dispatch(fetchFavoriteData(currentUser.id));
-      dispatch(fetchRequestData(currentUser.id));
-    }
-  }, [currentUser, dispatch]);
+  // useEffect(() => {
+  //   if (currentUser) {
+  //     dispatch(fetchFavoriteData(currentUser.id));
+  //     dispatch(fetchRequestData(currentUser.id));
+  //   }
+  // }, [currentUser, dispatch]);
 
   // Fetch user data from DB
   useEffect(() => {

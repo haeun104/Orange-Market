@@ -1,11 +1,28 @@
-import { useSelector } from "react-redux";
+import { useContext, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { DataContext } from "../App";
+import { fetchFavoriteData } from "../store/favorite-slice";
+import { fetchRequestData } from "../store/request-slice";
 
 const MyMarket = () => {
   const favoriteList = useSelector((state) => state.favorite.favoriteItem);
   const sellingList = useSelector((state) => state.request.sellingRequest);
   const purchaseList = useSelector((state) => state.request.purchaseRequest);
   const requests = [...sellingList, ...purchaseList];
+
+  const dispatch = useDispatch();
+
+  const { currentUser } = useContext(DataContext);
+
+  // Dispatch current user data
+  useEffect(() => {
+    if (currentUser) {
+      dispatch(fetchRequestData(currentUser.id, "seller"));
+      dispatch(fetchRequestData(currentUser.id, "requestor"));
+      dispatch(fetchFavoriteData(currentUser.id));
+    }
+  }, [currentUser, dispatch]);
 
   if (!favoriteList || !requests) {
     return (
