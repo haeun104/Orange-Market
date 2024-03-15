@@ -1,18 +1,16 @@
-import { useContext } from "react";
 import MyMarketList from "../components/MyMarket/MyMarketList";
-import { DataContext } from "../App";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const MyFavorite = () => {
-  const { currentUserFavorite } = useContext(DataContext);
-
+  const favoriteList = useSelector(state => state.favorite.favoriteItem) 
   const navigate = useNavigate();
 
   const goToProducDetail = (productId) => {
     navigate(`/products/${productId}`);
   };
 
-  if (!currentUserFavorite) {
+  if (!favoriteList) {
     return (
       <div
         className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
@@ -28,7 +26,7 @@ const MyFavorite = () => {
       <div className="container">
         <MyMarketList />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mt-[20px]">
-          {currentUserFavorite.map((item) => (
+          {favoriteList.map((item) => (
             <div key={item.id}>
               <div className="h-[200px]">
                 <img

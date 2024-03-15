@@ -1,23 +1,9 @@
-import { useContext, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import MyMarketList from "../components/MyMarket/MyMarketList";
-import { DataContext } from "../App";
-
 const PurchaseRequest = () => {
-  const [selling, setSelling] = useState();
-  const [purchase, setPurchase] = useState();
+const selling = useSelector(state => state.request.sellingRequest);
+const purchase = useSelector(state =>  state.request.purchaseRequest);
 
-  const { currentUserRequest, currentUser } = useContext(DataContext);
-
-  useEffect(() => {
-    const seller = currentUserRequest.filter(
-      (item) => item.seller === currentUser.id
-    );
-    const buyer = currentUserRequest.filter(
-      (item) => item.requestor === currentUser.id
-    );
-    setSelling(seller);
-    setPurchase(buyer);
-  }, [currentUserRequest, currentUser]);
 
   if (!selling || !purchase) {
     return (

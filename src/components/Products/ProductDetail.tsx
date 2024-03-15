@@ -14,6 +14,8 @@ import {
 import { db } from "../../firebase-config";
 import Modal from "../Modal";
 import { getFormattedDate } from "../../utils";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchFavoriteData } from "../../store/favorite-slice";
 
 const ProductDetail = () => {
   const [product, setProduct] = useState();
@@ -25,6 +27,8 @@ const ProductDetail = () => {
   const [modalMsg, setModalMsg] = useState("");
 
   const productId = useParams();
+  const favorite = useSelector((state) => state.favorite.favoriteItem);
+  const dispatch = useDispatch();
   const { currentUser } = useContext(DataContext);
 
   const navigate = useNavigate();
@@ -32,6 +36,12 @@ const ProductDetail = () => {
   useEffect(() => {
     fetchProductData(productId.id);
   }, [productId]);
+
+  useEffect(() => {
+    if (currentUser) {
+      dispatch(fetchFavoriteData(currentUser.id));
+    }
+  }, [existingFavorite]);
 
   // Fetch product and seller data from DB
   async function fetchProductData(id) {
@@ -61,50 +71,35 @@ const ProductDetail = () => {
     }
   }
 
+  // Check if favorite exists in DB
   useEffect(() => {
+    const checkUserFavorite = (productId) => {
+      const existingFavorite = favorite.find(
+        (item) => item.productId === productId
+      );
+      if (existingFavorite) {
+        setExistingFavorite(true);
+        setExistingFavoriteId(existingFavorite.id);
+      }
+    };
     if (currentUser && productId) {
-      checkUserFavorite(currentUser.id, productId.id);
-      checkUserRequest(currentUser.id, productId.id);
+      checkUserFavorite(productId.id);
+      checkUserRequest(productId.id);
     } else {
       setExistingFavorite(false);
       setExistingRequest(false);
     }
-  }, [currentUser, productId]);
-
-  // Check if favorite exists in DB
-  async function checkUserFavorite(userId: string, productId: string) {
-    try {
-      const favoriteQuery = query(
-        collection(db, "favorite"),
-        where("userId", "==", userId)
-      );
-      const favoriteSnapshot = await getDocs(favoriteQuery);
-      const favoriteList = favoriteSnapshot.docs.find((doc) => {
-        const data = doc.data();
-        return data.productId === productId;
-      });
-      if (favoriteList) {
-        setExistingFavorite(true);
-        setExistingFavoriteId(favoriteList.id);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  }, [currentUser, productId, favorite]);
 
   // Check if the product already exists on the request list
-  async function checkUserRequest(userId: string, productId: string) {
+  async function checkUserRequest(productId: string) {
     try {
       const requestQuery = query(
         collection(db, "purchase request"),
-        where("requestor", "==", userId)
+        where("product", "==", productId)
       );
       const requestSnapshot = await getDocs(requestQuery);
-      const requestList = requestSnapshot.docs.find((doc) => {
-        const data = doc.data();
-        return data.product === productId;
-      });
-      if (requestList) {
+      if (!requestSnapshot.empty) {
         setExistingRequest(true);
       }
     } catch (error) {
