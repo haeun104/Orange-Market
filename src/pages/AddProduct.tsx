@@ -36,6 +36,7 @@ const AddProduct = () => {
       setNewProduct((prev) => ({
         ...prev,
         seller: currentUser.id,
+        sellerName: currentUser.nickname,
       }));
     }
   }, [currentUser]);

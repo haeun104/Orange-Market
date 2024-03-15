@@ -82,6 +82,7 @@ const PurchaseRequest = () => {
               <div className="flex-1">Title</div>
               <div className="flex-1">Price</div>
               <div className="flex-1">Requestor</div>
+              <div className="flex-1">Request Date</div>
               <div className="flex-1">Response</div>
             </div>
             {selling.map((item) => (
@@ -89,12 +90,13 @@ const PurchaseRequest = () => {
                 key={item.id}
                 className="flex flex-col justify-center sm:flex-row sm:text-center mb-2"
               >
-                <Link to={`/products/${item.product}`} className="w-1/4">
+                <Link to={`/products/${item.product}`} className="w-1/5">
                   <div>{item.title}</div>
                 </Link>
-                <div className="w-1/4">{item.price} PLN</div>
-                <div className="w-1/4">{item.requestor}</div>
-                <div className="w-1/4 flex space-x-2 justify-center">
+                <div className="w-1/5">{item.price} PLN</div>
+                <div className="w-1/5">{item.requestor}</div>
+                <div className="w-1/5">{item.date}</div>
+                <div className="w-1/5 flex space-x-2 justify-center">
                   <button
                     className="btn-orange px-3 text-[14px]"
                     onClick={() => handleClosing(item.id, "accept")}
@@ -114,22 +116,24 @@ const PurchaseRequest = () => {
           <div className="mt-[30px]">
             <h2 className="font-bold mb-[20px]">For Purchaser</h2>
             <div className="hidden sm:flex text-center border-b-[1.5px] border-solid mb-[10px]">
-              <div className="w-1/4 cursor-pointer">Title</div>
-              <div className="w-1/4">Price</div>
-              <div className="w-1/4">Seller</div>
-              <div className="w-1/4">Cancel</div>
+              <div className="w-1/5 cursor-pointer">Title</div>
+              <div className="w-1/5">Price</div>
+              <div className="w-1/5">Seller</div>
+              <div className="w-1/5">Request Date</div>
+              <div className="w-1/5">Cancel</div>
             </div>
             {purchase.map((item) => (
               <div
                 key={item.id}
                 className="flex flex-col justify-center sm:flex-row sm:text-center mb-2"
               >
-                <Link to={`/products/${item.product}`} className="w-1/4">
+                <Link to={`/products/${item.product}`} className="w-1/5">
                   <div>{item.title}</div>
                 </Link>
-                <div className="w-1/4">{item.price} PLN</div>
-                <div className="w-1/4">{item.seller}</div>
-                <div className="w-1/4 flex space-x-2 justify-center">
+                <div className="w-1/5">{item.price} PLN</div>
+                <div className="w-1/5">{item.sellerName}</div>
+                <div className="w-1/5">{item.date}</div>
+                <div className="w-1/5 flex space-x-2 justify-center">
                   <button
                     className="btn-grey px-3 text-[14px]"
                     onClick={() => handleDeleteRequest(item.id)}
