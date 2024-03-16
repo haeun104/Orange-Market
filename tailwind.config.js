@@ -12,6 +12,9 @@ export default {
         "accent-purple": "#713ABE",
         "accent-grey": "#C7C8CC",
       },
+      backgroundImage: {
+        "hero-bg-image": "url('src/assets/hero-bg-image-lg.jpg')",
+      },
     },
   },
   plugins: [],
