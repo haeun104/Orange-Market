@@ -15,6 +15,9 @@ export default {
       backgroundImage: {
         "hero-bg-image": "url('src/assets/hero-bg-image-lg.jpg')",
       },
+      height: {
+        "calc-vh-minus-64": "calc(100vh - 64px)",
+      },
     },
   },
   plugins: [],
