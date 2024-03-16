@@ -57,6 +57,60 @@ const Hero = () => {
           </article>
         </div>
       </section>
+      <section className="lg:flex">
+        <div className="bg-[#EEEEEE] py-[60px] px-[15px] lg:w-1/2">
+          <h3 className="uppercase text-center mb-[20px] font-bold sm:mb-[40px] sm:text-[20px]">
+            Are you a seller?
+          </h3>
+          <div className="flex space-x-2 justify-center align-middle">
+            <span className="text-center text-[13px] sm:text-[16px]">
+              Sign up
+            </span>
+            <div className="text-[20px]">&gt;&gt;</div>
+            <span className="text-center text-[13px] sm:text-[16px]">
+              Register
+              <br /> your item
+            </span>
+            <div className="text-[20px]">&gt;&gt;</div>
+            <span className="text-center text-[13px] sm:text-[16px]">
+              Confirm
+              <br />
+              purchase request
+            </span>
+            <div className="text-[20px]">&gt;&gt;</div>
+            <span className="text-center text-[13px] sm:text-[16px]">
+              Pass <br />
+              your item
+            </span>
+          </div>
+        </div>
+        <div className="py-[60px] px-[15px] lg:w-1/2">
+          <h3 className="uppercase text-center mb-[20px] font-bold sm:mb-[40px] sm:text-[20px] text-main-orange">
+            Are you a buyer?
+          </h3>
+          <div className="flex space-x-2 justify-center align-middle ">
+            <span className="text-center text-[13px] sm:text-[16px]">
+              Sign up
+            </span>
+            <div className="text-[20px]">&gt;&gt;</div>
+            <span className="text-center text-[13px] sm:text-[16px]">
+              Send
+              <br /> purchase request
+            </span>
+            <div className="text-[20px]">&gt;&gt;</div>
+            <span className="text-center text-[13px] sm:text-[16px]">
+              Check
+              <br />
+              request status
+            </span>
+            <div className="text-[20px]">&gt;&gt;</div>
+            <span className="text-center text-[13px] sm:text-[16px]">
+              Get <br />
+              your item
+            </span>
+          </div>
+        </div>
+      </section>
     </>
   );
 };
