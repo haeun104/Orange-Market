@@ -28,8 +28,8 @@ const Login = () => {
   };
 
   return (
-    <>
-      <div className="input-section max-w-[300px] h-screen mx-auto flex flex-col align-middle justify-center space-y-4">
+    <section className="bg-[#EEEEEE] h-calc-vh-minus-64">
+      <div className="input-section max-w-[350px] h-[400px] mx-auto flex flex-col justify-center space-y-4 bg-white px-[20px]">
         <h2 className="title">Login</h2>
         <form
           action="/"
@@ -71,7 +71,7 @@ const Login = () => {
         setOpenModal={setOpenModal}
         message={"successfully logged in!"}
       />
-    </>
+    </section>
   );
 };
 
