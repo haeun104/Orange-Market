@@ -18,6 +18,16 @@ export default {
       height: {
         "calc-vh-minus-64": "calc(100vh - 64px)",
       },
+      keyframes: {
+        homeImages: {
+          "0%, 100%": { backgroundImage: "url('src/assets/laptop.jpg')" },
+          "33.33%": { backgroundImage: "url('src/assets/photobymobile.jpg')" },
+          "66.66%": { backgroundImage: "url('src/assets/parcel.jpg')" },
+        },
+      },
+      animation: {
+        homeImages: "homeImages 9s ease-in-out infinite",
+      },
     },
   },
   plugins: [],

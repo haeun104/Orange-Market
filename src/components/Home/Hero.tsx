@@ -58,10 +58,13 @@ const Hero = () => {
         </div>
       </section>
       <section className="lg:flex">
-        <div className="bg-[#EEEEEE] py-[60px] px-[15px] lg:w-1/2">
-          <h3 className="uppercase text-center mb-[20px] font-bold sm:mb-[40px] sm:text-[20px]">
+        <div className="bg-[#EEEEEE] py-[50px] px-[15px] lg:w-1/2">
+          <h3 className="uppercase text-center mb-[10px] font-bold sm:mb-[20px] sm:text-[20px]">
             Are you a seller?
           </h3>
+          <div className="h-[70px] w-[70px] mx-auto mb-[20px]">
+            <img src="/src/assets/seller.png" alt="seller" />
+          </div>
           <div className="flex space-x-2 justify-center align-middle">
             <span className="text-center text-[13px] sm:text-[16px]">
               Sign up
@@ -84,10 +87,13 @@ const Hero = () => {
             </span>
           </div>
         </div>
-        <div className="py-[60px] px-[15px] lg:w-1/2">
-          <h3 className="uppercase text-center mb-[20px] font-bold sm:mb-[40px] sm:text-[20px] text-main-orange">
+        <div className="py-[50px] px-[15px] lg:w-1/2">
+          <h3 className="uppercase text-center mb-[10px] font-bold sm:mb-[20px] sm:text-[20px] text-main-orange">
             Are you a buyer?
           </h3>
+          <div className="h-[70px] w-[70px] mx-auto mb-[20px]">
+            <img src="/src/assets/buyer.png" alt="buyer" />
+          </div>
           <div className="flex space-x-2 justify-center align-middle ">
             <span className="text-center text-[13px] sm:text-[16px]">
               Sign up
@@ -110,6 +116,9 @@ const Hero = () => {
             </span>
           </div>
         </div>
+      </section>
+      <section>
+        <div className="h-[90vh] bg-cover bg-center animate-homeImages"></div>
       </section>
     </>
   );
