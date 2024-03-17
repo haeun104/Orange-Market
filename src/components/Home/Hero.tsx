@@ -66,22 +66,22 @@ const Hero = () => {
             <img src="/src/assets/seller.png" alt="seller" />
           </div>
           <div className="flex space-x-2 justify-center align-middle">
-            <span className="text-center text-[13px] sm:text-[16px]">
+            <span className="text-center text-[13px] sm:text-[16px] my-auto">
               Sign up
             </span>
-            <div className="text-[20px]">&gt;&gt;</div>
-            <span className="text-center text-[13px] sm:text-[16px]">
+            <div className="text-[20px] my-auto">&gt;&gt;</div>
+            <span className="text-center text-[13px] sm:text-[16px] my-auto">
               Register
               <br /> your item
             </span>
-            <div className="text-[20px]">&gt;&gt;</div>
-            <span className="text-center text-[13px] sm:text-[16px]">
+            <div className="text-[20px] my-auto">&gt;&gt;</div>
+            <span className="text-center text-[13px] sm:text-[16px] my-auto">
               Confirm
               <br />
               purchase request
             </span>
-            <div className="text-[20px]">&gt;&gt;</div>
-            <span className="text-center text-[13px] sm:text-[16px]">
+            <div className="text-[20px] my-auto">&gt;&gt;</div>
+            <span className="text-center text-[13px] sm:text-[16px] my-auto">
               Pass <br />
               your item
             </span>
@@ -94,32 +94,64 @@ const Hero = () => {
           <div className="h-[70px] w-[70px] mx-auto mb-[20px]">
             <img src="/src/assets/buyer.png" alt="buyer" />
           </div>
-          <div className="flex space-x-2 justify-center align-middle ">
-            <span className="text-center text-[13px] sm:text-[16px]">
+          <div className="flex space-x-2 justify-center align-middle">
+            <span className="text-center text-[13px] sm:text-[16px] my-auto">
               Sign up
             </span>
-            <div className="text-[20px]">&gt;&gt;</div>
-            <span className="text-center text-[13px] sm:text-[16px]">
+            <div className="text-[20px] my-auto">&gt;&gt;</div>
+            <span className="text-center text-[13px] sm:text-[16px] my-auto">
               Send
               <br /> purchase request
             </span>
-            <div className="text-[20px]">&gt;&gt;</div>
-            <span className="text-center text-[13px] sm:text-[16px]">
+            <div className="text-[20px] my-auto">&gt;&gt;</div>
+            <span className="text-center text-[13px] sm:text-[16px] my-auto">
               Check
               <br />
               request status
             </span>
-            <div className="text-[20px]">&gt;&gt;</div>
-            <span className="text-center text-[13px] sm:text-[16px]">
+            <div className="text-[20px] my-auto">&gt;&gt;</div>
+            <span className="text-center text-[13px] sm:text-[16px] my-auto">
               Get <br />
               your item
             </span>
           </div>
         </div>
       </section>
-      <section>
-        <div className="h-[90vh] bg-cover bg-center animate-homeImages"></div>
+      <section className="h-[90vh] bg-cover bg-center animate-homeImages flex justify-center align-middle">
+        <h2 className="uppercase text-white font-bold text-[22px] md:text-[32px] text-center my-auto">
+          Register your first product now <br />
+          and <br />
+          enjoy convenience!
+        </h2>
       </section>
+      <footer className="p-[20px]">
+        <div>
+          <div className="flex flex-shrink-0 items-center">
+            <Link to="/" className="flex">
+              <img
+                className="h-[22px] w-auto size-5"
+                src="src\assets\logo_orange.png"
+                alt="company logo"
+              />
+              <h1 className="text-[18px] font-semibold">Orange Market</h1>
+            </Link>
+          </div>
+          <div className="text-[12px] sm:text-[14px] text-gray-400">
+            <span className="font-bold">Address</span>&nbsp;&nbsp;kwiatowa 7
+            Warszawa 12-345 Poland
+          </div>
+          <div className="text-[12px] sm:text-[14px] text-gray-400">
+            <span className="font-bold">Phone</span>&nbsp;&nbsp;123-456-789
+          </div>
+          <div className="text-[12px] sm:text-[14px] text-gray-400">
+            <span className="font-bold">Email</span>
+            &nbsp;&nbsp;service@orangemarket.com
+          </div>
+        </div>
+        <div className="text-[12px] sm:text-center text-gray-400 mt-[20px]">
+          Copyright &copy; 2024 Orange Market. All rights reserved
+        </div>
+      </footer>
     </>
   );
 };
