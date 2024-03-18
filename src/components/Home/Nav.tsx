@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { Disclosure, Menu } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, useNavigate } from "react-router-dom";
@@ -63,7 +63,7 @@ const Nav = () => {
                     )}
                   </Disclosure.Button>
                 </div>
-                <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+                <div className="flex items-center justify-center sm:items-stretch sm:justify-start">
                   <div className="flex flex-shrink-0 items-center">
                     <Link to="/" className="flex">
                       <img
@@ -76,26 +76,26 @@ const Nav = () => {
                       </h1>
                     </Link>
                   </div>
-                  <div className="hidden sm:ml-6 sm:block">
+                  <div className="hidden sm:ml-6 sm:block sm:flex-1">
                     <div className="flex space-x-4">
                       <Link to="/products">
-                        <div className="text-black-300 hover:bg-slate-200 rounded-md px-3 py-2 text-sm font-bold">
+                        <div className="text-black-300 hover:bg-slate-200 rounded-md px-[12px] py-[8px] text-sm font-bold">
                           Products
                         </div>
                       </Link>
                       {!loggedInUser && (
-                        <>
+                        <div className="flex space-x-4">
                           <Link to="/login">
-                            <div className="text-white hover:bg-slate-200 hover:text-black rounded-md px-3 py-2 text-sm font-medium bg-main-orange">
+                            <div className="text-white hover:bg-slate-200 hover:text-black rounded-md px-[12px] py-[8px] text-sm font-medium bg-main-orange border-solid">
                               Login
                             </div>
                           </Link>
                           <Link to="/signup">
-                            <div className="text-main-orange hover:bg-slate-200 hover:border-slate-200 hover:text-black rounded-md px-3 py-2 text-sm font-medium border-solid border-main-orange border-2">
+                            <div className="text-main-orange hover:bg-slate-200 hover:border-slate-200 hover:text-black rounded-md px-[11px] py-[6px] text-sm font-medium border-solid border-main-orange border-2">
                               Sign Up
                             </div>
                           </Link>
-                        </>
+                        </div>
                       )}
                     </div>
                   </div>
