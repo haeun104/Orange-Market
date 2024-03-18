@@ -49,12 +49,6 @@ const AddProduct = () => {
     }));
   };
 
-  // Update image value
-  const handleOnChangeImage = (e) => {
-    const file = e.target.files[0];
-    setImageName(`${newProduct.seller}_${file.name}`);
-  };
-
   // Create a new product in DB
   async function createProductInDb(product) {
     try {
@@ -66,21 +60,32 @@ const AddProduct = () => {
     }
   }
 
+  // Update image value
+  const handleOnChangeImage = (e) => {
+    const file = e.target.files[0];
+    setImageName(file);
+  };
+
   // Upload image into DB
-  const uploadImageToDb = async (fileName) => {
-    const uploadFile = await uploadBytes(
-      ref(storage, `images/${fileName}`),
-      fileName
-    );
-    const fileURL = await getDownloadURL(uploadFile.ref);
-    console.log(fileURL);
-    createProductInDb({ ...newProduct, imgURL: fileURL });
+  const uploadImageToDb = async (file, seller) => {
+    try {
+      const uploadFile = await uploadBytes(
+        ref(storage, `images/${seller}_${file.name}`),
+        file
+      );
+      const fileURL = await getDownloadURL(uploadFile.ref);
+      console.log(fileURL);
+      createProductInDb({ ...newProduct, imgURL: fileURL });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // Send product data to DB
   const handleSubmitNewProduct = (e) => {
     e.preventDefault();
-    uploadImageToDb(imageName);
+    const sellerId = newProduct.seller;
+    uploadImageToDb(imageName, sellerId);
   };
 
   // Go back

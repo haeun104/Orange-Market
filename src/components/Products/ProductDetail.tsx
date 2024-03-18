@@ -211,10 +211,13 @@ const ProductDetail = () => {
   } else {
     return (
       <>
-        <div className="container">
+        <div className="container py-[40px]">
+          <h2 className="text-lg font-bold text-center mb-8">
+            PRODUCT DETAILS
+          </h2>
           <div className="flex flex-col justify-center mx-auto w-[250px] md:w-[400px] lg:w-[600px]">
             <div className="h-[50vh]">
-              <img src="src\assets\chair.jpg" alt={product.title} />
+              <img src={product.imgURL} alt={product.title} />
             </div>
             <div className="flex flex-col text-gray-400">
               <h4 className="text-black font-bold">{product.title}</h4>
@@ -226,11 +229,11 @@ const ProductDetail = () => {
                 {sellerName}
               </span>
               <span>{`${product.city}, ${product.district}`}</span>
-              <p className="my-[20px]">{product.description}</p>
               <div className="flex space-x-2 text-sm">
                 <span>Click {product.clickCount}</span>
                 <span>Like {product.likeCount}</span>
               </div>
+              <p className="my-[20px]">{product.description}</p>
             </div>
             <div className="flex flex-col space-y-2 mt-4 mb-4">
               <button

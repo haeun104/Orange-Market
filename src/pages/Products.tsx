@@ -97,7 +97,7 @@ const Products = () => {
   } else {
     return (
       <>
-        <div className="container max-w-[1280px] relative">
+        <div className="container max-w-[1280px] relative py-[40px]">
           <h2 className="text-lg font-bold text-center mb-8">PRODUCT LIST</h2>
           <div className="max-w-[640px] mx-auto mb-[40px]">
             <ul className="flex space-x-4 flex-wrap justify-center mx-[20px]">
@@ -114,7 +114,7 @@ const Products = () => {
               ))}
             </ul>
           </div>
-          {emptyProducts && (
+          {filteredProducts.length === 0 && (
             <div className="text-center">
               There is no product registered yet.
             </div>
@@ -127,7 +127,7 @@ const Products = () => {
                 onClick={() => goToProductDetailPage(item.id)}
               >
                 <div className="">
-                  <img src="src\assets\chair.jpg" alt={item.title} />
+                  <img src={item.imgURL} alt={item.title} />
                 </div>
                 <div className="flex flex-col text-gray-400">
                   <h4 className="text-black">{item.title}</h4>
@@ -141,7 +141,7 @@ const Products = () => {
               </div>
             ))}
           </div>
-          <div className="absolute top-[40px] right-[10px] md:top-0 md:right-[40px] text-center">
+          <div className="absolute top-0 right-[5px] md:top-0 md:right-[40px] text-center">
             <button
               className="bg-main-orange hover:opacity-80 text-white font-bold rounded-[50%] w-[30px] h-[30px] text-[16px] md:w-[40px] md:h-[40px] md:text-[24px]"
               onClick={goToNewProductPage}

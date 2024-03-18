@@ -1,9 +1,9 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, createUserInDb } from "../../src/firebase-config";
+import { auth, createUserInDb, db } from "../../src/firebase-config";
 import { useNavigate } from "react-router-dom";
 import Modal from "../components/Modal";
-import { DataContext } from "../App";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -14,7 +14,6 @@ const SignUp = () => {
   const [openModal, setOpenModal] = useState(false);
 
   const navigate = useNavigate();
-  const { usersList } = useContext(DataContext);
 
   // Create a new user in DB
   const registerUser = async () => {
@@ -40,22 +39,34 @@ const SignUp = () => {
     }
   };
 
+  const checkExistingNickname = async (nickname) => {
+    try {
+      const nicknameQuery = query(
+        collection(db, "user"),
+        where("nickname", "==", nickname)
+      );
+      const nicknameSnapshot = await getDocs(nicknameQuery);
+      const nicknameData = nicknameSnapshot.docs.length;
+      if (nicknameData !== 0) {
+        setErrorMsg("The nickname already exists. Please enter another one.");
+        return;
+      } else {
+        registerUser();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // Check validation of passwords and nickname and execute user creation in DB
   const handleSignUp = (e) => {
     e.preventDefault();
     setErrorMsg("");
-    const existingNickname = usersList.find(
-      (user) => user.nickname === nickname
-    );
     if (password !== passwordConfirm) {
       setErrorMsg("Passwords are not matched!");
       return;
     }
-    if (existingNickname) {
-      setErrorMsg("The nickname already exists. Please enter another one.");
-      return;
-    }
-    registerUser();
+    checkExistingNickname(nickname);
   };
 
   // Go back to Home page
