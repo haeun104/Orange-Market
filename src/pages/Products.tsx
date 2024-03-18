@@ -126,8 +126,12 @@ const Products = () => {
                 className="flex flex-col justify-center mx-auto w-[250px] cursor-pointer"
                 onClick={() => goToProductDetailPage(item.id)}
               >
-                <div className="">
-                  <img src={item.imgURL} alt={item.title} />
+                <div className="h-[200px]">
+                  <img
+                    src={item.imgURL}
+                    alt={item.title}
+                    className="h-[100%]"
+                  />
                 </div>
                 <div className="flex flex-col text-gray-400">
                   <h4 className="text-black">{item.title}</h4>

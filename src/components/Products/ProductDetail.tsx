@@ -216,8 +216,8 @@ const ProductDetail = () => {
             PRODUCT DETAILS
           </h2>
           <div className="flex flex-col justify-center mx-auto w-[250px] md:w-[400px] lg:w-[600px]">
-            <div className="h-[50vh]">
-              <img src={product.imgURL} alt={product.title} />
+            <div className="">
+              <img src={product.imgURL} alt={product.title} className="" />
             </div>
             <div className="flex flex-col text-gray-400">
               <h4 className="text-black font-bold">{product.title}</h4>
@@ -229,6 +229,7 @@ const ProductDetail = () => {
                 {sellerName}
               </span>
               <span>{`${product.city}, ${product.district}`}</span>
+              <span>registered on {product.date}</span>
               <div className="flex space-x-2 text-sm">
                 <span>Click {product.clickCount}</span>
                 <span>Like {product.likeCount}</span>
