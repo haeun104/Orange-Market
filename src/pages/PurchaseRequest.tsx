@@ -7,6 +7,7 @@ import Modal from "../components/Modal";
 import { useContext, useState, useEffect } from "react";
 import { DataContext } from "../App";
 import { fetchRequestData } from "../store/request-slice";
+import { getFormattedDate } from "../utils";
 
 const PurchaseRequest = () => {
   const selling = useSelector((state) => state.request.sellingRequest);
@@ -24,17 +25,28 @@ const PurchaseRequest = () => {
     }
   }, [currentUser, dispatch]);
 
-  const handleClosing = (id, type) => {
-    closeRequestInDB(id, type);
+  const handleClosing = (id: string, product: string, type: string) => {
+    closeRequestInDB(id, product, type);
   };
 
-  async function closeRequestInDB(id, type) {
+  async function closeRequestInDB(id, product, type) {
     try {
       const requestRef = doc(collection(db, "purchase request"), id);
+      const productRef = doc(collection(db, "product"), product);
       if (type === "accept") {
-        await updateDoc(requestRef, { isClosed: true, isChosenBySeller: true });
+        await updateDoc(requestRef, {
+          isClosed: true,
+          isChosenBySeller: true,
+          closeDate: getFormattedDate(new Date()),
+        });
+        await updateDoc(productRef, {
+          isSold: true,
+        });
       } else {
-        await updateDoc(requestRef, { isClosed: true });
+        await updateDoc(requestRef, {
+          isClosed: true,
+          closeDate: getFormattedDate(new Date()),
+        });
       }
       setOpenModal(true);
       dispatch(fetchRequestData(currentUser.id, "seller"));
@@ -99,9 +111,9 @@ const PurchaseRequest = () => {
                         className="h-[100%]"
                       />
                     </div>
-                    <div className="flex">
+                    <div className="flex flex-1">
                       <div className="sm:hidden w-[120px]">Title:</div>
-                      <div>{item.title}</div>
+                      <div className="sm:text-left">{item.title}</div>
                     </div>
                   </div>
                 </Link>
@@ -117,22 +129,31 @@ const PurchaseRequest = () => {
                   <div className="sm:hidden w-[120px]">Request Date:</div>
                   <div>{item.date}</div>
                 </div>
-                <div className="sm:w-1/5 flex space-x-2 sm:justify-center">
+                <div className="sm:w-1/5 flex space-x-2 sm:justify-center max-h-[40px]">
                   <button
                     className="btn-orange px-3 text-[14px]"
-                    onClick={() => handleClosing(item.id, "accept")}
+                    onClick={() =>
+                      handleClosing(item.id, item.product, "accept")
+                    }
                   >
                     Accept
                   </button>
                   <button
                     className="btn-grey px-3 text-[14px]"
-                    onClick={() => handleClosing(item.id, "reject")}
+                    onClick={() =>
+                      handleClosing(item.id, item.product, "reject")
+                    }
                   >
                     Reject
                   </button>
                 </div>
               </div>
             ))}
+            {selling.length === 0 && (
+              <div className="text-center text-accent-grey">
+                There are no products requested for purchase
+              </div>
+            )}
           </div>
           <div className="mt-[30px]">
             <h2 className="font-bold mb-[20px]">For Purchaser</h2>
@@ -157,9 +178,9 @@ const PurchaseRequest = () => {
                         className="h-[100%]"
                       />
                     </div>
-                    <div className="flex">
+                    <div className="flex flex-1">
                       <div className="sm:hidden w-[120px]">Title:</div>
-                      <div>{item.title}</div>
+                      <div className="sm:text-left">{item.title}</div>
                     </div>
                   </div>
                 </Link>
@@ -175,7 +196,7 @@ const PurchaseRequest = () => {
                   <div className="sm:hidden w-[120px]">Request Date:</div>
                   <div>{item.date}</div>
                 </div>
-                <div className="sm:w-1/5 flex space-x-2 sm:justify-center">
+                <div className="sm:w-1/5 flex space-x-2 sm:justify-center max-h-[40px]">
                   <button
                     className="btn-grey px-3 text-[14px]"
                     onClick={() => handleDeleteRequest(item.id)}
@@ -185,6 +206,11 @@ const PurchaseRequest = () => {
                 </div>
               </div>
             ))}
+            {purchase.length === 0 && (
+              <div className="text-center text-accent-grey">
+                There are no products requested for purchase
+              </div>
+            )}
           </div>
         </div>
         <Modal

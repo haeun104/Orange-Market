@@ -43,25 +43,64 @@ const fetchData = async (key, id, boolean) => {
 };
 
 export const fetchRequestData = (id, key) => {
-  if (id) {
-    return async (dispatch) => {
+  // if (id) {
+  //   return async (dispatch) => {
+  //     if (key === "seller") {
+  //       try {
+  //         const sellingRequests = await fetchData("seller", id, false);
+  //         dispatch(requestActions.createSellingList(sellingRequests));
+  //       } catch (error) {
+  //         console.log(error);
+  //       }
+  //     } else if (key === "requestor") {
+  //       try {
+  //         const purchaseRequest = await fetchData("requestor", id, false);
+  //         dispatch(requestActions.createPurchaseList(purchaseRequest));
+  //       } catch (error) {
+  //         console.log(error);
+  //       }
+  //     } else if (key === "sellerClosed") {
+  //       try {
+  //         const sellingRequests = await fetchData("seller", id, true);
+  //         dispatch(requestActions.updateClosedSellingList(sellingRequests));
+  //       } catch (error) {
+  //         console.log(error);
+  //       }
+  //     } else {
+  //       try {
+  //         const purchaseRequest = await fetchData("requestor", id, true);
+  //         dispatch(requestActions.updateClosedPurchaseRequest(purchaseRequest));
+  //       } catch (error) {
+  //         console.log(error);
+  //       }
+  //     }
+  //   };
+  // }
+
+  if (!id) return;
+
+  return async (dispatch) => {
+    let data, actionCreator;
+    try {
       if (key === "seller") {
-        try {
-          const sellingRequests = await fetchData("seller", id, false);
-          dispatch(requestActions.createSellingList(sellingRequests));
-        } catch (error) {
-          console.log(error);
-        }
+        data = await fetchData("seller", id, false);
+        actionCreator = requestActions.createSellingList;
+      } else if (key === "requestor") {
+        data = await fetchData("requestor", id, false);
+        actionCreator = requestActions.createPurchaseList;
+      } else if (key === "sellerClosed") {
+        data = await fetchData("seller", id, true);
+        actionCreator = requestActions.updateClosedSellingList;
       } else {
-        try {
-          const purchaseRequest = await fetchData("requestor", id, false);
-          dispatch(requestActions.createPurchaseList(purchaseRequest));
-        } catch (error) {
-          console.log(error);
-        }
+        data = await fetchData("requestor", id, true);
+        actionCreator = requestActions.updateClosedPurchaseRequest;
       }
-    };
-  }
+
+      dispatch(actionCreator(data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
 };
 
 export default requestSlice;
