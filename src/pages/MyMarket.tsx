@@ -74,7 +74,7 @@ const MyMarket = () => {
         </div>
         <div className="mt-[50px] relative">
           <h3 className="uppercase font-bold border-black border-solid border-b-[2px]">
-            sales history
+            recent sales history
           </h3>
           <Link to="/sales-history">
             <span className="absolute top-0 right-0 cursor-pointer hover:text-gray-500">
@@ -84,7 +84,7 @@ const MyMarket = () => {
         </div>
         <div className="mt-[50px] relative">
           <h3 className="uppercase font-bold border-black border-solid border-b-[2px]">
-            purchase history
+            recent purchase history
           </h3>
           <Link to="/purchase-history">
             <span className="absolute top-0 right-0 cursor-pointer hover:text-gray-500">
