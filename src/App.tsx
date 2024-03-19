@@ -17,9 +17,6 @@ import MyFavorite from "./pages/MyFavorite";
 import PurchaseHistory from "./pages/PurchaseHistory";
 import SalesHistory from "./pages/SalesHistory";
 import PurchaseRequest from "./pages/PurchaseRequest";
-import { useDispatch } from "react-redux";
-import { fetchFavoriteData } from "./store/favorite-slice";
-import { fetchRequestData } from "./store/request-slice";
 
 export const DataContext = React.createContext();
 
@@ -47,8 +44,6 @@ function App() {
   const [loggedInUser, setLoggedInUser] = useState({});
   const [currentUser, setCurrentUser] = useState();
 
-  const dispatch = useDispatch();
-
   // Update user data whenever login status is changed
   onAuthStateChanged(auth, (currentUser) => {
     if (currentUser) {
@@ -57,14 +52,6 @@ function App() {
       setLoggedInUser(null);
     }
   });
-
-  // Dispatch current user data
-  // useEffect(() => {
-  //   if (currentUser) {
-  //     dispatch(fetchFavoriteData(currentUser.id));
-  //     dispatch(fetchRequestData(currentUser.id));
-  //   }
-  // }, [currentUser, dispatch]);
 
   // Fetch user data from DB
   useEffect(() => {

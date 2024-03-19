@@ -15,7 +15,7 @@ const Products = () => {
   const [category, setCategory] = useState("All");
   const [filteredProducts, setFilteredProducts] = useState();
   const [products, setProducts] = useState();
-  const [emptyProducts, setEmptyProducts] = useState(false);
+  const [message, setMessage] = useState("");
   const [openModal, setOpenModal] = useState(false);
 
   const navigate = useNavigate();
@@ -38,18 +38,20 @@ const Products = () => {
 
   // Filter a product list as per a selected category
   useEffect(() => {
-    setEmptyProducts(false);
+    setMessage("There is no product registered yet.");
     if (category === "All") {
       setFilteredProducts(products);
     } else if (category === "My Location") {
       if (!currentUser) {
         setOpenModal(true);
       } else {
+        const isExistingAddress = currentUser.city;
         const userLocationProduct = products.filter(
-          (item: ProductList) => item.city === currentUser.city
+          (item: ProductList) =>
+            item.city.toLowerCase() === currentUser.city.toLowerCase()
         );
-        if (userLocationProduct.length === 0) {
-          setEmptyProducts(true);
+        if (!isExistingAddress) {
+          setMessage("Update your address in My Profile first");
         }
         setFilteredProducts(userLocationProduct);
       }
@@ -57,9 +59,6 @@ const Products = () => {
       const filteredProducts = products.filter(
         (item: ProductType) => item.category === category
       );
-      if (filteredProducts.length === 0) {
-        setEmptyProducts(true);
-      }
       setFilteredProducts(filteredProducts);
     }
   }, [category, products, currentUser]);
@@ -81,6 +80,11 @@ const Products = () => {
   // Update state as per a selected category
   const handleCategoryClick = (category: string) => {
     setCategory(category);
+  };
+
+  // Go to my profile
+  const goToMyProfile = () => {
+    navigate("/my-profile");
   };
 
   if (!filteredProducts) {
@@ -116,7 +120,12 @@ const Products = () => {
           </div>
           {filteredProducts.length === 0 && (
             <div className="text-center">
-              There is no product registered yet.
+              <div className="mb-[10px]">{message}</div>
+              {message === "Update your address in My Profile first" && (
+                <button className="btn-purple" onClick={goToMyProfile}>
+                  Go to My Profile
+                </button>
+              )}
             </div>
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8 lg:px-[150px]">

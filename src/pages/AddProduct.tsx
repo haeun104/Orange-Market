@@ -108,7 +108,7 @@ const AddProduct = () => {
     return (
       <>
         <div className="container px-5 py-10">
-          <h2 className="text-center text-lg text-main-orange font-bold">
+          <h2 className="text-center text-lg text-main-orange font-bold uppercase mb-[20px]">
             Register your product
           </h2>
           <form
@@ -131,7 +131,7 @@ const AddProduct = () => {
             <label htmlFor="description">Description</label>
             <textarea
               id="description"
-              className="border-solid border-gray-200 border-2 rounded-md"
+              className="border-solid border-gray-200 border-2 rounded-md focus:border-main-orange indent-[6px]"
               rows={5}
               placeholder="Describe your product (color, size, used period, whatever you want to share with a future buyer)"
               name="description"

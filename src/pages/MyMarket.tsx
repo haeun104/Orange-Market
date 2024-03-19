@@ -37,11 +37,14 @@ const MyMarket = () => {
     );
   } else {
     return (
-      <div className="container">
-        <div className="mt-[50px] relative">
-          <h2 className="uppercase font-bold text-[18px] border-black border-solid border-b-[2px]">
+      <div className="container max-w-[640px] py-[40px] px-[10px]">
+        <h2 className="uppercase text-lg font-bold text-center text-main-orange mb-[40px]">
+          My Market
+        </h2>
+        <div className="relative">
+          <h3 className="uppercase font-bold border-black border-solid border-b-[2px]">
             my favorite
-          </h2>
+          </h3>
           <Link to="/my-favorite">
             <span className="absolute top-0 right-0 hover:text-gray-500">
               Go to details
@@ -49,21 +52,30 @@ const MyMarket = () => {
           </Link>
           <div>
             {favoriteList.map((item) => (
-              <ul key={item.id} className="flex space-x-4">
-                <li className="">
-                  <img src={item.imgURL} alt={item.title} />
+              <ul key={item.id} className="flex space-x-4 my-[10px]">
+                <li className="h-[40px] w-[70px]">
+                  <img
+                    src={item.imgURL}
+                    alt={item.title}
+                    className="h-[100%] w-[100%]"
+                  />
                 </li>
                 <li className="flex-1 text-center">{item.title}</li>
                 <li>{item.price}PLN</li>
                 <li>{item.isSold ? "sold" : "onSale"}</li>
               </ul>
             ))}
+            {favoriteList.length === 0 && (
+              <div className="text-center text-accent-grey">
+                There are no products added to favorites
+              </div>
+            )}
           </div>
         </div>
         <div className="mt-[50px] relative">
-          <h2 className="uppercase font-bold text-[18px] border-black border-solid border-b-[2px]">
+          <h3 className="uppercase font-bold border-black border-solid border-b-[2px]">
             sales history
-          </h2>
+          </h3>
           <Link to="/sales-history">
             <span className="absolute top-0 right-0 cursor-pointer hover:text-gray-500">
               Go to details
@@ -71,9 +83,9 @@ const MyMarket = () => {
           </Link>
         </div>
         <div className="mt-[50px] relative">
-          <h2 className="uppercase font-bold text-[18px] border-black border-solid border-b-[2px]">
+          <h3 className="uppercase font-bold border-black border-solid border-b-[2px]">
             purchase history
-          </h2>
+          </h3>
           <Link to="/purchase-history">
             <span className="absolute top-0 right-0 cursor-pointer hover:text-gray-500">
               Go to details
@@ -81,9 +93,9 @@ const MyMarket = () => {
           </Link>
         </div>
         <div className="mt-[50px] relative">
-          <h2 className="uppercase font-bold text-[18px] border-black border-solid border-b-[2px]">
+          <h3 className="uppercase font-bold border-black border-solid border-b-[2px]">
             purchase requests
-          </h2>
+          </h3>
           <Link to="/purchase-request">
             <span className="absolute top-0 right-0 cursor-pointer hover:text-gray-500">
               Go to details
@@ -91,9 +103,13 @@ const MyMarket = () => {
           </Link>
           <div>
             {requests.map((item) => (
-              <ul key={item.id} className="flex space-x-4">
-                <li className="">
-                  <img src={item.imgURL} alt={item.title} />
+              <ul key={item.id} className="flex space-x-4 my-[10px]">
+                <li className="h-[40px] w-[70px]">
+                  <img
+                    src={item.imgURL}
+                    alt={item.title}
+                    className="h-[100%] w-[100%]"
+                  />
                 </li>
                 <li className="flex-1 text-center">{item.title}</li>
                 <li>{item.price}PLN</li>
@@ -101,6 +117,11 @@ const MyMarket = () => {
               </ul>
             ))}
           </div>
+          {requests.length === 0 && (
+            <div className="text-center text-accent-grey">
+              There are no products requested for purchase
+            </div>
+          )}
         </div>
       </div>
     );

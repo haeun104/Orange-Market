@@ -4,6 +4,7 @@ const SalesHistory = () => {
   return (
     <div className="container">
       <MyMarketList />
+      <div></div>
     </div>
   );
 };

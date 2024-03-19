@@ -74,7 +74,7 @@ const PurchaseRequest = () => {
   } else {
     return (
       <>
-        <div className="container">
+        <div className="container px-[10px]">
           <MyMarketList />
           <div className="mt-[30px]">
             <h2 className="font-bold mb-[20px]">For Seller</h2>
@@ -90,13 +90,34 @@ const PurchaseRequest = () => {
                 key={item.id}
                 className="flex flex-col justify-center sm:flex-row sm:text-center mb-2"
               >
-                <Link to={`/products/${item.product}`} className="w-1/5">
-                  <div>{item.title}</div>
+                <Link to={`/products/${item.product}`} className="sm:w-1/5">
+                  <div className="flex flex-col sm:flex-row sm:justify-center">
+                    <div className="h-[120px] w-[120px] sm:h-[40px] sm:w-[70px]">
+                      <img
+                        src={item.imgURL}
+                        alt={item.title}
+                        className="h-[100%]"
+                      />
+                    </div>
+                    <div className="flex">
+                      <div className="sm:hidden w-[120px]">Title:</div>
+                      <div>{item.title}</div>
+                    </div>
+                  </div>
                 </Link>
-                <div className="w-1/5">{item.price} PLN</div>
-                <div className="w-1/5">{item.requestor}</div>
-                <div className="w-1/5">{item.date}</div>
-                <div className="w-1/5 flex space-x-2 justify-center">
+                <div className="sm:w-1/5 flex sm:justify-center">
+                  <div className="sm:hidden w-[120px]">Price:</div>
+                  <div>{item.price} PLN</div>
+                </div>
+                <div className="sm:w-1/5 flex sm:justify-center">
+                  <div className="sm:hidden w-[120px]">Requestor:</div>
+                  <div>{item.requestorName}</div>
+                </div>
+                <div className="sm:w-1/5 flex sm:justify-center">
+                  <div className="sm:hidden w-[120px]">Request Date:</div>
+                  <div>{item.date}</div>
+                </div>
+                <div className="sm:w-1/5 flex space-x-2 sm:justify-center">
                   <button
                     className="btn-orange px-3 text-[14px]"
                     onClick={() => handleClosing(item.id, "accept")}
@@ -127,13 +148,34 @@ const PurchaseRequest = () => {
                 key={item.id}
                 className="flex flex-col justify-center sm:flex-row sm:text-center mb-2"
               >
-                <Link to={`/products/${item.product}`} className="w-1/5">
-                  <div>{item.title}</div>
+                <Link to={`/products/${item.product}`} className="sm:w-1/5">
+                  <div className="flex flex-col sm:flex-row sm:justify-center">
+                    <div className="h-[120px] w-[120px] sm:h-[40px] sm:w-[70px]">
+                      <img
+                        src={item.imgURL}
+                        alt={item.title}
+                        className="h-[100%]"
+                      />
+                    </div>
+                    <div className="flex">
+                      <div className="sm:hidden w-[120px]">Title:</div>
+                      <div>{item.title}</div>
+                    </div>
+                  </div>
                 </Link>
-                <div className="w-1/5">{item.price} PLN</div>
-                <div className="w-1/5">{item.sellerName}</div>
-                <div className="w-1/5">{item.date}</div>
-                <div className="w-1/5 flex space-x-2 justify-center">
+                <div className="sm:w-1/5 flex sm:justify-center">
+                  <div className="sm:hidden w-[120px]">Price:</div>
+                  <div>{item.price} PLN</div>
+                </div>
+                <div className="sm:w-1/5 flex sm:justify-center">
+                  <div className="sm:hidden w-[120px]">Seller:</div>
+                  <div>{item.sellerName}</div>
+                </div>
+                <div className="sm:w-1/5 flex sm:justify-center">
+                  <div className="sm:hidden w-[120px]">Request Date:</div>
+                  <div>{item.date}</div>
+                </div>
+                <div className="sm:w-1/5 flex space-x-2 sm:justify-center">
                   <button
                     className="btn-grey px-3 text-[14px]"
                     onClick={() => handleDeleteRequest(item.id)}
