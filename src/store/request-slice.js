@@ -43,40 +43,6 @@ const fetchData = async (key, id, boolean) => {
 };
 
 export const fetchRequestData = (id, key) => {
-  // if (id) {
-  //   return async (dispatch) => {
-  //     if (key === "seller") {
-  //       try {
-  //         const sellingRequests = await fetchData("seller", id, false);
-  //         dispatch(requestActions.createSellingList(sellingRequests));
-  //       } catch (error) {
-  //         console.log(error);
-  //       }
-  //     } else if (key === "requestor") {
-  //       try {
-  //         const purchaseRequest = await fetchData("requestor", id, false);
-  //         dispatch(requestActions.createPurchaseList(purchaseRequest));
-  //       } catch (error) {
-  //         console.log(error);
-  //       }
-  //     } else if (key === "sellerClosed") {
-  //       try {
-  //         const sellingRequests = await fetchData("seller", id, true);
-  //         dispatch(requestActions.updateClosedSellingList(sellingRequests));
-  //       } catch (error) {
-  //         console.log(error);
-  //       }
-  //     } else {
-  //       try {
-  //         const purchaseRequest = await fetchData("requestor", id, true);
-  //         dispatch(requestActions.updateClosedPurchaseRequest(purchaseRequest));
-  //       } catch (error) {
-  //         console.log(error);
-  //       }
-  //     }
-  //   };
-  // }
-
   if (!id) return;
 
   return async (dispatch) => {
