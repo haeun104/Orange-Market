@@ -31,7 +31,8 @@ const Products = () => {
           id: doc.id,
         });
       });
-      setProducts(productList);
+      const unsoldProducts = productList.filter((item) => !item.isSold);
+      setProducts(unsoldProducts);
     });
     return () => unsubscribe();
   }, []);
