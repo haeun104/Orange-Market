@@ -80,7 +80,7 @@ const PurchaseHistory = () => {
           ))}
           {purchase.length === 0 && (
             <div className="text-center text-accent-grey">
-              There are no sales history
+              There are no purchase history
             </div>
           )}
         </div>

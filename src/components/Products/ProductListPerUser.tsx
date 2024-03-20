@@ -2,9 +2,12 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { db } from "../../firebase-config";
+import Modal from "../Modal";
 
-const ProductListPerUser = ({ id }) => {
+const ProductListPerUser = ({ id, type }) => {
   const [products, setProducts] = useState();
+  const [openModal, setOpenModal] = useState(false);
+  const [productToDelete, setProductToDelete] = useState("");
 
   const navigate = useNavigate();
 
@@ -38,6 +41,17 @@ const ProductListPerUser = ({ id }) => {
     navigate(`/products/${id}`);
   };
 
+  // Go to edit page
+  const goToEditPage = (id: string) => {
+    navigate(`/products/edit/${id}`);
+  };
+
+  //
+  const handleDeleteClick = (id) => {
+    setProductToDelete(id);
+    setOpenModal(true);
+  };
+
   if (!products) {
     return (
       <div
@@ -51,37 +65,64 @@ const ProductListPerUser = ({ id }) => {
     );
   } else {
     return (
-      <div className="container">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mt-[20px]">
-          {products.map((item) => (
-            <div
-              key={item.id}
-              className="flex flex-col justify-center mx-auto w-[250px] cursor-pointer"
-              onClick={() => goToProductDetailPage(item.id)}
-            >
-              <div className="h-[200px]">
-                <img
-                  src={item.imgURL}
-                  alt={item.title}
-                  className="max-h-[100%]"
-                />
-              </div>
-              <div className="flex flex-col text-gray-400">
-                <h4 className="text-black">{item.title}</h4>
-                <span className="text-black">{item.price} PLN</span>
-                <span>{`${item.city}, ${item.district}`}</span>
-                <div className="flex space-x-2 text-sm">
-                  <span>Click {item.clickCount}</span>
-                  <span>Like {item.likeCount}</span>
+      <>
+        <div className="container">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mt-[20px]">
+            {products.map((item) => (
+              <div
+                key={item.id}
+                className="flex flex-col mx-auto w-[250px] cursor-pointer"
+              >
+                <div className="h-[200px]">
+                  <img
+                    src={item.imgURL}
+                    alt={item.title}
+                    className="max-h-[100%]"
+                  />
                 </div>
-                <span className="">
-                  Status: {item.isSold ? "Sold" : "on sale"}
-                </span>
+                <div
+                  className="flex flex-col text-gray-400"
+                  onClick={() => goToProductDetailPage(item.id)}
+                >
+                  <h4 className="text-black">{item.title}</h4>
+                  <span className="text-black">{item.price} PLN</span>
+                  <span>{`${item.city}, ${item.district}`}</span>
+                  <div className="flex space-x-2 text-sm">
+                    <span>Click {item.clickCount}</span>
+                    <span>Like {item.likeCount}</span>
+                  </div>
+                  <span className="">
+                    Status: {item.isSold ? "Sold" : "on sale"}
+                  </span>
+                </div>
+                {!item.isSold && type === "myproduct" && (
+                  <div className="flex space-x-2 mt-[10px]">
+                    <button
+                      className="btn-orange"
+                      onClick={() => goToEditPage(item.id)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="btn-grey"
+                      onClick={() => handleDeleteClick(item.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+        <Modal
+          openModal={openModal}
+          setOpenModal={setOpenModal}
+          message="Are you sure to delete?"
+          type="delete"
+          id={productToDelete}
+        />
+      </>
     );
   }
 };

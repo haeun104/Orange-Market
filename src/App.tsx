@@ -18,6 +18,7 @@ import PurchaseHistory from "./pages/PurchaseHistory";
 import SalesHistory from "./pages/SalesHistory";
 import PurchaseRequest from "./pages/PurchaseRequest";
 import MyProducts from "./pages/MyProducts";
+import EditProduct from "./pages/EditProduct";
 
 export const DataContext = React.createContext();
 
@@ -98,6 +99,7 @@ function App() {
               path="/products/seller/:seller"
               element={<ProductsBySeller />}
             />
+            <Route path="/products/edit/:product" element={<EditProduct />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/my-profile" element={<MyProfile />} />
