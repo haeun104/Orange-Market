@@ -25,6 +25,7 @@ const ProductDetail = () => {
   const [existingRequest, setExistingRequest] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
+  const [requestBtn, setRequestBtn] = useState("");
 
   const productId = useParams();
   const favorite = useSelector((state) => state.favorite.favoriteItem);
@@ -100,7 +101,16 @@ const ProductDetail = () => {
       );
       const requestSnapshot = await getDocs(requestQuery);
       if (!requestSnapshot.empty) {
-        setExistingRequest(true);
+        const requests = [];
+        requestSnapshot.forEach((doc) => requests.push(doc.data()));
+        const closedRequest = requests.find((item) => item.isClosed);
+        if (closedRequest) {
+          setRequestBtn("Request is unavailable");
+          setExistingRequest(true);
+        } else {
+          setRequestBtn("Waiting for response on purchase request");
+          setExistingRequest(true);
+        }
       }
     } catch (error) {
       console.log(error);
@@ -236,6 +246,11 @@ const ProductDetail = () => {
               </div>
               <p className="my-[20px]">{product.description}</p>
             </div>
+            {product.isSold ? (
+              <div className="text-red-400 font-bold">
+                This product has already been sold
+              </div>
+            ) : null}
             <div className="flex flex-col space-y-2 mt-4 mb-4">
               <button
                 className="btn-orange disabled:bg-gray-300 disabled:cursor-not-allowed disabled:hover:opacity-100"
@@ -257,9 +272,7 @@ const ProductDetail = () => {
                 disabled={product.isSold || existingRequest ? true : false}
                 onClick={sendPurchaseRequest}
               >
-                {existingRequest
-                  ? "waiting for response on purchase request"
-                  : "Make a purchase request"}
+                {existingRequest ? requestBtn : "Make a purchase request"}
               </button>
             </div>
           </div>
