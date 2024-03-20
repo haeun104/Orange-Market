@@ -4,10 +4,13 @@ import { Link } from "react-router-dom";
 import { DataContext } from "../App";
 import { fetchFavoriteData } from "../store/favorite-slice";
 import { fetchRequestData } from "../store/request-slice";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "../firebase-config";
 
 const MyMarket = () => {
   const [recentSelling, setRecentSelling] = useState();
   const [recentPurchase, setRecentPurchase] = useState();
+  const [productOnSale, setProductOnSale] = useState();
   const favoriteList = useSelector((state) => state.favorite.favoriteItem);
   const sellingList = useSelector((state) => state.request.sellingRequest);
   const purchaseList = useSelector((state) => state.request.purchaseRequest);
@@ -60,9 +63,34 @@ const MyMarket = () => {
     }
   }, [currentUser, dispatch]);
 
+  // Fetch products on sale from DB
+  const fetchProductsOnSale = async (id) => {
+    const productQuery = query(
+      collection(db, "product"),
+      where("seller", "==", id),
+      where("isSold", "==", false)
+    );
+    const productSnapshot = await getDocs(productQuery);
+    const productOnSale = [];
+    productSnapshot.forEach((doc) => productOnSale.push(doc.data()));
+    setProductOnSale(productOnSale);
+  };
+
+  useEffect(() => {
+    if (currentUser) {
+      fetchProductsOnSale(currentUser.id);
+    }
+  }, [currentUser]);
+
   return (
     <>
-      {!(favoriteList && requests && recentPurchase && recentSelling) ? (
+      {!(
+        favoriteList &&
+        requests &&
+        recentPurchase &&
+        recentSelling &&
+        productOnSale
+      ) ? (
         <div
           className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
           role="status"
@@ -107,6 +135,37 @@ const MyMarket = () => {
               )}
             </div>
           </div>
+          <div className="mt-[50px] relative">
+            <h3 className="uppercase font-bold border-black border-solid border-b-[2px]">
+              My products for sale
+            </h3>
+            <Link to={`/products/seller/${currentUser.id}`}>
+              <span className="absolute top-0 right-0 cursor-pointer hover:text-gray-500">
+                Go to details
+              </span>
+            </Link>
+          </div>
+          <div>
+            {productOnSale.map((item, index) => (
+              <ul key={index} className="flex space-x-4 my-[10px]">
+                <li className="h-[40px] w-[70px]">
+                  <img
+                    src={item.imgURL}
+                    alt={item.title}
+                    className="h-[100%] w-[100%]"
+                  />
+                </li>
+                <li className="flex-1 text-center">{item.title}</li>
+                <li>{item.price}PLN</li>
+                <li>like {item.likeCount}</li>
+              </ul>
+            ))}
+          </div>
+          {productOnSale.length === 0 && (
+            <div className="text-center text-accent-grey">
+              There are no products requested for purchase
+            </div>
+          )}
           <div className="mt-[50px] relative">
             <h3 className="uppercase font-bold border-black border-solid border-b-[2px]">
               recent sales history
