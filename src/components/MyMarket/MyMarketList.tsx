@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 
 const links = [
   { link: "/my-favorite", title: "My Favorite" },
-  { link: "/my-product", title: "My Products For Sale" },
+  { link: "/my-products", title: "My Products For Sale" },
   { link: "/sales-history", title: "Sales History" },
   { link: "/purchase-history", title: "Purchase History" },
   { link: "/purchase-request", title: "Purchase Request Status" },

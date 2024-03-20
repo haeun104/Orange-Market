@@ -139,7 +139,7 @@ const MyMarket = () => {
             <h3 className="uppercase font-bold border-black border-solid border-b-[2px]">
               My products for sale
             </h3>
-            <Link to={`/products/seller/${currentUser.id}`}>
+            <Link to="/my-products">
               <span className="absolute top-0 right-0 cursor-pointer hover:text-gray-500">
                 Go to details
               </span>

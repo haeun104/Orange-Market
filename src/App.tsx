@@ -12,11 +12,12 @@ import MyMarket from "./pages/MyMarket";
 import Products from "./pages/Products";
 import AddProduct from "./pages/AddProduct";
 import ProductDetail from "./components/Products/ProductDetail";
-import ProductsBySeller from "./components/Products/ProductsBySeller";
+import ProductsBySeller from "./pages/ProductsBySeller";
 import MyFavorite from "./pages/MyFavorite";
 import PurchaseHistory from "./pages/PurchaseHistory";
 import SalesHistory from "./pages/SalesHistory";
 import PurchaseRequest from "./pages/PurchaseRequest";
+import MyProducts from "./pages/MyProducts";
 
 export const DataContext = React.createContext();
 
@@ -102,6 +103,7 @@ function App() {
             <Route path="/my-profile" element={<MyProfile />} />
             <Route path="/my-market" element={<MyMarket />} />
             <Route path="/my-favorite" element={<MyFavorite />} />
+            <Route path="/my-products" element={<MyProducts />} />
             <Route path="/purchase-history" element={<PurchaseHistory />} />
             <Route path="/purchase-request" element={<PurchaseRequest />} />
             <Route path="/sales-history" element={<SalesHistory />} />
