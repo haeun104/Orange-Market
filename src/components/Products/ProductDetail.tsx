@@ -10,6 +10,7 @@ import {
   getDocs,
   query,
   where,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../../firebase-config";
 import Modal from "../Modal";
@@ -27,7 +28,7 @@ const ProductDetail = () => {
   const [modalMsg, setModalMsg] = useState("");
   const [requestBtn, setRequestBtn] = useState("");
 
-  const productId = useParams();
+  const { productId } = useParams();
   const favorite = useSelector((state) => state.favorite.favoriteItem);
   const dispatch = useDispatch();
   const { currentUser } = useContext(DataContext);
@@ -35,8 +36,8 @@ const ProductDetail = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchProductData(productId.id);
-  }, [productId]);
+    fetchProductData(productId);
+  }, [productId, existingFavorite]);
 
   useEffect(() => {
     if (currentUser) {
@@ -84,8 +85,8 @@ const ProductDetail = () => {
       }
     };
     if (currentUser && productId) {
-      checkUserFavorite(productId.id);
-      checkUserRequest(productId.id);
+      checkUserFavorite(productId);
+      checkUserRequest(productId);
     } else {
       setExistingFavorite(false);
       setExistingRequest(false);
@@ -126,6 +127,14 @@ const ProductDetail = () => {
   async function addFavoriteInDb(favorite) {
     try {
       await addDoc(collection(db, "favorite"), favorite);
+
+      const productRef = doc(collection(db, "product"), productId);
+      const docSnap = await getDoc(productRef);
+      const product = docSnap.data();
+      const currentLike = parseInt(product.likeCount);
+
+      await updateDoc(productRef, { likeCount: currentLike + 1 });
+
       setModalMsg("successfully added favorite!");
       setOpenModal(true);
       setExistingFavorite(true);
@@ -140,6 +149,14 @@ const ProductDetail = () => {
     try {
       const docRef = doc(db, "favorite", id);
       await deleteDoc(docRef);
+
+      const productRef = doc(collection(db, "product"), productId);
+      const docSnap = await getDoc(productRef);
+      const product = docSnap.data();
+      const currentLike = parseInt(product.likeCount);
+
+      await updateDoc(productRef, { likeCount: currentLike - 1 });
+
       setExistingFavorite(false);
       setModalMsg("successfully deleted favorite!");
       setOpenModal(true);
@@ -163,7 +180,7 @@ const ProductDetail = () => {
       price: product.price,
       title: product.title,
       userId: currentUser.id,
-      productId: productId.id,
+      productId: productId,
     };
     if (existingFavorite) {
       deleteFavoriteInDb(existingFavoriteId);
@@ -195,7 +212,7 @@ const ProductDetail = () => {
       imgURL: product.imgURL,
       price: product.price,
       title: product.title,
-      product: productId.id,
+      product: productId,
       requestor: currentUser.id,
       requestorName: currentUser.nickname,
       seller: product.seller,

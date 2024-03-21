@@ -94,12 +94,12 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
             <Route path="/products/new" element={<AddProduct />} />
-            <Route path="/products/:id" element={<ProductDetail />} />
+            <Route path="/products/:productId" element={<ProductDetail />} />
             <Route
               path="/products/seller/:seller"
               element={<ProductsBySeller />}
             />
-            <Route path="/products/edit/:product" element={<EditProduct />} />
+            <Route path="/products/edit/:productId" element={<EditProduct />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/my-profile" element={<MyProfile />} />
