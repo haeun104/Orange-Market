@@ -39,6 +39,23 @@ const ProductDetail = () => {
     fetchProductData(productId);
   }, [productId, existingFavorite]);
 
+  // Add click count in DB when user open product details
+  useEffect(() => {
+    const increaseClickCount = async () => {
+      const productRef = doc(db, "product", productId);
+      const productSnap = await getDoc(productRef);
+      const product = productSnap.data();
+      const currentClick = parseInt(product.clickCount);
+      try {
+        await updateDoc(productRef, { clickCount: currentClick + 1 });
+        console.log("Click count added");
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    increaseClickCount();
+  }, [productId]);
+
   useEffect(() => {
     if (currentUser) {
       dispatch(fetchFavoriteData(currentUser.id));
