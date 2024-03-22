@@ -77,7 +77,7 @@ const SignUp = () => {
   return (
     <>
       <section className="bg-[#EEEEEE] h-calc-vh-minus-64 flex justify-center py-[20px]">
-        <div className="input-section w-[350px] h-[400px] my-auto flex flex-col justify-center space-y-4 bg-white px-[20px] rounded-[15px]">
+        <div className="w-[350px] my-auto flex flex-col justify-center space-y-4 bg-white px-[20px] rounded-[15px]">
           <h2 className="title mt-[15px]">Sign Up</h2>
           <form
             action="/"

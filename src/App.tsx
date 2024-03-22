@@ -43,13 +43,13 @@ export interface ProductType {
 }
 
 function App() {
-  const [loggedInUser, setLoggedInUser] = useState({});
+  const [loggedInUser, setLoggedInUser] = useState<string | null>();
   const [currentUser, setCurrentUser] = useState();
 
   // Update user data whenever login status is changed
   onAuthStateChanged(auth, (currentUser) => {
     if (currentUser) {
-      setLoggedInUser(currentUser.email);
+        setLoggedInUser(currentUser.email);
     } else {
       setLoggedInUser(null);
     }

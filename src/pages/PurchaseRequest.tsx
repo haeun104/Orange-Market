@@ -1,7 +1,15 @@
 import { useDispatch, useSelector } from "react-redux";
 import MyMarketList from "../components/MyMarket/MyMarketList";
 import { Link } from "react-router-dom";
-import { collection, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { db } from "../firebase-config";
 import Modal from "../components/Modal";
 import { useContext, useState, useEffect } from "react";
@@ -33,6 +41,15 @@ const PurchaseRequest = () => {
     try {
       const requestRef = doc(collection(db, "purchase request"), id);
       const productRef = doc(collection(db, "product"), product);
+      const favoriteQuery = query(
+        collection(db, "favorite"),
+        where("productId", "==", product)
+      );
+      const favoriteSnapshot = await getDocs(favoriteQuery);
+      const favorites = favoriteSnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
       if (type === "accept") {
         await updateDoc(requestRef, {
           isClosed: true,
@@ -42,6 +59,12 @@ const PurchaseRequest = () => {
         await updateDoc(productRef, {
           isSold: true,
         });
+        await Promise.all(
+          favorites.map(async (favorite) => {
+            const favoriteDocRef = doc(db, "favorite", favorite.id);
+            await updateDoc(favoriteDocRef, { isSold: true });
+          })
+        );
       } else {
         await updateDoc(requestRef, {
           isClosed: true,

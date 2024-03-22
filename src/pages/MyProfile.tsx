@@ -68,9 +68,12 @@ const MyProfile = () => {
   } else {
     return (
       <>
-        <div className="input-section max-w-[300px] h-screen mx-auto flex flex-col align-middle space-y-4">
+        <div className="max-w-[300px] h-calc-vh-minus-64 mx-auto flex flex-col align-middle">
+          <h2 className="uppercase text-lg font-bold text-center text-main-orange">
+            my profile
+          </h2>
           <form
-            className="flex flex-col space-y-2 pb-5"
+            className="flex flex-col space-y-2"
             onSubmit={handleSubmitUserData}
           >
             <label htmlFor="first-name">Email</label>

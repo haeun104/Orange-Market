@@ -125,7 +125,7 @@ const MyMarket = () => {
                   </li>
                   <li className="flex-1 text-center">{item.title}</li>
                   <li>{item.price}PLN</li>
-                  <li>{item.isSold ? "sold" : "onSale"}</li>
+                  <li>{item.isSold ? "Sold" : "On Sale"}</li>
                 </ul>
               ))}
               {favoriteList.length === 0 && (

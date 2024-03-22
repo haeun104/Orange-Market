@@ -107,7 +107,9 @@ const Nav = () => {
                     <Menu as="div" className="relative ml-3">
                       <div>
                         <Menu.Button className="relative flex">
-                          <span>{currentUser && currentUser.nickname}</span>
+                          <span className="text-[12px] text-wrap w-[50px] sm:text-[16px] sm:w-[100%]">
+                            {currentUser && currentUser.nickname}
+                          </span>
                         </Menu.Button>
                       </div>
                       <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">

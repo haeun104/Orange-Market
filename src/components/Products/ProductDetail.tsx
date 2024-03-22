@@ -48,7 +48,6 @@ const ProductDetail = () => {
       const currentClick = parseInt(product.clickCount);
       try {
         await updateDoc(productRef, { clickCount: currentClick + 1 });
-        console.log("Click count added");
       } catch (error) {
         console.log(error);
       }
@@ -121,13 +120,20 @@ const ProductDetail = () => {
       if (!requestSnapshot.empty) {
         const requests = [];
         requestSnapshot.forEach((doc) => requests.push(doc.data()));
-        const closedRequest = requests.find((item) => item.isClosed);
+        const closedRequest = requests.find(
+          (item) => item.isClosed && item.isChosenBySeller
+        );
+        const pendingRequest = requests.find(
+          (item) => !item.isClosed && !item.isChosenBySeller
+        );
         if (closedRequest) {
           setRequestBtn("Request is unavailable");
           setExistingRequest(true);
-        } else {
+        } else if (pendingRequest) {
           setRequestBtn("Waiting for response on purchase request");
           setExistingRequest(true);
+        } else {
+          setExistingRequest(false);
         }
       }
     } catch (error) {
@@ -213,6 +219,7 @@ const ProductDetail = () => {
       setModalMsg("successfully send a purchase request!");
       setOpenModal(true);
       setExistingRequest(true);
+      setRequestBtn("Waiting for response on request");
       console.log("successfully created a purchase request.");
     } catch (error) {
       console.error(error);
