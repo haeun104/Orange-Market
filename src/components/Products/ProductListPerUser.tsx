@@ -17,6 +17,10 @@ const ProductListPerUser = ({ id, type }) => {
     }
   }, [id]);
 
+  const updateProductList = () => {
+    fetchProductData(id);
+  }
+
   // Fetch product and seller data from DB
   async function fetchProductData(sellerId: string) {
     try {
@@ -121,6 +125,7 @@ const ProductListPerUser = ({ id, type }) => {
           message="Are you sure to delete?"
           type="delete"
           id={productToDelete}
+          updateProductList={updateProductList}
         />
       </>
     );

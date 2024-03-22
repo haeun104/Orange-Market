@@ -10,10 +10,19 @@ type ModalProps = {
   message: string;
   type: string;
   id?: string;
+  updateProductList?: () => void;
 };
 
 const Modal = (props: ModalProps) => {
-  const { openModal, setOpenModal, setCategory, message, type, id } = props;
+  const {
+    openModal,
+    setOpenModal,
+    setCategory,
+    message,
+    type,
+    id,
+    updateProductList,
+  } = props;
   const navigate = useNavigate();
   const [docDeleted, setDocDeleted] = useState(false);
 
@@ -25,6 +34,7 @@ const Modal = (props: ModalProps) => {
       navigate("/", { replace: true });
     } else if (type === "delete") {
       navigate("/my-products", { replace: true });
+      updateProductList();
     }
   };
 
