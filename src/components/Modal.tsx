@@ -13,16 +13,15 @@ type ModalProps = {
   updateProductList?: () => void;
 };
 
-const Modal = (props: ModalProps) => {
-  const {
-    openModal,
-    setOpenModal,
-    setCategory,
-    message,
-    type,
-    id,
-    updateProductList,
-  } = props;
+const Modal: React.FC<ModalProps> = ({
+  openModal,
+  setOpenModal,
+  setCategory,
+  message,
+  type,
+  id,
+  updateProductList,
+}) => {
   const navigate = useNavigate();
   const [docDeleted, setDocDeleted] = useState(false);
 
@@ -34,7 +33,9 @@ const Modal = (props: ModalProps) => {
       navigate("/", { replace: true });
     } else if (type === "delete") {
       navigate("/my-products", { replace: true });
-      updateProductList();
+      if (updateProductList !== undefined) {
+        updateProductList();
+      }
     }
   };
 

@@ -22,10 +22,6 @@ import EditProduct from "./pages/EditProduct";
 
 export const DataContext = React.createContext();
 
-type UserType = {
-  [key: string]: string;
-};
-
 export interface ProductType {
   title: string;
   description: string;
@@ -42,14 +38,18 @@ export interface ProductType {
   district: string;
 }
 
+interface UserType {
+  [key: string]: string;
+}
+
 function App() {
   const [loggedInUser, setLoggedInUser] = useState<string | null>();
-  const [currentUser, setCurrentUser] = useState();
+  const [currentUser, setCurrentUser] = useState<UserType | undefined>();
 
   // Update user data whenever login status is changed
   onAuthStateChanged(auth, (currentUser) => {
     if (currentUser) {
-        setLoggedInUser(currentUser.email);
+      setLoggedInUser(currentUser.email);
     } else {
       setLoggedInUser(null);
     }
@@ -57,7 +57,7 @@ function App() {
 
   // Fetch user data from DB
   useEffect(() => {
-    const fetchUserDataFromDB = async (email) => {
+    const fetchUserDataFromDB = async (email: string) => {
       try {
         const userQuery = query(
           collection(db, "user"),
@@ -68,14 +68,16 @@ function App() {
           ...doc.data(),
           id: doc.id,
         }));
-        const user = userList[0];
+        const user: UserType = userList[0];
         setCurrentUser(user);
       } catch (error) {
         console.log(error);
       }
     };
     if (loggedInUser !== undefined) {
-      fetchUserDataFromDB(loggedInUser);
+      if (typeof loggedInUser === "string") {
+        fetchUserDataFromDB(loggedInUser);
+      }
     }
   }, [loggedInUser]);
 
