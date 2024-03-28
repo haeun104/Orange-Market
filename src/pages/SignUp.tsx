@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, createUserInDb, db } from "../../src/firebase-config";
 import { useNavigate } from "react-router-dom";
@@ -39,7 +39,7 @@ const SignUp = () => {
     }
   };
 
-  const checkExistingNickname = async (nickname) => {
+  const checkExistingNickname = async (nickname: string) => {
     try {
       const nicknameQuery = query(
         collection(db, "user"),
@@ -59,7 +59,7 @@ const SignUp = () => {
   };
 
   // Check validation of passwords and nickname and execute user creation in DB
-  const handleSignUp = (e) => {
+  const handleSignUp = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMsg("");
     if (password !== passwordConfirm) {
