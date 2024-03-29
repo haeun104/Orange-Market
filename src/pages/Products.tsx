@@ -6,15 +6,16 @@ import { ProductType } from "../App";
 import Modal from "../components/Modal";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase-config";
+import { IoMdAddCircle } from "react-icons/io";
 
-interface ProductList {
-  [key: string]: string | number | boolean;
+interface ProductsFromDB extends ProductType {
+  id: string;
 }
 
 const Products = () => {
   const [category, setCategory] = useState("All");
-  const [filteredProducts, setFilteredProducts] = useState();
-  const [products, setProducts] = useState();
+  const [filteredProducts, setFilteredProducts] = useState<ProductsFromDB[]>();
+  const [products, setProducts] = useState<ProductsFromDB[]>();
   const [message, setMessage] = useState("");
   const [openModal, setOpenModal] = useState(false);
 
@@ -24,10 +25,11 @@ const Products = () => {
   //Fetch product data from DB
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "product"), (snapshot) => {
-      const productList: ProductType[] = [];
+      const productList: ProductsFromDB[] = [];
       snapshot.docs.forEach((doc) => {
+        const data = doc.data() as ProductsFromDB;
         productList.push({
-          ...doc.data(),
+          ...data,
           id: doc.id,
         });
       });
@@ -47,20 +49,24 @@ const Products = () => {
         setOpenModal(true);
       } else {
         const isExistingAddress = currentUser.city;
-        const userLocationProduct = products.filter(
-          (item: ProductList) =>
-            item.city.toLowerCase() === currentUser.city.toLowerCase()
-        );
-        if (!isExistingAddress) {
-          setMessage("Update your address in My Profile first");
+        if (products !== undefined) {
+          const userLocationProduct = products.filter(
+            (item: ProductType) =>
+              item.city.toLowerCase() === currentUser.city.toLowerCase()
+          );
+          if (!isExistingAddress) {
+            setMessage("Update your address in My Profile first");
+          }
+          setFilteredProducts(userLocationProduct);
         }
-        setFilteredProducts(userLocationProduct);
       }
     } else {
-      const filteredProducts = products.filter(
-        (item: ProductType) => item.category === category
-      );
-      setFilteredProducts(filteredProducts);
+      if (products !== undefined) {
+        const filteredProducts = products.filter(
+          (item: ProductType) => item.category === category
+        );
+        setFilteredProducts(filteredProducts);
+      }
     }
   }, [category, products, currentUser]);
 
@@ -130,7 +136,7 @@ const Products = () => {
             </div>
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8 lg:px-[150px]">
-            {filteredProducts.map((item: ProductType) => (
+            {filteredProducts.map((item: ProductsFromDB) => (
               <div
                 key={item.id}
                 className="flex flex-col justify-center mx-auto w-[250px] cursor-pointer"
@@ -140,7 +146,7 @@ const Products = () => {
                   <img
                     src={item.imgURL}
                     alt={item.title}
-                    className="h-[100%]"
+                    className="h-full w-full rounded-lg"
                   />
                 </div>
                 <div className="flex flex-col text-gray-400">
@@ -155,14 +161,15 @@ const Products = () => {
               </div>
             ))}
           </div>
-          <div className="absolute top-0 right-[5px] md:top-0 md:right-[40px] text-center">
-            <button
-              className="bg-main-orange hover:opacity-80 text-white font-bold rounded-[50%] w-[30px] h-[30px] text-[16px] md:w-[40px] md:h-[40px] md:text-[24px]"
-              onClick={goToNewProductPage}
-            >
-              +
-            </button>
-            <div className="text-main-orange font-bold text-sm text-center">
+          <div
+            className="absolute top-[10px] right-[5px] md:top-0 md:right-[40px] text-center cursor-pointer"
+            onClick={goToNewProductPage}
+          >
+            <IoMdAddCircle
+              size={32}
+              className="text-main-orange hover:opacity-80 mx-auto"
+            />
+            <div className="text-main-orange font-bold text-[12px] sm:text-[16px] text-center">
               Register <br />
               your product!
             </div>

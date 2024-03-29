@@ -6,6 +6,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../../../src/firebase-config";
 import Modal from "../Modal";
 import { DataContext } from "../../App";
+import Avatar from "../Avatar";
 
 const Nav = () => {
   // const [userData, setUserData] = useState();
@@ -106,8 +107,11 @@ const Nav = () => {
 
                     <Menu as="div" className="relative ml-3">
                       <div>
-                        <Menu.Button className="relative flex">
-                          <span className="text-[12px] text-wrap w-[50px] sm:text-[16px] sm:w-[100%]">
+                        <Menu.Button className="relative flex flex-col sm:flex-row-reverse sm:gap-2">
+                          <div className="h-[30px] w-[30px] rounded-full overflow-hidden shrink-0 mx-auto">
+                            <Avatar />
+                          </div>
+                          <span className="text-[9px] text-wrap sm:text-[14px] sm:w-[100%]">
                             {currentUser && currentUser.nickname}
                           </span>
                         </Menu.Button>
