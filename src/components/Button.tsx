@@ -1,10 +1,15 @@
 interface ButtonProps {
   title: string;
-  onClick: () => void;
+  onClick?: () => void;
+  btnColor: string;
 }
 
-const Button: React.FC<ButtonProps> = ({ title, onClick }) => {
-  return <button onClick={onClick}>{title}</button>;
+const Button: React.FC<ButtonProps> = ({ title, onClick, btnColor }) => {
+  return (
+    <button onClick={onClick} className={`btn-${btnColor}`}>
+      {title}
+    </button>
+  );
 };
 
 export default Button;

@@ -1,19 +1,22 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { FormEvent, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../../src/firebase-config";
 import Modal from "../components/Modal";
+import {} from "firebase/app";
+import Button from "../components/Button";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [openModal, setOpenModal] = useState(false);
 
+  const navigate = useNavigate();
+
   //Login
   const login = async () => {
     try {
-      const user = await signInWithEmailAndPassword(auth, email, password);
-      // console.log(user);
+      await signInWithEmailAndPassword(auth, email, password);
       console.log("successfully logged in");
       setOpenModal(true);
     } catch (error) {
@@ -22,9 +25,14 @@ const Login = () => {
   };
 
   // Execute login
-  const handleLogin = (e) => {
+  const handleLogin = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     login();
+  };
+
+  // Go back to main page
+  const handleCancelClick = () => {
+    navigate("/");
   };
 
   return (
@@ -64,7 +72,12 @@ const Login = () => {
                 </span>
               </div>
             </div>
-            <button className="btn-orange">Login</button>
+            <Button title="Login" btnColor="orange" />
+            <Button
+              title="Cancel"
+              btnColor="grey"
+              onClick={handleCancelClick}
+            />
           </form>
         </div>
       </section>

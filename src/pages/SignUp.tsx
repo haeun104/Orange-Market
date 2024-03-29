@@ -4,6 +4,7 @@ import { auth, createUserInDb, db } from "../../src/firebase-config";
 import { useNavigate } from "react-router-dom";
 import Modal from "../components/Modal";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import Button from "../components/Button";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -126,14 +127,12 @@ const SignUp = () => {
               </div>
             )}
             <div className="flex pt-3 justify-between space-x-4">
-              <button className="btn-purple flex-1">Sign Up</button>
-              <button
-                type="button"
-                className="btn-orange flex-1"
+              <Button title="Sign Up" btnColor="purple" />
+              <Button
+                title="Cancel"
+                btnColor="grey"
                 onClick={handleCancelClick}
-              >
-                Cancel
-              </button>
+              />
             </div>
           </form>
         </div>

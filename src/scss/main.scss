@@ -20,15 +20,15 @@
     @apply text-center text-xl;
   }
   .btn-orange {
-    @apply bg-main-orange text-white py-2 px-7 rounded-xl hover:opacity-80;
+    @apply bg-main-orange text-white py-2 px-7 rounded-xl hover:opacity-80 flex-1;
   }
   .btn-purple {
-    @apply bg-accent-purple text-white py-2 px-7 rounded-xl hover:opacity-80;
+    @apply bg-accent-purple text-white py-2 px-7 rounded-xl hover:opacity-80 flex-1;
   }
   .btn-grey {
-    @apply bg-accent-grey text-white py-2 px-7 rounded-xl hover:opacity-80;
+    @apply bg-accent-grey text-white py-2 px-7 rounded-xl hover:opacity-80 flex-1;
   }
   .btn-basic {
-    @apply bg-white text-gray-500 py-1 px-5 rounded-[20px] hover:bg-gray-400 hover:text-white hover:border-gray-400 border-solid border-[1.5px] border-gray-500;
+    @apply bg-white text-gray-500 py-1 px-5 rounded-[20px] hover:bg-gray-400 hover:text-white hover:border-gray-400 border-solid border-[1.5px] border-gray-500 flex-1;
   }
 }
