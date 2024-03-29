@@ -108,10 +108,10 @@ const Nav = () => {
                     <Menu as="div" className="relative ml-3">
                       <div>
                         <Menu.Button className="relative flex flex-col sm:flex-row-reverse sm:gap-2">
-                          <div className="h-[30px] w-[30px] rounded-full overflow-hidden shrink-0 mx-auto">
+                          <div className="h-[30px] w-[30px] md:h-[40px] md:w-[40px] rounded-full overflow-hidden shrink-0 mx-auto">
                             <Avatar />
                           </div>
-                          <span className="text-[9px] text-wrap sm:text-[14px] sm:w-[100%]">
+                          <span className="text-[9px] text-wrap sm:text-[14px] sm:w-[100%] sm:my-auto">
                             {currentUser && currentUser.nickname}
                           </span>
                         </Menu.Button>
