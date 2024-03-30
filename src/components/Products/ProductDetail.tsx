@@ -11,15 +11,61 @@ import {
   query,
   where,
   updateDoc,
+  Firestore,
 } from "firebase/firestore";
 import { db } from "../../firebase-config";
 import Modal from "../Modal";
 import { getFormattedDate } from "../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchFavoriteData } from "../../store/favorite-slice";
+import Button from "../Button";
+
+interface FavoriteType {
+  city: string;
+  district: string;
+  imgURL: string;
+  isSold: boolean;
+  price: string;
+  productId: string | undefined;
+  title: string;
+  userId: string;
+  id?: string;
+}
+
+interface ProductType {
+  title: string;
+  description: string;
+  price: string;
+  category: string;
+  date: string;
+  clickCount: number;
+  likeCount: number;
+  seller: string;
+  buyer: string;
+  isSold: boolean;
+  imgURL: string;
+  city: string;
+  district: string;
+  sellerName?: string;
+}
+
+interface RequestType {
+  closeDate: string;
+  date: string;
+  imgURL: string;
+  isChosenBySeller: boolean;
+  isClosed: boolean;
+  price: string;
+  product: string | undefined;
+  requestor: string;
+  requestorName: string;
+  seller: string;
+  sellerName: string | undefined;
+  title: string;
+}
 
 const ProductDetail = () => {
-  const [product, setProduct] = useState();
+  const [product, setProduct] = useState<ProductType>();
   const [sellerName, setSellerName] = useState("");
   const [existingFavorite, setExistingFavorite] = useState(false);
   const [existingFavoriteId, setExistingFavoriteId] = useState("");
@@ -36,23 +82,32 @@ const ProductDetail = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchProductData(productId);
+    if (productId) {
+      fetchProductData(productId);
+    }
   }, [productId, existingFavorite]);
 
   // Add click count in DB when user open product details
   useEffect(() => {
-    const increaseClickCount = async () => {
-      const productRef = doc(db, "product", productId);
-      const productSnap = await getDoc(productRef);
-      const product = productSnap.data();
-      const currentClick = parseInt(product.clickCount);
-      try {
-        await updateDoc(productRef, { clickCount: currentClick + 1 });
-      } catch (error) {
-        console.log(error);
+    const increaseClickCount = async (
+      db: Firestore,
+      productId: string | undefined
+    ) => {
+      if (productId !== undefined) {
+        try {
+          const productRef = doc(db, "product", productId);
+          const productSnap = await getDoc(productRef);
+          const product = productSnap.data();
+          if (product !== undefined) {
+            const currentClick = parseInt(product.clickCount);
+            await updateDoc(productRef, { clickCount: currentClick + 1 });
+          }
+        } catch (error) {
+          console.log(error);
+        }
       }
     };
-    increaseClickCount();
+    increaseClickCount(db, productId);
   }, [productId]);
 
   useEffect(() => {
@@ -62,13 +117,13 @@ const ProductDetail = () => {
   }, [existingFavorite, currentUser, dispatch]);
 
   // Fetch product and seller data from DB
-  async function fetchProductData(id) {
+  async function fetchProductData(id: string) {
     try {
       const productRef = doc(db, "product", id);
       const productSnapshot = await getDoc(productRef);
 
       if (productSnapshot.exists()) {
-        const productData = productSnapshot.data();
+        const productData = productSnapshot.data() as ProductType;
         setProduct(productData);
 
         const sellerId = productData.seller;
@@ -91,9 +146,9 @@ const ProductDetail = () => {
 
   // Check if favorite exists in DB
   useEffect(() => {
-    const checkUserFavorite = (productId) => {
+    const checkUserFavorite = (productId: string) => {
       const existingFavorite = favorite.find(
-        (item) => item.productId === productId
+        (item: FavoriteType) => item.productId === productId
       );
       if (existingFavorite) {
         setExistingFavorite(true);
@@ -118,8 +173,10 @@ const ProductDetail = () => {
       );
       const requestSnapshot = await getDocs(requestQuery);
       if (!requestSnapshot.empty) {
-        const requests = [];
-        requestSnapshot.forEach((doc) => requests.push(doc.data()));
+        const requests: RequestType[] = [];
+        requestSnapshot.forEach((doc) =>
+          requests.push(doc.data() as RequestType)
+        );
         const closedRequest = requests.find(
           (item) => item.isClosed && item.isChosenBySeller
         );
@@ -142,33 +199,35 @@ const ProductDetail = () => {
   }
 
   // Go to seller's product list
-  const goToSellerProductList = (sellerId) => {
+  const goToSellerProductList = (sellerId: string) => {
     navigate(`/products/seller/${sellerId}`);
   };
 
   // Add a product to favorites in DB
-  async function addFavoriteInDb(favorite) {
+  async function addFavoriteInDb(favorite: FavoriteType) {
     try {
       await addDoc(collection(db, "favorite"), favorite);
 
       const productRef = doc(collection(db, "product"), productId);
       const docSnap = await getDoc(productRef);
       const product = docSnap.data();
-      const currentLike = parseInt(product.likeCount);
+      if (product) {
+        const currentLike = parseInt(product.likeCount);
 
-      await updateDoc(productRef, { likeCount: currentLike + 1 });
+        await updateDoc(productRef, { likeCount: currentLike + 1 });
 
-      setModalMsg("successfully added favorite!");
-      setOpenModal(true);
-      setExistingFavorite(true);
-      console.log("successfully added favorite.");
+        setModalMsg("successfully added favorite!");
+        setOpenModal(true);
+        setExistingFavorite(true);
+        console.log("successfully added favorite.");
+      }
     } catch (error) {
       console.error(error);
     }
   }
 
   // Remove a product from favorites in DB
-  async function deleteFavoriteInDb(id) {
+  async function deleteFavoriteInDb(id: string) {
     try {
       const docRef = doc(db, "favorite", id);
       await deleteDoc(docRef);
@@ -176,18 +235,21 @@ const ProductDetail = () => {
       const productRef = doc(collection(db, "product"), productId);
       const docSnap = await getDoc(productRef);
       const product = docSnap.data();
-      const currentLike = parseInt(product.likeCount);
+      if (product) {
+        const currentLike = parseInt(product.likeCount);
 
-      await updateDoc(productRef, { likeCount: currentLike - 1 });
+        await updateDoc(productRef, { likeCount: currentLike - 1 });
 
-      setExistingFavorite(false);
-      setModalMsg("successfully deleted favorite!");
-      setOpenModal(true);
-      console.log("successfully deleted favorite.");
+        setExistingFavorite(false);
+        setModalMsg("successfully deleted favorite!");
+        setOpenModal(true);
+        console.log("successfully deleted favorite.");
+      }
     } catch (error) {
       console.error(error);
     }
   }
+
   // Send favorite to DB
   const addToFavorites = () => {
     if (!currentUser) {
@@ -195,25 +257,27 @@ const ProductDetail = () => {
       setOpenModal(true);
       return;
     }
-    const favorite = {
-      city: product.city,
-      district: product.district,
-      imgURL: product.imgURL,
-      isSold: product.isSold,
-      price: product.price,
-      title: product.title,
-      userId: currentUser.id,
-      productId: productId,
-    };
-    if (existingFavorite) {
-      deleteFavoriteInDb(existingFavoriteId);
-    } else {
-      addFavoriteInDb(favorite);
+    if (product) {
+      const favorite: FavoriteType = {
+        city: product.city,
+        district: product.district,
+        imgURL: product.imgURL,
+        isSold: product.isSold,
+        price: product.price,
+        title: product.title,
+        userId: currentUser.id,
+        productId: productId,
+      };
+      if (existingFavorite) {
+        deleteFavoriteInDb(existingFavoriteId);
+      } else {
+        addFavoriteInDb(favorite);
+      }
     }
   };
 
   // Create a purchase request in DB
-  async function createPurchaseRequestInDb(request) {
+  async function createPurchaseRequestInDb(request: RequestType) {
     try {
       await addDoc(collection(db, "purchase request"), request);
       setModalMsg("successfully send a purchase request!");
@@ -232,20 +296,23 @@ const ProductDetail = () => {
       setOpenModal(true);
       return;
     }
-    const request = {
-      imgURL: product.imgURL,
-      price: product.price,
-      title: product.title,
-      product: productId,
-      requestor: currentUser.id,
-      requestorName: currentUser.nickname,
-      seller: product.seller,
-      sellerName: product.sellerName,
-      isClosed: false,
-      isChosenBySeller: false,
-      date: getFormattedDate(new Date()),
-    };
-    createPurchaseRequestInDb(request);
+    if (product) {
+      const request: RequestType = {
+        imgURL: product.imgURL,
+        price: product.price,
+        title: product.title,
+        product: productId,
+        requestor: currentUser.id,
+        requestorName: currentUser.nickname,
+        seller: product.seller,
+        sellerName: product.sellerName,
+        isClosed: false,
+        isChosenBySeller: false,
+        closeDate: "",
+        date: getFormattedDate(new Date()),
+      };
+      createPurchaseRequestInDb(request);
+    }
   };
 
   if (!product) {
@@ -267,18 +334,24 @@ const ProductDetail = () => {
             PRODUCT DETAILS
           </h2>
           <div className="flex flex-col justify-center mx-auto w-[250px] md:w-[400px] lg:w-[600px]">
-            <div className="">
-              <img src={product.imgURL} alt={product.title} className="" />
+            <div className="w-full">
+              <img
+                src={product.imgURL}
+                alt={product.title}
+                className="rounded-lg object-cover"
+              />
             </div>
             <div className="flex flex-col text-gray-400">
               <h4 className="text-black font-bold">{product.title}</h4>
               <span className="text-black font-bold">{product.price} PLN</span>
-              <span
-                className="cursor-pointer underline"
-                onClick={() => goToSellerProductList(product.seller)}
-              >
-                {sellerName}
-              </span>
+              <div>
+                <span
+                  className="cursor-pointer underline"
+                  onClick={() => goToSellerProductList(product.seller)}
+                >
+                  {sellerName}
+                </span>
+              </div>
               <span>{`${product.city}, ${product.district}`}</span>
               <span>registered on {product.date}</span>
               <div className="flex space-x-2 text-sm">
@@ -292,29 +365,28 @@ const ProductDetail = () => {
                 This product has already been sold
               </div>
             ) : null}
-            <div className="flex flex-col space-y-2 mt-4 mb-4">
-              <button
-                className="btn-orange disabled:bg-gray-300 disabled:cursor-not-allowed disabled:hover:opacity-100"
-                disabled={product.isSold ? true : false}
+            <div className="flex flex-col gap-2 mt-4">
+              <Button
+                title={
+                  existingFavorite
+                    ? "Remove from my favorite list"
+                    : "Add to your favorite list"
+                }
                 onClick={addToFavorites}
-              >
-                {existingFavorite
-                  ? "Remove from my favorite list"
-                  : "Add to your favorite list"}
-              </button>
-              <button
-                className="btn-orange disabled:bg-gray-300 disabled:cursor-not-allowed disabled:hover:opacity-100"
+                btnColor="orange"
                 disabled={product.isSold ? true : false}
-              >
-                Chat with a seller
-              </button>
-              <button
-                className="btn-purple disabled:bg-gray-300 disabled:cursor-not-allowed disabled:hover:opacity-100"
-                disabled={product.isSold || existingRequest ? true : false}
+              />
+              <Button
+                title="Chat with a seller"
+                btnColor="orange"
+                disabled={product.isSold ? true : false}
+              />
+              <Button
+                title={existingRequest ? requestBtn : "Make a purchase request"}
                 onClick={sendPurchaseRequest}
-              >
-                {existingRequest ? requestBtn : "Make a purchase request"}
-              </button>
+                btnColor="purple"
+                disabled={product.isSold || existingRequest ? true : false}
+              />
             </div>
           </div>
         </div>
