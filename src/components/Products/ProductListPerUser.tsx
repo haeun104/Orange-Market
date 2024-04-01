@@ -4,8 +4,30 @@ import { useNavigate } from "react-router-dom";
 import { db } from "../../firebase-config";
 import Modal from "../Modal";
 
-const ProductListPerUser = ({ id, type }) => {
-  const [products, setProducts] = useState();
+interface ProductPerUser {
+  id: string | undefined;
+  type?: string;
+}
+
+interface ProductType {
+  title: string;
+  description: string;
+  price: number;
+  category: string;
+  date: string;
+  clickCount: number;
+  likeCount: number;
+  seller: string;
+  buyer: string;
+  isSold: boolean;
+  imgURL: string;
+  city: string;
+  district: string;
+  id: string;
+}
+
+const ProductListPerUser: React.FC<ProductPerUser> = ({ id, type }) => {
+  const [products, setProducts] = useState<ProductType[]>();
   const [openModal, setOpenModal] = useState(false);
   const [productToDelete, setProductToDelete] = useState("");
 
@@ -18,8 +40,10 @@ const ProductListPerUser = ({ id, type }) => {
   }, [id]);
 
   const updateProductList = () => {
-    fetchProductData(id);
-  }
+    if (id) {
+      fetchProductData(id);
+    }
+  };
 
   // Fetch product and seller data from DB
   async function fetchProductData(sellerId: string) {
@@ -33,7 +57,7 @@ const ProductListPerUser = ({ id, type }) => {
       const productList = productSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      }));
+      })) as ProductType[];
       setProducts(productList);
     } catch (error) {
       console.log(error);
@@ -51,7 +75,7 @@ const ProductListPerUser = ({ id, type }) => {
   };
 
   //
-  const handleDeleteClick = (id) => {
+  const handleDeleteClick = (id: string) => {
     setProductToDelete(id);
     setOpenModal(true);
   };
@@ -81,7 +105,7 @@ const ProductListPerUser = ({ id, type }) => {
                   <img
                     src={item.imgURL}
                     alt={item.title}
-                    className="max-h-[100%]"
+                    className="max-h-full w-full rounded-lg"
                   />
                 </div>
                 <div
