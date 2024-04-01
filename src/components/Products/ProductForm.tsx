@@ -7,10 +7,10 @@ import Modal from "../../components/Modal";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useNavigate, useParams } from "react-router-dom";
 
-const initialProduct = {
+const initialProduct: ProductType = {
   title: "",
   description: "",
-  price: 0,
+  price: "",
   category: "Electronics",
   date: getFormattedDate(new Date()),
   clickCount: 0,
@@ -23,8 +23,39 @@ const initialProduct = {
   district: "",
 };
 
-const ProductForm = ({ type }) => {
-  const [product, setProduct] = useState();
+interface ProductType {
+  title: string;
+  description: string;
+  price: string;
+  category: string;
+  date: string;
+  clickCount: number;
+  likeCount: number;
+  seller: string;
+  buyer: string;
+  isSold: boolean;
+  imgURL: string;
+  city: string;
+  district: string;
+  sellerName?: string;
+}
+
+interface UpdatedProduct {
+  title?: string;
+  description?: string;
+  price?: string;
+  category?: string;
+  imgURL?: string;
+  city?: string;
+  district?: string;
+}
+
+interface FormType {
+  type: string;
+}
+
+const ProductForm: React.FC<FormType> = ({ type }) => {
+  const [product, setProduct] = useState<ProductType>();
   const [openModal, setOpenModal] = useState(false);
   const [imageName, setImageName] = useState(null);
   const { productId } = useParams();
@@ -35,22 +66,25 @@ const ProductForm = ({ type }) => {
   // Update state whenever a current user is changed
   useEffect(() => {
     if (type === "new" && currentUser) {
-      setProduct((prev) => ({
-        ...prev,
-        seller: currentUser.id,
-        sellerName: currentUser.nickname,
-      }));
+      setProduct(
+        (prev) =>
+          ({
+            ...prev,
+            seller: currentUser.id,
+            sellerName: currentUser.nickname,
+          } as ProductType)
+      );
     }
   }, [currentUser, type]);
 
   // Fetch product data from DB
-  const fetchProductData = async (productId) => {
+  const fetchProductData = async (productId: string) => {
     try {
       const productRef = doc(db, "product", productId);
       const productSnapshot = await getDoc(productRef);
 
       if (productSnapshot.exists()) {
-        const productData = productSnapshot.data();
+        const productData = productSnapshot.data() as ProductType;
         setProduct(productData);
       }
     } catch (error) {
@@ -68,7 +102,7 @@ const ProductForm = ({ type }) => {
   }, [type, productId]);
 
   // Update product data changes in DB
-  async function updateProduct(newData, id) {
+  async function updateProduct(newData: UpdatedProduct, id: string) {
     try {
       const docRef = doc(collection(db, "product"), id);
 
