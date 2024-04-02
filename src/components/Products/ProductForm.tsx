@@ -1,4 +1,10 @@
-import { useContext, useEffect, useState } from "react";
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { DataContext } from "../../App";
 import { getFormattedDate, productRegisterCategories } from "../../utils";
 import { db, storage } from "../../firebase-config";
@@ -41,13 +47,13 @@ interface ProductType {
 }
 
 interface UpdatedProduct {
-  title?: string;
-  description?: string;
-  price?: string;
-  category?: string;
-  imgURL?: string;
-  city?: string;
-  district?: string;
+  title: string;
+  description: string;
+  price: string;
+  category: string;
+  imgURL: string;
+  city: string;
+  district: string;
 }
 
 interface FormType {
@@ -57,7 +63,7 @@ interface FormType {
 const ProductForm: React.FC<FormType> = ({ type }) => {
   const [product, setProduct] = useState<ProductType>();
   const [openModal, setOpenModal] = useState(false);
-  const [imageName, setImageName] = useState(null);
+  const [imageName, setImageName] = useState<File>();
   const { productId } = useParams();
 
   const navigate = useNavigate();
@@ -115,12 +121,16 @@ const ProductForm: React.FC<FormType> = ({ type }) => {
       const currentData = docSnap.data();
       const updatedData = { ...currentData, ...newData };
 
-      const diff = Object.keys(updatedData).reduce((result, key) => {
-        if (currentData[key] !== updatedData[key]) {
-          result[key] = updatedData[key];
-        }
-        return result;
-      }, {});
+      const diff = Object.keys(updatedData).reduce(
+        (result: Partial<UpdatedProduct>, key) => {
+          if (currentData[key] !== updatedData[key as keyof UpdatedProduct]) {
+            result[key as keyof UpdatedProduct] =
+              updatedData[key as keyof UpdatedProduct];
+          }
+          return result;
+        },
+        {}
+      );
       console.log(diff);
 
       await updateDoc(docRef, diff);
@@ -132,7 +142,7 @@ const ProductForm: React.FC<FormType> = ({ type }) => {
   }
 
   // Create a new product in DB
-  async function createProduct(product) {
+  async function createProduct(product: ProductType) {
     try {
       await addDoc(collection(db, "product"), product);
       console.log("successfully created a product.");
@@ -143,7 +153,7 @@ const ProductForm: React.FC<FormType> = ({ type }) => {
   }
 
   // Upload image into DB
-  const updateImageAndProduct = async (file, seller) => {
+  const updateImageAndProduct = async (file: File, seller: string) => {
     try {
       const uploadFile = await uploadBytes(
         ref(storage, `images/${seller}_${file.name}`),
@@ -151,33 +161,43 @@ const ProductForm: React.FC<FormType> = ({ type }) => {
       );
       const fileURL = await getDownloadURL(uploadFile.ref);
       console.log(fileURL);
-      if (type === "edit") {
-        updateProduct({ ...product, imgURL: fileURL }, productId);
-      } else {
-        createProduct({ ...product, imgURL: fileURL });
+      if (fileURL && product && productId) {
+        if (type === "edit") {
+          updateProduct({ ...product, imgURL: fileURL }, productId);
+        } else {
+          createProduct({ ...product, imgURL: fileURL });
+        }
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleOnSubmit = (e) => {
+  const handleOnSubmit = (e: FormEvent) => {
     e.preventDefault();
-    updateImageAndProduct(imageName, currentUser.id);
+    if (imageName) {
+      updateImageAndProduct(imageName, currentUser.id);
+    }
   };
 
   // Update image value
-  const handleOnChangeImage = (e) => {
-    const file = e.target.files[0];
-    setImageName(file);
+  const handleOnChangeImage = (e: ChangeEvent<HTMLInputElement>) => {
+    const fileList: FileList | null = e.target.files;
+    if (fileList && fileList.length > 0) {
+      const file: File | null = fileList[0];
+      setImageName(file);
+    }
   };
 
   // Update input value
-  const handleOnChangeProduct = (e) => {
-    setProduct((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+  const handleOnChangeProduct = (e: ChangeEvent<HTMLInputElement>) => {
+    setProduct(
+      (prev) =>
+        ({
+          ...prev,
+          [e.target.name]: e.target.value,
+        } as ProductType)
+    );
   };
 
   // Go back
