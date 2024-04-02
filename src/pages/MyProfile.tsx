@@ -1,48 +1,83 @@
-import { useContext, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  MouseEvent,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { DataContext } from "../App";
 import Modal from "../components/Modal";
 import { db } from "../firebase-config";
 import { useNavigate } from "react-router-dom";
 import { updateDoc, collection, doc } from "firebase/firestore";
 
+interface UpdatedUser {
+  id: string;
+  email: string;
+  nickname: string;
+  firstname: string;
+  city: string;
+  district: string;
+  phone: string;
+  postalCode: string;
+  street: string;
+  surname: string;
+}
+
 const MyProfile = () => {
   const [editClicked, setEditClicked] = useState(false);
   const { currentUser } = useContext(DataContext);
-  const [updatedUserData, setUpdatedUserData] = useState(currentUser);
+  const [updatedUserData, setUpdatedUserData] = useState<
+    UpdatedUser | undefined
+  >();
   const [openModal, setOpenModal] = useState(false);
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (currentUser) {
+      setUpdatedUserData(currentUser);
+    }
+  }, [currentUser]);
+
   // Switch to edit mode
-  const handleEditClick = (e) => {
+  const handleEditClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setEditClicked(true);
   };
 
   // Update state of user data
-  const handleOnChangeUserData = (e) => {
-    setUpdatedUserData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+  const handleOnChangeUserData = (e: ChangeEvent<HTMLInputElement>) => {
+    setUpdatedUserData(
+      (prev) =>
+        ({
+          ...prev,
+          [e.target.name]: e.target.value,
+        } as UpdatedUser)
+    );
   };
 
   // Update user data changes in DB
-  async function updateUserProfile(userData) {
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  async function updateUserProfile(userData: UpdatedUser) {
     try {
       const docRef = doc(collection(db, "user"), userData.id);
-      await updateDoc(docRef, userData);
+      await updateDoc(docRef, userData as { [x: string]: any });
       setOpenModal(true);
       console.log("successfully updated user data.");
     } catch (error) {
       console.error(error);
     }
   }
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   // Send update commend to DB
-  const handleSubmitUserData = (e) => {
+  const handleSubmitUserData = (e: FormEvent) => {
     e.preventDefault();
-    updateUserProfile(updatedUserData);
+    if (updatedUserData) {
+      updateUserProfile(updatedUserData);
+    }
   };
 
   // Go back to a previous page
@@ -54,7 +89,7 @@ const MyProfile = () => {
     }
   };
 
-  if (!currentUser) {
+  if (!currentUser || !updatedUserData) {
     return (
       <div
         className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"

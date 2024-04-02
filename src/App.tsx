@@ -39,7 +39,16 @@ export interface ProductType {
 }
 
 interface UserType {
-  [key: string]: string;
+  id: string;
+  email: string;
+  nickname: string;
+  firstname: string;
+  city: string;
+  district: string;
+  phone: string;
+  postalCode: string;
+  street: string;
+  surname: string;
 }
 
 function App() {
