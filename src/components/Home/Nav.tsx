@@ -3,7 +3,7 @@ import { Disclosure, Menu } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
-import { auth } from "../../../src/firebase-config";
+import { auth } from "../../firebase-config";
 import Modal from "../Modal";
 import { DataContext } from "../../App";
 import Avatar from "../Avatar";

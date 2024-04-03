@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import MyMarketList from "../components/MyMarket/MyMarketList";
+import MyMarketList from "../components/myMarket/MyMarketList";
 import { Link } from "react-router-dom";
 import {
   collection,

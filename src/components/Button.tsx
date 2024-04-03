@@ -1,8 +1,11 @@
+import { MouseEvent } from "react";
+
 interface ButtonProps {
   title: string;
-  onClick?: () => void;
+  onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   btnColor: string;
   disabled?: boolean;
+  type?: "button" | "submit" | "reset";
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -10,9 +13,11 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
   btnColor,
   disabled,
+  type,
 }) => {
   return (
     <button
+      type={type || "button"}
       onClick={onClick}
       className={`btn-${btnColor} ${
         disabled

@@ -9,7 +9,7 @@ import { DataContext } from "../../App";
 import { getFormattedDate, productRegisterCategories } from "../../utils";
 import { db, storage } from "../../firebase-config";
 import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
-import Modal from "../../components/Modal";
+import Modal from "../Modal";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useNavigate, useParams } from "react-router-dom";
 

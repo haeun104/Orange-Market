@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { DataContext } from "../App";
-import MyMarketList from "../components/MyMarket/MyMarketList";
-import ProductListPerUser from "../components/Products/ProductListPerUser";
+import MyMarketList from "../components/myMarket/MyMarketList";
+import ProductListPerUser from "../components/products/ProductListPerUser";
 
 const MyProducts = () => {
   const { currentUser } = useContext(DataContext);
@@ -21,7 +21,7 @@ const MyProducts = () => {
     return (
       <div className="container px-[10px]">
         <MyMarketList />
-        <ProductListPerUser id={currentUser.id} type="myproduct"/>
+        <ProductListPerUser id={currentUser.id} type="myproduct" />
       </div>
     );
   }

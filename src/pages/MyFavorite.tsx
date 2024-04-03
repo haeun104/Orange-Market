@@ -1,4 +1,4 @@
-import MyMarketList from "../components/MyMarket/MyMarketList";
+import MyMarketList from "../components/myMarket/MyMarketList";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 

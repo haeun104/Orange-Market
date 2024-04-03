@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import MyMarketList from "../components/MyMarket/MyMarketList";
+import MyMarketList from "../components/myMarket/MyMarketList";
 import { useContext, useEffect } from "react";
 import { DataContext } from "../App";
 import { fetchRequestData } from "../store/request-slice";

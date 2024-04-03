@@ -2,7 +2,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../firebase-config";
-import ProductListPerUser from "../components/Products/ProductListPerUser";
+import ProductListPerUser from "../components/products/ProductListPerUser";
 
 const ProductsBySeller = () => {
   const [sellerName, setSellerName] = useState("");

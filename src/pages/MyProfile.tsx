@@ -11,6 +11,8 @@ import Modal from "../components/Modal";
 import { db } from "../firebase-config";
 import { useNavigate } from "react-router-dom";
 import { updateDoc, collection, doc } from "firebase/firestore";
+import Input from "../components/inputs/Input";
+import Button from "../components/Button";
 
 interface UpdatedUser {
   id: string;
@@ -73,8 +75,7 @@ const MyProfile = () => {
   /* eslint-enable @typescript-eslint/no-explicit-any */
 
   // Send update commend to DB
-  const handleSubmitUserData = (e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmitUserData = () => {
     if (updatedUserData) {
       updateUserProfile(updatedUserData);
     }
@@ -103,136 +104,107 @@ const MyProfile = () => {
   } else {
     return (
       <>
-        <div className="max-w-[300px] h-calc-vh-minus-64 mx-auto flex flex-col align-middle">
-          <h2 className="uppercase text-lg font-bold text-center text-main-orange">
+        <div className="max-w-[300px] md:max-w-[600px] h-calc-vh-minus-64 mx-auto flex flex-col">
+          <h2 className="uppercase text-lg font-bold text-center text-main-orange my-[40px]">
             my profile
           </h2>
-          <form
-            className="flex flex-col space-y-2"
-            onSubmit={handleSubmitUserData}
-          >
-            <label htmlFor="first-name">Email</label>
-            <input
-              type="text"
-              id="first-name"
-              className="basic-input disabled:bg-gray-200"
-              value={updatedUserData.email}
-              disabled
-            />
-            <label htmlFor="nickname">Nickname</label>
-            <input
-              type="text"
-              id="nickname"
-              className="basic-input disabled:bg-gray-200"
-              value={updatedUserData.nickname}
-              disabled
-            />
-            <label htmlFor="first-name">First Name</label>
-            <input
-              type="text"
-              id="first-name"
-              className="basic-input disabled:bg-gray-200"
-              value={updatedUserData.firstname}
-              disabled={editClicked ? false : true}
-              name="firstname"
-              onChange={(e) => handleOnChangeUserData(e)}
-            />
-            <label htmlFor="last-name">Last Name</label>
-            <input
-              type="text"
-              id="last-name"
-              className="basic-input disabled:bg-gray-200"
-              value={updatedUserData.surname}
-              disabled={editClicked ? false : true}
-              name="surname"
-              onChange={(e) => handleOnChangeUserData(e)}
-            />
-
-            <label htmlFor="mobile">Mobile</label>
-            <input
-              type="phone"
-              id="mobile"
-              className="basic-input disabled:bg-gray-200"
-              value={updatedUserData.phone}
-              disabled={editClicked ? false : true}
-              name="phone"
-              onChange={(e) => handleOnChangeUserData(e)}
-            />
-            <div className="flex flex-col space-y-2 mb-3">
-              <span>Address</span>
-              <label htmlFor="street">Street</label>
-              <input
-                type="text"
-                id="street"
-                className="basic-input disabled:bg-gray-200"
-                value={updatedUserData.street}
+          <form className="flex flex-col gap-4 md:flex-row md:gap-10">
+            <div className="flex flex-col gap-2 md:flex-1">
+              <Input
+                id="email"
+                value={updatedUserData.email}
+                disabled
+                label="Email"
+              />
+              <Input
+                id="nickname"
+                value={updatedUserData.nickname}
+                disabled
+                label="Nickname"
+              />
+              <Input
+                id="firstname"
+                value={updatedUserData.firstname}
                 disabled={editClicked ? false : true}
-                name="street"
+                onChange={(e) => handleOnChangeUserData(e)}
+                label="First Name"
+              />
+              <Input
+                id="surname"
+                value={updatedUserData.surname}
+                disabled={editClicked ? false : true}
+                label="Last Name"
                 onChange={(e) => handleOnChangeUserData(e)}
               />
-              <label htmlFor="district">District</label>
-              <input
-                type="text"
-                id="district"
-                className="basic-input disabled:bg-gray-200"
-                value={updatedUserData.district}
+              <Input
+                type="phone"
+                id="phone"
+                value={updatedUserData.phone}
                 disabled={editClicked ? false : true}
-                name="district"
+                label="Mobile"
                 onChange={(e) => handleOnChangeUserData(e)}
               />
-              <label htmlFor="city">City</label>
-              <input
-                type="text"
+            </div>
+            <div className="flex flex-col gap-2 md:flex-1">
+              <Input
                 id="city"
-                className="basic-input disabled:bg-gray-200"
                 value={updatedUserData.city}
                 disabled={editClicked ? false : true}
-                name="city"
                 onChange={(e) => handleOnChangeUserData(e)}
+                label="City"
               />
-              <label htmlFor="postal-code">Postal Code</label>
-              <input
-                type="text"
-                id="postal-code"
-                className="basic-input disabled:bg-gray-200"
+              <Input
+                id="district"
+                value={updatedUserData.district}
+                disabled={editClicked ? false : true}
+                onChange={(e) => handleOnChangeUserData(e)}
+                label="District"
+              />
+              <Input
+                id="street"
+                value={updatedUserData.street}
+                disabled={editClicked ? false : true}
+                onChange={(e) => handleOnChangeUserData(e)}
+                label="Street"
+              />
+              <Input
+                id="postalCode"
                 value={updatedUserData.postalCode}
                 disabled={editClicked ? false : true}
-                name="postalCode"
                 onChange={(e) => handleOnChangeUserData(e)}
+                label="Postal Code"
               />
             </div>
-            <div className="flex pt-3 justify-between space-x-4">
-              {!editClicked ? (
-                <>
-                  <button
-                    type="button"
-                    className="btn-purple flex-1"
-                    onClick={handleEditClick}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    className="btn-orange flex-1"
-                    onClick={() => handleCancelClick("edit")}
-                  >
-                    Cancel
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button className="btn-purple flex-1">Save</button>
-                  <button
-                    type="button"
-                    className="btn-orange flex-1"
-                    onClick={() => handleCancelClick("submit")}
-                  >
-                    Cancel
-                  </button>
-                </>
-              )}
-            </div>
           </form>
+          <div className="flex flex-row justify-between gap-2 py-[40px] md:gap-10">
+            {!editClicked ? (
+              <>
+                <Button
+                  title="Edit"
+                  onClick={handleEditClick}
+                  btnColor="purple"
+                />
+                <Button
+                  title="Cancel"
+                  onClick={() => handleCancelClick("edit")}
+                  btnColor="orange"
+                />
+              </>
+            ) : (
+              <>
+                <Button
+                  title="Save"
+                  btnColor="purple"
+                  onClick={handleSubmitUserData}
+                />
+                <Button
+                  title="Cancel"
+                  btnColor="orange"
+                  onClick={() => handleCancelClick("submit")}
+                />
+              </>
+            )}
+          </div>
         </div>
         <Modal
           openModal={openModal}
