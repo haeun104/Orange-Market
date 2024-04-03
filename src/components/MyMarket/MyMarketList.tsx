@@ -1,30 +1,58 @@
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
+import MarketProducts from "./MarketProducts";
 
-const links = [
-  { link: "/my-favorite", title: "My Favorite" },
-  { link: "/my-products", title: "My Products For Sale" },
-  { link: "/sales-history", title: "Sales History" },
-  { link: "/purchase-history", title: "Purchase History" },
-  { link: "/purchase-request", title: "Purchase Request Status" },
-];
+interface ProductList {
+  city: string;
+  district: string;
+  imgURL: string;
+  isSold: boolean;
+  price: string;
+  productId: string;
+  title: string;
+  userId: string;
+  id?: string;
+  isChosenBySeller?: boolean;
+  isClosed?: boolean;
+  likeCount?: string;
+}
 
-const MyMarketList = () => {
+interface MyMarketListProps {
+  title: string;
+  link: string;
+  list: ProductList[];
+}
+
+const MyMarketList: React.FC<MyMarketListProps> = ({ title, link, list }) => {
   return (
-    <ul className="sm:flex sm:space-x-4 sm:flex-wrap">
-      {links.map((item, index) => (
-        <NavLink
-          key={index}
-          to={item.link}
-          className={({ isActive }) =>
-            isActive
-              ? "font-bold text-blue-500 border-b-2 border-blue-500 border-solid"
-              : undefined
-          }
-        >
-          <li>{item.title}</li>
-        </NavLink>
-      ))}
-    </ul>
+    <div className="relative mt-[40px]">
+      <h3 className="uppercase font-bold border-black border-solid border-b-[2px]">
+        {title}
+      </h3>
+      <Link to={`/${link}`}>
+        <span className="absolute top-0 right-0 hover:text-gray-500">
+          Go to details
+        </span>
+      </Link>
+      <div>
+        {list.map((item) => (
+          <MarketProducts
+            imgURL={item.imgURL}
+            title={item.title}
+            price={item.price}
+            isSold={item.isSold}
+            likeCount={item.likeCount}
+            isChosenBySeller={item.isChosenBySeller}
+            isClosed={item.isClosed}
+            listType={link}
+          />
+        ))}
+        {list.length === 0 && (
+          <div className="text-center text-accent-grey">
+            There are no items to display
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

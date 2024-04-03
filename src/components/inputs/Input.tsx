@@ -16,7 +16,6 @@ const Input: React.FC<InputProps> = ({
   className = "basic-input disabled:bg-gray-200",
   value,
   disabled,
-  name,
   onChange,
   label,
 }) => {

@@ -1,16 +1,33 @@
 import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import { DataContext } from "../App";
 import { fetchFavoriteData } from "../store/favorite-slice";
 import { fetchRequestData } from "../store/request-slice";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase-config";
+import MyMarketList from "../components/myMarket/MyMarketList";
+
+interface ProductType {
+  title: string;
+  description: string;
+  price: string;
+  category: string;
+  date: string;
+  clickCount: number;
+  likeCount: number;
+  seller: string;
+  buyer: string;
+  isSold: boolean;
+  imgURL: string;
+  city: string;
+  district: string;
+  sellerName?: string;
+}
 
 const MyMarket = () => {
   const [recentSelling, setRecentSelling] = useState();
   const [recentPurchase, setRecentPurchase] = useState();
-  const [productOnSale, setProductOnSale] = useState();
+  const [productOnSale, setProductOnSale] = useState<ProductType[]>();
   const favoriteList = useSelector((state) => state.favorite.favoriteItem);
   const sellingList = useSelector((state) => state.request.sellingRequest);
   const purchaseList = useSelector((state) => state.request.purchaseRequest);
@@ -64,15 +81,17 @@ const MyMarket = () => {
   }, [currentUser, dispatch]);
 
   // Fetch products on sale from DB
-  const fetchProductsOnSale = async (id) => {
+  const fetchProductsOnSale = async (id: string) => {
     const productQuery = query(
       collection(db, "product"),
       where("seller", "==", id),
       where("isSold", "==", false)
     );
     const productSnapshot = await getDocs(productQuery);
-    const productOnSale = [];
-    productSnapshot.forEach((doc) => productOnSale.push(doc.data()));
+    const productOnSale: ProductType[] = [];
+    productSnapshot.forEach((doc) =>
+      productOnSale.push(doc.data() as ProductType)
+    );
     setProductOnSale(productOnSale);
   };
 
@@ -82,185 +101,59 @@ const MyMarket = () => {
     }
   }, [currentUser]);
 
+  if (
+    !(
+      favoriteList &&
+      requests &&
+      recentPurchase &&
+      recentSelling &&
+      productOnSale
+    )
+  ) {
+    return (
+      <div
+        className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+        role="status"
+      >
+        <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+          Loading...
+        </span>
+      </div>
+    );
+  }
+
   return (
     <>
-      {!(
-        favoriteList &&
-        requests &&
-        recentPurchase &&
-        recentSelling &&
-        productOnSale
-      ) ? (
-        <div
-          className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-          role="status"
-        >
-          <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-            Loading...
-          </span>
-        </div>
-      ) : (
-        <div className="container max-w-[640px] py-[40px] px-[10px]">
-          <h2 className="uppercase text-lg font-bold text-center text-main-orange mb-[40px]">
-            My Market
-          </h2>
-          <div className="relative">
-            <h3 className="uppercase font-bold border-black border-solid border-b-[2px]">
-              my favorite
-            </h3>
-            <Link to="/my-favorite">
-              <span className="absolute top-0 right-0 hover:text-gray-500">
-                Go to details
-              </span>
-            </Link>
-            <div>
-              {favoriteList.map((item) => (
-                <ul key={item.id} className="flex space-x-4 my-[10px]">
-                  <li className="h-[40px] w-[70px]">
-                    <img
-                      src={item.imgURL}
-                      alt={item.title}
-                      className="h-[100%] w-[100%]"
-                    />
-                  </li>
-                  <li className="flex-1 text-center">{item.title}</li>
-                  <li>{item.price}PLN</li>
-                  <li>{item.isSold ? "Sold" : "On Sale"}</li>
-                </ul>
-              ))}
-              {favoriteList.length === 0 && (
-                <div className="text-center text-accent-grey">
-                  There are no products added to favorites
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="mt-[50px] relative">
-            <h3 className="uppercase font-bold border-black border-solid border-b-[2px]">
-              My products for sale
-            </h3>
-            <Link to="/my-products">
-              <span className="absolute top-0 right-0 cursor-pointer hover:text-gray-500">
-                Go to details
-              </span>
-            </Link>
-          </div>
-          <div>
-            {productOnSale.map((item, index) => (
-              <ul key={index} className="flex space-x-4 my-[10px]">
-                <li className="h-[40px] w-[70px]">
-                  <img
-                    src={item.imgURL}
-                    alt={item.title}
-                    className="h-[100%] w-[100%]"
-                  />
-                </li>
-                <li className="flex-1 text-center">{item.title}</li>
-                <li>{item.price}PLN</li>
-                <li>like {item.likeCount}</li>
-              </ul>
-            ))}
-          </div>
-          {productOnSale.length === 0 && (
-            <div className="text-center text-accent-grey">
-              There are no products requested for purchase
-            </div>
-          )}
-          <div className="mt-[50px] relative">
-            <h3 className="uppercase font-bold border-black border-solid border-b-[2px]">
-              recent sales history
-            </h3>
-            <Link to="/sales-history">
-              <span className="absolute top-0 right-0 cursor-pointer hover:text-gray-500">
-                Go to details
-              </span>
-            </Link>
-          </div>
-          <div>
-            {recentSelling.map((item) => (
-              <ul key={item.id} className="flex space-x-4 my-[10px]">
-                <li className="h-[40px] w-[70px]">
-                  <img
-                    src={item.imgURL}
-                    alt={item.title}
-                    className="h-[100%] w-[100%]"
-                  />
-                </li>
-                <li className="flex-1 text-center">{item.title}</li>
-                <li>{item.price}PLN</li>
-                <li>{item.isChosenBySeller ? "Accepted" : "Rejected"}</li>
-              </ul>
-            ))}
-          </div>
-          {recentSelling.length === 0 && (
-            <div className="text-center text-accent-grey">
-              There are no products requested for purchase
-            </div>
-          )}
-          <div className="mt-[50px] relative">
-            <h3 className="uppercase font-bold border-black border-solid border-b-[2px]">
-              recent purchase history
-            </h3>
-            <Link to="/purchase-history">
-              <span className="absolute top-0 right-0 cursor-pointer hover:text-gray-500">
-                Go to details
-              </span>
-            </Link>
-          </div>
-          <div>
-            {recentPurchase.map((item) => (
-              <ul key={item.id} className="flex space-x-4 my-[10px]">
-                <li className="h-[40px] w-[70px]">
-                  <img
-                    src={item.imgURL}
-                    alt={item.title}
-                    className="h-[100%] w-[100%]"
-                  />
-                </li>
-                <li className="flex-1 text-center">{item.title}</li>
-                <li>{item.price}PLN</li>
-                <li>{item.isChosenBySeller ? "Accepted" : "Rejected"}</li>
-              </ul>
-            ))}
-          </div>
-          {recentPurchase.length === 0 && (
-            <div className="text-center text-accent-grey">
-              There are no products requested for purchase
-            </div>
-          )}
-          <div className="mt-[50px] relative">
-            <h3 className="uppercase font-bold border-black border-solid border-b-[2px]">
-              purchase requests
-            </h3>
-            <Link to="/purchase-request">
-              <span className="absolute top-0 right-0 cursor-pointer hover:text-gray-500">
-                Go to details
-              </span>
-            </Link>
-            <div>
-              {requests.map((item) => (
-                <ul key={item.id} className="flex space-x-4 my-[10px]">
-                  <li className="h-[40px] w-[70px]">
-                    <img
-                      src={item.imgURL}
-                      alt={item.title}
-                      className="h-[100%] w-[100%]"
-                    />
-                  </li>
-                  <li className="flex-1 text-center">{item.title}</li>
-                  <li>{item.price}PLN</li>
-                  <li>{item.isClosed ? "Sold" : "Pending response"}</li>
-                </ul>
-              ))}
-            </div>
-            {requests.length === 0 && (
-              <div className="text-center text-accent-grey">
-                There are no products requested for purchase
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+      <div className="container max-w-[640px] py-[40px] px-[10px]">
+        <h2 className="uppercase text-lg font-bold text-center text-main-orange">
+          My Market
+        </h2>
+        <MyMarketList
+          title="My Favorite"
+          link="my-favorite"
+          list={favoriteList}
+        />
+        <MyMarketList
+          title="My products for sale"
+          link="my-products"
+          list={productOnSale}
+        />
+        <MyMarketList
+          title="recent sales history"
+          link="sales-history"
+          list={recentSelling}
+        />
+        <MyMarketList
+          title="recent purchase history"
+          link="purchase-history"
+          list={recentPurchase}
+        />
+        <MyMarketList
+          title="purchase requests"
+          link="purchase-request"
+          list={requests}
+        />
+      </div>
     </>
   );
 };

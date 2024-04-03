@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { DataContext } from "../App";
-import MyMarketList from "../components/myMarket/MyMarketList";
+import MyMarketMenu from "../components/myMarket/MyMarketMenu";
 import ProductListPerUser from "../components/products/ProductListPerUser";
 
 const MyProducts = () => {
@@ -20,7 +20,7 @@ const MyProducts = () => {
   } else {
     return (
       <div className="container px-[10px]">
-        <MyMarketList />
+        <MyMarketMenu />
         <ProductListPerUser id={currentUser.id} type="myproduct" />
       </div>
     );

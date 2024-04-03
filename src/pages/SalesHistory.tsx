@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import MyMarketList from "../components/myMarket/MyMarketList";
+import MyMarketMenu from "../components/myMarket/MyMarketMenu";
 import { useContext, useEffect } from "react";
 import { DataContext } from "../App";
 import { fetchRequestData } from "../store/request-slice";
@@ -31,7 +31,7 @@ const SalesHistory = () => {
   } else {
     return (
       <div className="container">
-        <MyMarketList />
+        <MyMarketMenu />
         <div className="mt-[40px]">
           <div className="hidden sm:flex text-center border-b-[1.5px] border-solid mb-[10px]">
             <div className="flex-1">Title</div>

@@ -1,6 +1,6 @@
-import MyMarketList from "../components/myMarket/MyMarketList";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import MyMarketMenu from "../components/myMarket/MyMarketMenu";
 
 const MyFavorite = () => {
   const favoriteList = useSelector((state) => state.favorite.favoriteItem);
@@ -24,7 +24,7 @@ const MyFavorite = () => {
   } else {
     return (
       <div className="container px-[10px]">
-        <MyMarketList />
+        <MyMarketMenu />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mt-[20px]">
           {favoriteList.map((item) => (
             <div key={item.id}>

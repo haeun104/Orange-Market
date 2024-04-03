@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import MyMarketList from "../components/myMarket/MyMarketList";
+import MyMarketMenu from "../components/myMarket/MyMarketMenu";
 import { Link } from "react-router-dom";
 import {
   collection,
@@ -110,7 +110,7 @@ const PurchaseRequest = () => {
     return (
       <>
         <div className="container px-[10px]">
-          <MyMarketList />
+          <MyMarketMenu />
           <div className="mt-[30px]">
             <h2 className="font-bold mb-[20px]">For Seller</h2>
             <div className="hidden sm:flex text-center border-b-[1.5px] border-solid mb-[10px]">
