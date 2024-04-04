@@ -6,6 +6,7 @@ interface ButtonProps {
   btnColor: string;
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
+  style?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -14,6 +15,7 @@ const Button: React.FC<ButtonProps> = ({
   btnColor,
   disabled,
   type,
+  style,
 }) => {
   return (
     <button
@@ -23,7 +25,8 @@ const Button: React.FC<ButtonProps> = ({
         disabled
           ? "disabled:bg-gray-300 disabled:cursor-not-allowed disabled:hover:opacity-100"
           : ""
-      }`}
+      } ${style ? style : null}`}
+      disabled={disabled}
     >
       {title}
     </button>
