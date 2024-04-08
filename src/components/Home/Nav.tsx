@@ -80,11 +80,20 @@ const Nav = () => {
                   </div>
                   <div className="hidden sm:ml-6 sm:block flex-1">
                     <div className="flex space-x-4 justify-between">
-                      <Link to="/products">
-                        <div className="text-black-300 hover:bg-slate-200 rounded-md px-[12px] py-[8px] text-sm font-bold">
-                          Products
-                        </div>
-                      </Link>
+                      <div className="flex gap-2">
+                        <Link to="/products">
+                          <div className="text-black-300 hover:bg-slate-200 rounded-md px-[12px] py-[8px] text-sm font-bold">
+                            Products
+                          </div>
+                        </Link>
+                        {loggedInUser && (
+                          <Link to="/products/new">
+                            <div className="text-blue-700 hover:bg-slate-200 rounded-md px-[12px] py-[8px] text-sm font-bold">
+                              Add Products
+                            </div>
+                          </Link>
+                        )}
+                      </div>
                       {!loggedInUser && (
                         <div className="flex space-x-4">
                           <Link to="/login">
