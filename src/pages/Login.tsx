@@ -1,9 +1,8 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { FormEvent, useState } from "react";
+import { FormEvent, MouseEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../../src/firebase-config";
 import Modal from "../components/Modal";
-import {} from "firebase/app";
 import Button from "../components/Button";
 
 const Login = () => {
@@ -20,12 +19,16 @@ const Login = () => {
       console.log("successfully logged in");
       setOpenModal(true);
     } catch (error) {
-      console.log(error.message);
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
     }
   };
 
   // Execute login
-  const handleLogin = (e: FormEvent<HTMLFormElement>) => {
+  const handleLogin = (
+    e: FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>
+  ) => {
     e.preventDefault();
     login();
   };
@@ -72,7 +75,7 @@ const Login = () => {
                 </span>
               </div>
             </div>
-            <Button title="Login" btnColor="orange" />
+            <Button title="Login" btnColor="orange" onClick={handleLogin} />
             <Button
               title="Cancel"
               btnColor="grey"

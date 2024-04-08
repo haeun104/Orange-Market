@@ -23,13 +23,14 @@ const Nav = () => {
       console.log("successfully logged out");
       setOpenModal(true);
     } catch (error) {
-      console.log(error.message);
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
     }
   };
 
   // Execute logout
-  const handleLogout = (e) => {
-    e.preventDefault();
+  const handleLogout = () => {
     logout();
   };
 
@@ -77,8 +78,8 @@ const Nav = () => {
                       </h1>
                     </Link>
                   </div>
-                  <div className="hidden sm:ml-6 sm:block sm:flex-1">
-                    <div className="flex space-x-4">
+                  <div className="hidden sm:ml-6 sm:block flex-1">
+                    <div className="flex space-x-4 justify-between">
                       <Link to="/products">
                         <div className="text-black-300 hover:bg-slate-200 rounded-md px-[12px] py-[8px] text-sm font-bold">
                           Products
