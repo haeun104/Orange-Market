@@ -9,7 +9,7 @@ import {
   getDoc,
   updateDoc,
 } from "firebase/firestore";
-import { db } from "../firebase-config";
+import { db } from "../firebase/firebase-config";
 import { useState } from "react";
 import Modal from "../components/Modal";
 
@@ -26,7 +26,6 @@ interface FavoriteType {
 }
 
 const MyFavorite = () => {
-  const [modalMsg, setModalMsg] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const favoriteList = useSelector((state) => state.favorite.favoriteItem);
   const navigate = useNavigate();
@@ -49,7 +48,6 @@ const MyFavorite = () => {
 
         await updateDoc(productRef, { likeCount: currentLike - 1 });
 
-        setModalMsg("successfully deleted favorite!");
         setOpenModal(true);
         console.log("successfully deleted favorite.");
       }
@@ -109,8 +107,8 @@ const MyFavorite = () => {
         </div>
         <Modal
           openModal={openModal}
-          setOpenModal={setOpenModal}
-          message={modalMsg}
+          closeModal={() => setOpenModal(false)}
+          message="successfully deleted favorite!"
         />
       </>
     );

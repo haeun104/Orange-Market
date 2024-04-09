@@ -4,7 +4,7 @@ import { DataContext } from "../App";
 import { fetchFavoriteData } from "../store/favorite-slice";
 import { fetchRequestData } from "../store/request-slice";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../firebase-config";
+import { db } from "../firebase/firebase-config";
 import MyMarketList from "../components/myMarket/MyMarketList";
 
 interface ProductType {
@@ -42,7 +42,7 @@ const MyMarket = () => {
 
   const dispatch = useDispatch();
 
-  const { currentUser } = useContext(DataContext);
+  const currentUser = useContext(DataContext);
 
   // Filter requests closed within a month
   const filterRecentDates = (list) => {

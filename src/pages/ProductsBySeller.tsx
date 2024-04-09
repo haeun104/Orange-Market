@@ -1,7 +1,7 @@
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { db } from "../firebase-config";
+import { db } from "../firebase/firebase-config";
 import ProductListPerUser from "../components/products/ProductListPerUser";
 
 const ProductsBySeller = () => {

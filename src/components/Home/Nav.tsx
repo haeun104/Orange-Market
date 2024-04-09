@@ -3,7 +3,7 @@ import { Disclosure, Menu } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
-import { auth } from "../../firebase-config";
+import { auth } from "../../firebase/firebase-config";
 import Modal from "../Modal";
 import { DataContext } from "../../App";
 import Avatar from "../Avatar";
@@ -12,7 +12,7 @@ const Nav = () => {
   // const [userData, setUserData] = useState();
   const [openModal, setOpenModal] = useState(false);
 
-  const { loggedInUser, currentUser } = useContext(DataContext);
+  const currentUser = useContext(DataContext);
 
   const navigate = useNavigate();
 
@@ -86,7 +86,7 @@ const Nav = () => {
                             Products
                           </div>
                         </Link>
-                        {loggedInUser && (
+                        {currentUser && (
                           <Link to="/products/new">
                             <div className="text-blue-700 hover:bg-slate-200 rounded-md px-[12px] py-[8px] text-sm font-bold">
                               Add Products
@@ -94,7 +94,7 @@ const Nav = () => {
                           </Link>
                         )}
                       </div>
-                      {!loggedInUser && (
+                      {!currentUser && (
                         <div className="flex space-x-4">
                           <Link to="/login">
                             <div className="text-white hover:bg-slate-200 hover:text-black rounded-md px-[12px] py-[8px] text-sm font-medium bg-main-orange border-solid">
@@ -111,7 +111,7 @@ const Nav = () => {
                     </div>
                   </div>
                 </div>
-                {loggedInUser && (
+                {currentUser && (
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                     {/* Profile dropdown */}
 
@@ -179,7 +179,7 @@ const Nav = () => {
                     Products
                   </Disclosure.Button>
                 </Link>
-                {!loggedInUser && (
+                {!currentUser && (
                   <>
                     <Link to="/login">
                       <Disclosure.Button className="text-black-300 hover:bg-slate-200 block rounded-md px-3 py-2 text-base font-medium">
@@ -200,8 +200,9 @@ const Nav = () => {
       </Disclosure>
       <Modal
         openModal={openModal}
-        setOpenModal={setOpenModal}
+        closeModal={() => setOpenModal(false)}
         message={"successfully logged out!"}
+        type="goToHome"
       />
     </>
   );

@@ -4,8 +4,7 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Nav from "./components/home/Nav";
 import React, { useEffect, useState } from "react";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db, auth } from "../src/firebase-config";
+import { auth } from "./firebase/firebase-config";
 import { onAuthStateChanged } from "firebase/auth";
 import MyProfile from "./pages/MyProfile";
 import MyMarket from "./pages/MyMarket";
@@ -19,37 +18,10 @@ import SalesHistory from "./pages/SalesHistory";
 import PurchaseRequest from "./pages/PurchaseRequest";
 import MyProducts from "./pages/MyProducts";
 import EditProduct from "./pages/EditProduct";
+import { UserType } from "./types";
+import { fetchUserData } from "./firebase/firebase-action";
 
-export const DataContext = React.createContext();
-
-export interface ProductType {
-  title: string;
-  description: string;
-  price: number;
-  category: string;
-  date: string;
-  clickCount: number;
-  likeCount: number;
-  seller: string;
-  buyer: string;
-  isSold: boolean;
-  imgURL: string;
-  city: string;
-  district: string;
-}
-
-interface UserType {
-  id: string;
-  email: string;
-  nickname: string;
-  firstname: string;
-  city: string;
-  district: string;
-  phone: string;
-  postalCode: string;
-  street: string;
-  surname: string;
-}
+export const DataContext = React.createContext<UserType | undefined>(undefined);
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState<string | null>();
@@ -61,44 +33,29 @@ function App() {
       setLoggedInUser(currentUser.email);
     } else {
       setLoggedInUser(null);
+      setCurrentUser(undefined);
     }
   });
 
   // Fetch user data from DB
   useEffect(() => {
-    const fetchUserDataFromDB = async (email: string) => {
+    async function fetchData() {
       try {
-        const userQuery = query(
-          collection(db, "user"),
-          where("email", "==", email)
-        );
-        const userSnapshot = await getDocs(userQuery);
-        const userList = userSnapshot.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
-        const user: UserType = userList[0];
-        setCurrentUser(user);
+        if (loggedInUser !== undefined && typeof loggedInUser === "string") {
+          const currentUserData = await fetchUserData(loggedInUser);
+          setCurrentUser(currentUserData as UserType);
+        }
       } catch (error) {
-        console.log(error);
-      }
-    };
-    if (loggedInUser !== undefined) {
-      if (typeof loggedInUser === "string") {
-        fetchUserDataFromDB(loggedInUser);
+        console.error(error);
       }
     }
+    fetchData();
   }, [loggedInUser]);
 
   return (
     <>
       <BrowserRouter>
-        <DataContext.Provider
-          value={{
-            loggedInUser,
-            currentUser,
-          }}
-        >
+        <DataContext.Provider value={currentUser}>
           <Nav />
           <Outlet />
           <Routes>

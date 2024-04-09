@@ -9,7 +9,7 @@ const SalesHistory = () => {
   const selling = useSelector((state) => state.request.closedSellingRequest);
   const dispatch = useDispatch();
 
-  const { currentUser } = useContext(DataContext);
+  const currentUser = useContext(DataContext);
 
   useEffect(() => {
     if (currentUser) {

@@ -13,7 +13,7 @@ import {
   updateDoc,
   Firestore,
 } from "firebase/firestore";
-import { db } from "../../firebase-config";
+import { db } from "../../firebase/firebase-config";
 import Modal from "../Modal";
 import { getFormattedDate } from "../../utils";
 import { useDispatch, useSelector } from "react-redux";
@@ -77,7 +77,7 @@ const ProductDetail = () => {
   const { productId } = useParams();
   const favorite = useSelector((state) => state.favorite.favoriteItem);
   const dispatch = useDispatch();
-  const { currentUser } = useContext(DataContext);
+  const currentUser = useContext(DataContext);
 
   const navigate = useNavigate();
 
@@ -392,7 +392,7 @@ const ProductDetail = () => {
         </div>
         <Modal
           openModal={openModal}
-          setOpenModal={setOpenModal}
+          closeModal={() => setOpenModal(false)}
           message={modalMsg}
           type={currentUser ? "goback" : "error"}
         />

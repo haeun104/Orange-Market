@@ -1,7 +1,7 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { db } from "../../firebase-config";
+import { db } from "../../firebase/firebase-config";
 import Modal from "../Modal";
 
 interface ProductPerUser {
@@ -145,7 +145,8 @@ const ProductListPerUser: React.FC<ProductPerUser> = ({ id, type }) => {
         </div>
         <Modal
           openModal={openModal}
-          setOpenModal={setOpenModal}
+          closeModal={() => setOpenModal(false)}
+          reopenModal={() => setOpenModal(true)}
           message="Are you sure to delete?"
           type="delete"
           id={productToDelete}

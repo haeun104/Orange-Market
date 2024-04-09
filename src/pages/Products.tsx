@@ -2,12 +2,12 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DataContext } from "../App";
 import { productFilterCategories } from "./../utils";
-import { ProductType } from "../App";
 import Modal from "../components/Modal";
 import { collection, onSnapshot } from "firebase/firestore";
-import { db } from "../firebase-config";
+import { db } from "../firebase/firebase-config";
 import { IoMdAddCircle } from "react-icons/io";
 import Loader from "../components/Loader";
+import { ProductType } from "../types";
 
 interface ProductsFromDB extends ProductType {
   id: string;
@@ -21,7 +21,7 @@ const Products = () => {
   const [openModal, setOpenModal] = useState(false);
 
   const navigate = useNavigate();
-  const { currentUser } = useContext(DataContext);
+  const currentUser = useContext(DataContext);
 
   //Fetch product data from DB
   useEffect(() => {
@@ -169,10 +169,10 @@ const Products = () => {
         </div>
         <Modal
           openModal={openModal}
-          setOpenModal={setOpenModal}
-          setCategory={setCategory}
+          closeModal={() => setOpenModal(false)}
+          resetCategory={() => setCategory("All")}
           message="Please login first"
-          type="login"
+          type="unauthorized"
         />
       </>
     );

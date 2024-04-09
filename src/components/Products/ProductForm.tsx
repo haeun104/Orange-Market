@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { DataContext } from "../../App";
 import { getFormattedDate, productRegisterCategories } from "../../utils";
-import { db, storage } from "../../firebase-config";
+import { db, storage } from "../../firebase/firebase-config";
 import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import Modal from "../Modal";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -67,7 +67,7 @@ const ProductForm: React.FC<FormType> = ({ type }) => {
   const { productId } = useParams();
 
   const navigate = useNavigate();
-  const { currentUser } = useContext(DataContext);
+  const currentUser = useContext(DataContext);
 
   // Update state whenever a current user is changed
   useEffect(() => {
@@ -322,12 +322,13 @@ const ProductForm: React.FC<FormType> = ({ type }) => {
         </form>
         <Modal
           openModal={openModal}
-          setOpenModal={setOpenModal}
+          closeModal={() => setOpenModal(false)}
           message={
             type === "edit"
               ? "successfully updated a product!"
               : "successfully registered a product!"
           }
+          type="form"
         />
       </>
     );

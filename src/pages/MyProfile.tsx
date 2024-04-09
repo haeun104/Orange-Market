@@ -7,7 +7,7 @@ import {
 } from "react";
 import { DataContext } from "../App";
 import Modal from "../components/Modal";
-import { db } from "../firebase-config";
+import { db } from "../firebase/firebase-config";
 import { useNavigate } from "react-router-dom";
 import { updateDoc, collection, doc } from "firebase/firestore";
 import Input from "../components/inputs/Input";
@@ -28,7 +28,7 @@ interface UpdatedUser {
 
 const MyProfile = () => {
   const [editClicked, setEditClicked] = useState(false);
-  const { currentUser } = useContext(DataContext);
+  const  currentUser  = useContext(DataContext);
   const [updatedUserData, setUpdatedUserData] = useState<
     UpdatedUser | undefined
   >();
@@ -207,7 +207,7 @@ const MyProfile = () => {
         </div>
         <Modal
           openModal={openModal}
-          setOpenModal={setOpenModal}
+          closeModal={() => setOpenModal(false)}
           message={"successfully updated!"}
         />
       </>

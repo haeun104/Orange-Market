@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { query, collection, where, getDocs } from "firebase/firestore";
-import { db } from "../firebase-config";
+import { db } from "../firebase/firebase-config";
 
 const requestSlice = createSlice({
   name: "request",

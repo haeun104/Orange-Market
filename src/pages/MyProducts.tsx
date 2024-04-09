@@ -4,7 +4,7 @@ import MyMarketMenu from "../components/myMarket/MyMarketMenu";
 import ProductListPerUser from "../components/products/ProductListPerUser";
 
 const MyProducts = () => {
-  const { currentUser } = useContext(DataContext);
+  const currentUser = useContext(DataContext);
 
   if (!currentUser) {
     return (

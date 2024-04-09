@@ -1,10 +1,11 @@
 import { FormEvent, useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, createUserInDb, db } from "../../src/firebase-config";
+import { auth, db } from "../firebase/firebase-config";
 import { useNavigate } from "react-router-dom";
 import Modal from "../components/Modal";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import Button from "../components/Button";
+import { createUserInDb } from "../firebase/firebase-action";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -141,8 +142,9 @@ const SignUp = () => {
       </section>
       <Modal
         openModal={openModal}
-        setOpenModal={setOpenModal}
-        message={"Successfully signed up!"}
+        closeModal={() => setOpenModal(false)}
+        message="Successfully signed up!"
+        type="goToHome"
       />
     </>
   );

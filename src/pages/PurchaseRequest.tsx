@@ -10,7 +10,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { db } from "../firebase-config";
+import { db } from "../firebase/firebase-config";
 import Modal from "../components/Modal";
 import { useContext, useState, useEffect } from "react";
 import { DataContext } from "../App";
@@ -22,7 +22,7 @@ const PurchaseRequest = () => {
   const purchase = useSelector((state) => state.request.purchaseRequest);
   const [openModal, setOpenModal] = useState(false);
 
-  const { currentUser } = useContext(DataContext);
+  const currentUser = useContext(DataContext);
   const dispatch = useDispatch();
 
   // Dispatch current user data

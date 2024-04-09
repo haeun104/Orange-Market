@@ -1,7 +1,7 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { FormEvent, MouseEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { auth } from "../../src/firebase-config";
+import { auth } from "../firebase/firebase-config";
 import Modal from "../components/Modal";
 import Button from "../components/Button";
 
@@ -86,8 +86,9 @@ const Login = () => {
       </section>
       <Modal
         openModal={openModal}
-        setOpenModal={setOpenModal}
-        message={"successfully logged in!"}
+        closeModal={() => setOpenModal(false)}
+        message="successfully logged in!"
+        type="goToHome"
       />
     </>
   );
