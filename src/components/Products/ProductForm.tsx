@@ -263,27 +263,34 @@ const ProductForm: React.FC<FormType> = ({ type }) => {
               label="District"
             />
           </div>
-          <Input
-            type="file"
-            id="image"
-            className="cursor-pointer w-1/2"
-            onChangeImage={(e) => handleOnChangeImage(e)}
-            required={type === "new" ? true : false}
-            label="Image file"
-          />
-          {tempImage ? (
-            <div className="h-[100px] w-[100px]">
-              <img
-                src={tempImage}
-                alt="product image"
-                className="rounded-md h-full w-full"
-              />
+          <div>
+            <span>Image File</span>
+            <div className="flex flex-row mt-[5px] gap-4">
+              <div className="h-[100px] w-[100px] border-[1px] border-accent-grey border-solid rounded-md flex items-center justify-center text-center text-sm">
+                {tempImage ? (
+                  <img
+                    src={tempImage}
+                    alt="product image"
+                    className="rounded-md h-full w-full"
+                  />
+                ) : (
+                  "No image chosen"
+                )}
+              </div>
+              <label htmlFor="image" className="relative">
+                <input
+                  type="file"
+                  id="image"
+                  className="hidden"
+                  onChange={(e) => handleOnChangeImage(e)}
+                  required={type === "new" ? true : false}
+                />
+                <div className="w-[100px] text-center p-[5px] rounded-md bg-main-orange hover:opacity-80 text-sm text-white absolute top-0 left-0 ">
+                  Choose File
+                </div>
+              </label>
             </div>
-          ) : (
-            <div className="h-[100px] w-[100px] border-[1px] border-accent-grey border-solid rounded-md flex items-center justify-center text-center text-sm">
-              No image chosen
-            </div>
-          )}
+          </div>
 
           <label htmlFor="category">Category</label>
           <select

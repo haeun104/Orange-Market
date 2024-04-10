@@ -7,7 +7,6 @@ interface InputProps {
   value?: string;
   disabled?: boolean;
   onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  onChangeImage?: (e: ChangeEvent<HTMLInputElement>) => void;
   label: string;
   required: boolean;
   max?: string;
@@ -23,7 +22,6 @@ const Input: React.FC<InputProps> = ({
   value,
   disabled,
   onChange,
-  onChangeImage,
   label,
   required,
   max,
@@ -53,7 +51,7 @@ const Input: React.FC<InputProps> = ({
           value={value}
           disabled={disabled}
           name={id}
-          onChange={onChange || onChangeImage}
+          onChange={onChange}
           required={required}
           max={max}
           placeholder={placeholder}
