@@ -1,10 +1,4 @@
-import React, {
-  ChangeEvent,
-  FormEvent,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { ChangeEvent, useContext, useEffect, useState } from "react";
 import { DataContext } from "../../App";
 import { getFormattedDate, productRegisterCategories } from "../../utils";
 import { db, storage } from "../../firebase/firebase-config";
@@ -12,6 +6,10 @@ import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import Modal from "../Modal";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useNavigate, useParams } from "react-router-dom";
+import { ProductType } from "../../types";
+import Loader from "../Loader";
+import Input from "../inputs/Input";
+import Button from "../Button";
 
 const initialProduct: ProductType = {
   title: "",
@@ -28,23 +26,6 @@ const initialProduct: ProductType = {
   city: "",
   district: "",
 };
-
-interface ProductType {
-  title: string;
-  description: string;
-  price: string;
-  category: string;
-  date: string;
-  clickCount: number;
-  likeCount: number;
-  seller: string;
-  buyer: string;
-  isSold: boolean;
-  imgURL: string;
-  city: string;
-  district: string;
-  sellerName?: string;
-}
 
 interface UpdatedProduct {
   title: string;
@@ -63,7 +44,8 @@ interface FormType {
 const ProductForm: React.FC<FormType> = ({ type }) => {
   const [product, setProduct] = useState<ProductType>();
   const [openModal, setOpenModal] = useState(false);
-  const [imageName, setImageName] = useState<File>();
+  const [imageName, setImageName] = useState<File | string>();
+  const [tempImage, setTempImage] = useState("");
   const { productId } = useParams();
 
   const navigate = useNavigate();
@@ -92,6 +74,7 @@ const ProductForm: React.FC<FormType> = ({ type }) => {
       if (productSnapshot.exists()) {
         const productData = productSnapshot.data() as ProductType;
         setProduct(productData);
+        setTempImage(productData.imgURL);
       }
     } catch (error) {
       console.log(error);
@@ -131,8 +114,6 @@ const ProductForm: React.FC<FormType> = ({ type }) => {
         },
         {}
       );
-      console.log(diff);
-
       await updateDoc(docRef, diff);
       setOpenModal(true);
       console.log("successfully updated product data.");
@@ -153,19 +134,28 @@ const ProductForm: React.FC<FormType> = ({ type }) => {
   }
 
   // Upload image into DB
-  const updateImageAndProduct = async (file: File, seller: string) => {
+  const uploadImageAndReturnURL = async (file: File, seller: string) => {
+    const uploadFile = await uploadBytes(
+      ref(storage, `images/${seller}_${file.name}`),
+      file
+    );
+    return await getDownloadURL(uploadFile.ref);
+  };
+
+  const updateImageAndProduct = async (file: File | string, seller: string) => {
     try {
-      const uploadFile = await uploadBytes(
-        ref(storage, `images/${seller}_${file.name}`),
-        file
-      );
-      const fileURL = await getDownloadURL(uploadFile.ref);
-      console.log(fileURL);
-      if (fileURL && product && productId) {
-        if (type === "edit") {
-          updateProduct({ ...product, imgURL: fileURL }, productId);
-        } else {
+      if (typeof file !== "string") {
+        const fileURL = await uploadImageAndReturnURL(file, seller);
+        const isDataExisting = fileURL && product;
+        if (isDataExisting && type === "new") {
           createProduct({ ...product, imgURL: fileURL });
+        }
+        if (isDataExisting && productId && type === "edit") {
+          updateProduct({ ...product, imgURL: fileURL }, productId);
+        }
+      } else {
+        if (product && productId && type === "edit") {
+          updateProduct({ ...product }, productId);
         }
       }
     } catch (error) {
@@ -173,24 +163,34 @@ const ProductForm: React.FC<FormType> = ({ type }) => {
     }
   };
 
-  const handleOnSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (imageName) {
+  const handleOnSubmit = () => {
+    if (imageName && currentUser) {
       updateImageAndProduct(imageName, currentUser.id);
+    }
+    if (!imageName && currentUser && type === "edit") {
+      updateImageAndProduct(tempImage, currentUser.id);
     }
   };
 
   // Update image value
   const handleOnChangeImage = (e: ChangeEvent<HTMLInputElement>) => {
-    const fileList: FileList | null = e.target.files;
-    if (fileList && fileList.length > 0) {
-      const file: File | null = fileList[0];
-      setImageName(file);
+    if (e.target.files) {
+      const file = e.target.files[0];
+      if (file !== null) {
+        setImageName(file);
+      }
+      const fileReader = new FileReader();
+      fileReader.onload = () => {
+        setTempImage(fileReader.result as string);
+      };
+      fileReader.readAsDataURL(file);
     }
   };
 
   // Update input value
-  const handleOnChangeProduct = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleOnChangeProduct = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     setProduct(
       (prev) =>
         ({
@@ -206,91 +206,84 @@ const ProductForm: React.FC<FormType> = ({ type }) => {
   };
 
   if (!product) {
-    return (
-      <div
-        className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-        role="status"
-      >
-        <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-          Loading...
-        </span>
-      </div>
-    );
+    return <Loader />;
   } else {
     return (
       <>
-        <form
-          className="flex flex-col space-y-2 max-w-[500px] mx-auto"
-          onSubmit={(e) => handleOnSubmit(e)}
-        >
-          <label htmlFor="title">Title</label>
-          <input
+        <form className="flex flex-col space-y-2 max-w-[500px] mx-auto">
+          <Input
             type="text"
             id="title"
             max="100"
             className="basic-input"
             placeholder="Enter a title of your product"
-            name="title"
             required
             value={product.title}
-            onChange={(e) => handleOnChangeProduct(e)}
+            onChange={handleOnChangeProduct}
+            label="Title"
           />
-
-          <label htmlFor="description">Description</label>
-          <textarea
+          <Input
             id="description"
             className="border-solid border-gray-200 border-2 rounded-md focus:border-main-orange indent-[6px]"
             rows={5}
             placeholder="Describe your product (color, size, used period, whatever you want to share with a future buyer)"
-            name="description"
             required
             value={product.description}
-            onChange={(e) => handleOnChangeProduct(e)}
+            onChange={handleOnChangeProduct}
+            label="Description"
+            textarea={true}
           />
-
-          <label htmlFor="price">Price (Polish zloty, PLN)</label>
-          <input
+          <Input
+            label="Price (Polish zloty, PLN)"
             type="number"
             id="price"
             className="basic-input"
-            name="price"
             required
             value={product.price}
-            onChange={(e) => handleOnChangeProduct(e)}
+            onChange={handleOnChangeProduct}
           />
           <div className="flex flex-col space-y-2">
             <span className="">Selling Location</span>
-
-            <label htmlFor="city flex flex-col">City</label>
-            <input
+            <Input
               type="text"
               id="city"
               className="basic-input"
-              name="city"
               required
               value={product.city}
-              onChange={(e) => handleOnChangeProduct(e)}
+              onChange={handleOnChangeProduct}
+              label="City"
             />
-
-            <label htmlFor="district">District</label>
-            <input
+            <Input
               type="text"
               id="district"
               className="basic-input"
-              name="district"
               required
               value={product.district}
-              onChange={(e) => handleOnChangeProduct(e)}
+              onChange={handleOnChangeProduct}
+              label="District"
             />
           </div>
-
-          <label htmlFor="image">Image file</label>
-          <input
+          <Input
             type="file"
             id="image"
             className="cursor-pointer w-1/2"
-            onChange={(e) => handleOnChangeImage(e)}
+            onChangeImage={(e) => handleOnChangeImage(e)}
+            required={type === "new" ? true : false}
+            label="Image file"
           />
+          {tempImage ? (
+            <div className="h-[100px] w-[100px]">
+              <img
+                src={tempImage}
+                alt="product image"
+                className="rounded-md h-full w-full"
+              />
+            </div>
+          ) : (
+            <div className="h-[100px] w-[100px] border-[1px] border-accent-grey border-solid rounded-md flex items-center justify-center text-center text-sm">
+              No image chosen
+            </div>
+          )}
 
           <label htmlFor="category">Category</label>
           <select
@@ -299,7 +292,7 @@ const ProductForm: React.FC<FormType> = ({ type }) => {
             className="border-solid border-2 border-gray-200 h-8 rounded-md"
             required
             value={product.category}
-            onChange={(e) => handleOnChangeProduct(e)}
+            onChange={handleOnChangeProduct}
           >
             {productRegisterCategories.map((item, index) => (
               <option key={index} value={item.value}>
@@ -308,16 +301,16 @@ const ProductForm: React.FC<FormType> = ({ type }) => {
             ))}
           </select>
           <div className="flex pt-3 justify-between space-x-4">
-            <button className="btn-purple flex-1">
-              {type === "edit" ? "Edit" : "Submit"}
-            </button>
-            <button
-              type="button"
-              className="btn-orange flex-1"
+            <Button
+              onClick={handleOnSubmit}
+              btnColor="purple"
+              title={type === "edit" ? "Edit" : "Submit"}
+            />
+            <Button
               onClick={handleCancelClick}
-            >
-              Cancel
-            </button>
+              btnColor="grey"
+              title="Cancel"
+            />
           </div>
         </form>
         <Modal
@@ -328,7 +321,7 @@ const ProductForm: React.FC<FormType> = ({ type }) => {
               ? "successfully updated a product!"
               : "successfully registered a product!"
           }
-          type="form"
+          type="goToHome"
         />
       </>
     );

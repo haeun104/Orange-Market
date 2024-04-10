@@ -4,10 +4,16 @@ interface InputProps {
   type?: string;
   id: string;
   className?: string;
-  value: string;
-  disabled: boolean;
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
+  disabled?: boolean;
+  onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onChangeImage?: (e: ChangeEvent<HTMLInputElement>) => void;
   label: string;
+  required: boolean;
+  max?: string;
+  placeholder?: string;
+  textarea?: boolean;
+  rows?: number;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -17,20 +23,42 @@ const Input: React.FC<InputProps> = ({
   value,
   disabled,
   onChange,
+  onChangeImage,
   label,
+  required,
+  max,
+  textarea,
+  placeholder,
+  rows,
 }) => {
   return (
     <div className="flex flex-col gap-2">
       <label htmlFor={id}>{label}</label>
-      <input
-        type={type}
-        id={id}
-        className={className}
-        value={value}
-        disabled={disabled}
-        name={id}
-        onChange={onChange}
-      />
+      {textarea ? (
+        <textarea
+          id={id}
+          className={className}
+          rows={rows}
+          placeholder={placeholder}
+          name={id}
+          required={required}
+          value={value}
+          onChange={onChange}
+        />
+      ) : (
+        <input
+          type={type}
+          id={id}
+          className={className}
+          value={value}
+          disabled={disabled}
+          name={id}
+          onChange={onChange || onChangeImage}
+          required={required}
+          max={max}
+          placeholder={placeholder}
+        />
+      )}
     </div>
   );
 };

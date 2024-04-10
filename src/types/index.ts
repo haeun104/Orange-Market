@@ -1,7 +1,7 @@
 export interface ProductType {
   title: string;
   description: string;
-  price: number;
+  price: string;
   category: string;
   date: string;
   clickCount: number;
@@ -12,6 +12,7 @@ export interface ProductType {
   imgURL: string;
   city: string;
   district: string;
+  sellerName?: string;
 }
 
 export interface UserType {
