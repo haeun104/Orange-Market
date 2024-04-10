@@ -34,10 +34,10 @@ export interface FavoriteType {
   imgURL: string;
   isSold: boolean;
   price: string;
-  productId: string | undefined;
+  productId: string;
   title: string;
   userId: string;
-  id?: string;
+  id: string;
 }
 
 export interface RequestType {

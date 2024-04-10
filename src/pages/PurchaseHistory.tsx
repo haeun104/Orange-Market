@@ -9,7 +9,7 @@ const PurchaseHistory = () => {
   const purchase = useSelector((state) => state.request.closedPurchaseRequest);
   const dispatch = useDispatch();
 
-  const { currentUser } = useContext(DataContext);
+  const currentUser = useContext(DataContext);
 
   useEffect(() => {
     if (currentUser) {
@@ -30,7 +30,7 @@ const PurchaseHistory = () => {
     );
   } else {
     return (
-      <div className="container">
+      <div className="container max-w-[1280px] px-[40px]">
         <MyMarketMenu />
         <div className="mt-[40px]">
           <div className="hidden sm:flex text-center border-b-[1.5px] border-solid mb-[10px]">

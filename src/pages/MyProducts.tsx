@@ -19,7 +19,7 @@ const MyProducts = () => {
     );
   } else {
     return (
-      <div className="container px-[10px]">
+      <div className="container max-w-[1280px] px-[40px]">
         <MyMarketMenu />
         <ProductListPerUser id={currentUser.id} type="myproduct" />
       </div>

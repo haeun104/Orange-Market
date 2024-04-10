@@ -75,50 +75,48 @@ const ProductListPerUser: React.FC<ProductPerUser> = ({ id, type }) => {
   } else {
     return (
       <>
-        <div className="container">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mt-[20px]">
-            {products.map((item) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mt-[20px]">
+          {products.map((item) => (
+            <div
+              key={item.id}
+              className="flex flex-col mx-auto w-[250px] cursor-pointer"
+            >
+              <div className="h-[200px]">
+                <img
+                  src={item.imgURL}
+                  alt={item.title}
+                  className="h-full w-full rounded-lg"
+                />
+              </div>
               <div
-                key={item.id}
-                className="flex flex-col mx-auto w-[250px] cursor-pointer"
+                className="flex flex-col text-gray-400"
+                onClick={() => goToProductDetailPage(item.id)}
               >
-                <div className="h-[200px]">
-                  <img
-                    src={item.imgURL}
-                    alt={item.title}
-                    className="h-full w-full rounded-lg"
+                <h4 className="text-black">{item.title}</h4>
+                <span className="text-black">{item.price} PLN</span>
+                <span>{`${item.city}, ${item.district}`}</span>
+                <div className="flex space-x-2 text-sm">
+                  <span>Click {item.clickCount}</span>
+                  <span>Like {item.likeCount}</span>
+                </div>
+                <span>Status: {item.isSold ? "Sold" : "on sale"}</span>
+              </div>
+              {!item.isSold && type === "myproduct" && (
+                <div className="flex space-x-2 mt-[10px]">
+                  <Button
+                    title="Edit"
+                    onClick={() => goToEditPage(item.id)}
+                    btnColor="orange"
+                  />
+                  <Button
+                    btnColor="grey"
+                    onClick={() => handleDeleteClick(item.id)}
+                    title="Delete"
                   />
                 </div>
-                <div
-                  className="flex flex-col text-gray-400"
-                  onClick={() => goToProductDetailPage(item.id)}
-                >
-                  <h4 className="text-black">{item.title}</h4>
-                  <span className="text-black">{item.price} PLN</span>
-                  <span>{`${item.city}, ${item.district}`}</span>
-                  <div className="flex space-x-2 text-sm">
-                    <span>Click {item.clickCount}</span>
-                    <span>Like {item.likeCount}</span>
-                  </div>
-                  <span>Status: {item.isSold ? "Sold" : "on sale"}</span>
-                </div>
-                {!item.isSold && type === "myproduct" && (
-                  <div className="flex space-x-2 mt-[10px]">
-                    <Button
-                      title="Edit"
-                      onClick={() => goToEditPage(item.id)}
-                      btnColor="orange"
-                    />
-                    <Button
-                      btnColor="grey"
-                      onClick={() => handleDeleteClick(item.id)}
-                      title="Delete"
-                    />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+              )}
+            </div>
+          ))}
         </div>
         <Modal
           openModal={openModal}

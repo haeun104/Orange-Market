@@ -6,27 +6,12 @@ import { fetchRequestData } from "../store/request-slice";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import MyMarketList from "../components/myMarket/MyMarketList";
-
-interface ProductType {
-  title: string;
-  description: string;
-  price: string;
-  category: string;
-  date: string;
-  clickCount: number;
-  likeCount: number;
-  seller: string;
-  buyer: string;
-  isSold: boolean;
-  imgURL: string;
-  city: string;
-  district: string;
-  sellerName?: string;
-}
+import Loader from "../components/Loader";
+import { ProductType, RequestType } from "../types";
 
 const MyMarket = () => {
-  const [recentSelling, setRecentSelling] = useState();
-  const [recentPurchase, setRecentPurchase] = useState();
+  const [recentSelling, setRecentSelling] = useState<RequestType[]>();
+  const [recentPurchase, setRecentPurchase] = useState<RequestType[]>();
   const [productOnSale, setProductOnSale] = useState<ProductType[]>();
   const favoriteList = useSelector((state) => state.favorite.favoriteItem);
   const sellingList = useSelector((state) => state.request.sellingRequest);
@@ -45,7 +30,7 @@ const MyMarket = () => {
   const currentUser = useContext(DataContext);
 
   // Filter requests closed within a month
-  const filterRecentDates = (list) => {
+  const filterRecentDates = (list: RequestType[]) => {
     const currentDate = new Date();
 
     const previousMonth = new Date();
@@ -60,11 +45,13 @@ const MyMarket = () => {
 
   useEffect(() => {
     if (closedSellingList) {
-      const recentRequests = filterRecentDates(closedSellingList);
+      const recentRequests: RequestType[] =
+        filterRecentDates(closedSellingList);
       setRecentSelling(recentRequests);
     }
     if (closedPurchaseList) {
-      const recentRequests = filterRecentDates(closedPurchaseList);
+      const recentRequests: RequestType[] =
+        filterRecentDates(closedPurchaseList);
       setRecentPurchase(recentRequests);
     }
   }, [closedPurchaseList, closedSellingList]);
@@ -72,7 +59,7 @@ const MyMarket = () => {
   // Dispatch current user data
   useEffect(() => {
     if (currentUser) {
-      dispatch(fetchRequestData(currentUser.id, "seller"));
+      dispatch (fetchRequestData(currentUser.id, "seller"));
       dispatch(fetchRequestData(currentUser.id, "requestor"));
       dispatch(fetchRequestData(currentUser.id, "sellerClosed"));
       dispatch(fetchRequestData(currentUser.id, "requestorClosed"));
@@ -110,16 +97,7 @@ const MyMarket = () => {
       productOnSale
     )
   ) {
-    return (
-      <div
-        className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-        role="status"
-      >
-        <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-          Loading...
-        </span>
-      </div>
-    );
+    return <Loader />;
   }
 
   return (

@@ -109,7 +109,7 @@ const PurchaseRequest = () => {
   } else {
     return (
       <>
-        <div className="container px-[10px]">
+        <div className="container max-w-[1280px] px-[40px]">
           <MyMarketMenu />
           <div className="mt-[30px]">
             <h2 className="font-bold mb-[20px]">For Seller</h2>
