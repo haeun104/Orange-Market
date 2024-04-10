@@ -3,31 +3,21 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { db } from "../../firebase/firebase-config";
 import Modal from "../Modal";
+import { ProductType } from "../../types";
+import Loader from "../Loader";
+import Button from "../Button";
 
 interface ProductPerUser {
   id: string | undefined;
   type?: string;
 }
 
-interface ProductType {
-  title: string;
-  description: string;
-  price: number;
-  category: string;
-  date: string;
-  clickCount: number;
-  likeCount: number;
-  seller: string;
-  buyer: string;
-  isSold: boolean;
-  imgURL: string;
-  city: string;
-  district: string;
+interface ProductWithId extends ProductType {
   id: string;
 }
 
 const ProductListPerUser: React.FC<ProductPerUser> = ({ id, type }) => {
-  const [products, setProducts] = useState<ProductType[]>();
+  const [products, setProducts] = useState<ProductWithId[]>();
   const [openModal, setOpenModal] = useState(false);
   const [productToDelete, setProductToDelete] = useState("");
 
@@ -57,7 +47,7 @@ const ProductListPerUser: React.FC<ProductPerUser> = ({ id, type }) => {
       const productList = productSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      })) as ProductType[];
+      })) as ProductWithId[];
       setProducts(productList);
     } catch (error) {
       console.log(error);
@@ -81,16 +71,7 @@ const ProductListPerUser: React.FC<ProductPerUser> = ({ id, type }) => {
   };
 
   if (!products) {
-    return (
-      <div
-        className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-        role="status"
-      >
-        <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-          Loading...
-        </span>
-      </div>
-    );
+    return <Loader />;
   } else {
     return (
       <>
@@ -105,7 +86,7 @@ const ProductListPerUser: React.FC<ProductPerUser> = ({ id, type }) => {
                   <img
                     src={item.imgURL}
                     alt={item.title}
-                    className="max-h-full w-full rounded-lg"
+                    className="h-full w-full rounded-lg"
                   />
                 </div>
                 <div
@@ -119,24 +100,20 @@ const ProductListPerUser: React.FC<ProductPerUser> = ({ id, type }) => {
                     <span>Click {item.clickCount}</span>
                     <span>Like {item.likeCount}</span>
                   </div>
-                  <span className="">
-                    Status: {item.isSold ? "Sold" : "on sale"}
-                  </span>
+                  <span>Status: {item.isSold ? "Sold" : "on sale"}</span>
                 </div>
                 {!item.isSold && type === "myproduct" && (
                   <div className="flex space-x-2 mt-[10px]">
-                    <button
-                      className="btn-orange"
+                    <Button
+                      title="Edit"
                       onClick={() => goToEditPage(item.id)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="btn-grey"
+                      btnColor="orange"
+                    />
+                    <Button
+                      btnColor="grey"
                       onClick={() => handleDeleteClick(item.id)}
-                    >
-                      Delete
-                    </button>
+                      title="Delete"
+                    />
                   </div>
                 )}
               </div>

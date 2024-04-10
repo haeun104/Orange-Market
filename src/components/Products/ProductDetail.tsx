@@ -19,50 +19,8 @@ import { getFormattedDate } from "../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchFavoriteData } from "../../store/favorite-slice";
 import Button from "../Button";
-
-interface FavoriteType {
-  city: string;
-  district: string;
-  imgURL: string;
-  isSold: boolean;
-  price: string;
-  productId: string | undefined;
-  title: string;
-  userId: string;
-  id?: string;
-}
-
-interface ProductType {
-  title: string;
-  description: string;
-  price: string;
-  category: string;
-  date: string;
-  clickCount: number;
-  likeCount: number;
-  seller: string;
-  buyer: string;
-  isSold: boolean;
-  imgURL: string;
-  city: string;
-  district: string;
-  sellerName?: string;
-}
-
-interface RequestType {
-  closeDate: string;
-  date: string;
-  imgURL: string;
-  isChosenBySeller: boolean;
-  isClosed: boolean;
-  price: string;
-  product: string | undefined;
-  requestor: string;
-  requestorName: string;
-  seller: string;
-  sellerName: string | undefined;
-  title: string;
-}
+import { ProductType, FavoriteType, RequestType } from "../../types";
+import Loader from "../Loader";
 
 const ProductDetail = () => {
   const [product, setProduct] = useState<ProductType>();
@@ -316,16 +274,7 @@ const ProductDetail = () => {
   };
 
   if (!product) {
-    return (
-      <div
-        className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-        role="status"
-      >
-        <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-          Loading...
-        </span>
-      </div>
-    );
+    return <Loader />;
   } else {
     return (
       <>

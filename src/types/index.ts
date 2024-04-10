@@ -27,3 +27,30 @@ export interface UserType {
   street: string;
   surname: string;
 }
+
+export interface FavoriteType {
+  city: string;
+  district: string;
+  imgURL: string;
+  isSold: boolean;
+  price: string;
+  productId: string | undefined;
+  title: string;
+  userId: string;
+  id?: string;
+}
+
+export interface RequestType {
+  closeDate: string;
+  date: string;
+  imgURL: string;
+  isChosenBySeller: boolean;
+  isClosed: boolean;
+  price: string;
+  product: string | undefined;
+  requestor: string;
+  requestorName: string;
+  seller: string;
+  sellerName: string | undefined;
+  title: string;
+}
