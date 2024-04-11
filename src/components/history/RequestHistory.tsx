@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { RequestType } from "../../types";
+import { ChangeEvent, useEffect, useState } from "react";
+import Loader from "../Loader";
 
 interface RequestHistoryProps {
   data: RequestType[];
@@ -7,8 +9,30 @@ interface RequestHistoryProps {
 }
 
 const RequestHistory: React.FC<RequestHistoryProps> = ({ data, type }) => {
+  const [filterValue, setFilterValue] = useState("all");
+  const [filteredRequests, setFilteredRequests] = useState<RequestType[]>();
+
+  useEffect(() => {
+    if (filterValue === "all") {
+      setFilteredRequests(data);
+    } else if (filterValue === "rejected") {
+      const rejectedRequests = data.filter((item) => !item.isChosenBySeller);
+      setFilteredRequests(rejectedRequests);
+    } else {
+      const acceptedRequests = data.filter((item) => item.isChosenBySeller);
+      setFilteredRequests(acceptedRequests);
+    }
+  }, [filterValue, data]);
+
+  const handleOnchange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setFilterValue(e.target.value);
+  };
+  if (!filteredRequests) {
+    return <Loader />;
+  }
+
   return (
-    <div className="mt-[40px]">
+    <div className="mt-[40px] relative">
       <div className="hidden sm:flex text-center border-b-[1.5px] border-solid mb-[10px]">
         <div className="flex-1">Title</div>
         <div className="flex-1">Price</div>
@@ -18,7 +42,7 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ data, type }) => {
         <div className="flex-1">Request Date</div>
         <div className="flex-1">Status</div>
       </div>
-      {data.map((item) => (
+      {filteredRequests.map((item) => (
         <div
           key={item.id}
           className="flex flex-col justify-center sm:flex-row sm:text-center mb-2"
@@ -67,9 +91,23 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ data, type }) => {
           </div>
         </div>
       ))}
-      {data.length === 0 && (
+      {filteredRequests.length === 0 && (
         <div className="text-center text-accent-grey">There are no history</div>
       )}
+      <div className="absolute top-[-30px] sm:right-0 sm:flex sm:flex-col sm:top-[-50px] text-sm">
+        <label htmlFor="status">filter status </label>
+        <select
+          name="status"
+          id="status"
+          className="border-[1px] border-solid border-accent-grey rounded-md"
+          value={filterValue}
+          onChange={handleOnchange}
+        >
+          <option value="all">all</option>
+          <option value="rejected">rejected</option>
+          <option value="accepted">accepted</option>
+        </select>
+      </div>
     </div>
   );
 };
