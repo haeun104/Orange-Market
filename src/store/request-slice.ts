@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { query, collection, where, getDocs } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
+import { AppDispatch } from ".";
 
 const requestSlice = createSlice({
   name: "request",
@@ -28,7 +29,7 @@ const requestSlice = createSlice({
 
 export const requestActions = requestSlice.actions;
 
-const fetchData = async (key, id, boolean) => {
+const fetchData = async (key: string, id: string, boolean: boolean) => {
   const requestQuery = query(
     collection(db, "purchase request"),
     where(key, "==", id),
@@ -42,10 +43,10 @@ const fetchData = async (key, id, boolean) => {
   return requestList;
 };
 
-export const fetchRequestData = (id, key) => {
+export const fetchRequestData = (id: string, key: string) => {
   if (!id) return;
 
-  return async (dispatch) => {
+  return async (dispatch: AppDispatch) => {
     let data, actionCreator;
     try {
       if (key === "seller") {

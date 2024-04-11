@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { query, collection, where, getDocs } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
+import { AppDispatch } from ".";
 
 const favoriteSlice = createSlice({
   name: "favorite",
@@ -14,8 +15,8 @@ const favoriteSlice = createSlice({
 
 export const favoriteActions = favoriteSlice.actions;
 
-export const fetchFavoriteData = (id) => {
-  return async (dispatch) => {
+export const fetchFavoriteData = (id: string) => {
+  return async (dispatch: AppDispatch) => {
     const fetchData = async () => {
       const favoriteQuery = query(
         collection(db, "favorite"),

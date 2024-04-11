@@ -5,52 +5,62 @@ import { fetchFavoriteData } from "../store/favorite-slice";
 import { fetchRequestData } from "../store/request-slice";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
-import MyMarketList from "../components/myMarket/MyMarketList";
+import MyMarketList, {
+  MyMarketProductList,
+} from "../components/myMarket/MyMarketList";
 import Loader from "../components/Loader";
-import { ProductType, RequestType } from "../types";
+import { AppDispatch, RootState } from "../store";
 
 const MyMarket = () => {
-  const [recentSelling, setRecentSelling] = useState<RequestType[]>();
-  const [recentPurchase, setRecentPurchase] = useState<RequestType[]>();
-  const [productOnSale, setProductOnSale] = useState<ProductType[]>();
-  const favoriteList = useSelector((state) => state.favorite.favoriteItem);
-  const sellingList = useSelector((state) => state.request.sellingRequest);
-  const purchaseList = useSelector((state) => state.request.purchaseRequest);
+  const [recentSelling, setRecentSelling] = useState<MyMarketProductList[]>();
+  const [recentPurchase, setRecentPurchase] = useState<MyMarketProductList[]>();
+  const [productOnSale, setProductOnSale] = useState<MyMarketProductList[]>();
+  const favoriteList = useSelector(
+    (state: RootState) => state.favorite.favoriteItem
+  );
+  const sellingList = useSelector(
+    (state: RootState) => state.request.sellingRequest
+  );
+  const purchaseList = useSelector(
+    (state: RootState) => state.request.purchaseRequest
+  );
   const requests = [...sellingList, ...purchaseList];
 
   const closedSellingList = useSelector(
-    (state) => state.request.closedSellingRequest
+    (state: RootState) => state.request.closedSellingRequest
   );
   const closedPurchaseList = useSelector(
-    (state) => state.request.closedPurchaseRequest
+    (state: RootState) => state.request.closedPurchaseRequest
   );
 
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   const currentUser = useContext(DataContext);
 
   // Filter requests closed within a month
-  const filterRecentDates = (list: RequestType[]) => {
+  const filterRecentDates = (list: MyMarketProductList[]) => {
     const currentDate = new Date();
 
     const previousMonth = new Date();
     previousMonth.setMonth(previousMonth.getMonth() - 1);
 
     const recentDates = list.filter((item) => {
-      const date = new Date(item.closeDate);
-      return date >= previousMonth && date <= currentDate;
+      if (item.closeDate !== undefined) {
+        const date = new Date(item.closeDate);
+        return date >= previousMonth && date <= currentDate;
+      }
     });
     return recentDates;
   };
 
   useEffect(() => {
     if (closedSellingList) {
-      const recentRequests: RequestType[] =
+      const recentRequests: MyMarketProductList[] =
         filterRecentDates(closedSellingList);
       setRecentSelling(recentRequests);
     }
     if (closedPurchaseList) {
-      const recentRequests: RequestType[] =
+      const recentRequests: MyMarketProductList[] =
         filterRecentDates(closedPurchaseList);
       setRecentPurchase(recentRequests);
     }
@@ -59,10 +69,12 @@ const MyMarket = () => {
   // Dispatch current user data
   useEffect(() => {
     if (currentUser) {
-      dispatch (fetchRequestData(currentUser.id, "seller"));
-      dispatch(fetchRequestData(currentUser.id, "requestor"));
-      dispatch(fetchRequestData(currentUser.id, "sellerClosed"));
-      dispatch(fetchRequestData(currentUser.id, "requestorClosed"));
+      dispatch(fetchRequestData(currentUser.id, "seller") as AppDispatch);
+      dispatch(fetchRequestData(currentUser.id, "requestor") as AppDispatch);
+      dispatch(fetchRequestData(currentUser.id, "sellerClosed") as AppDispatch);
+      dispatch(
+        fetchRequestData(currentUser.id, "requestorClosed") as AppDispatch
+      );
       dispatch(fetchFavoriteData(currentUser.id));
     }
   }, [currentUser, dispatch]);
@@ -75,9 +87,9 @@ const MyMarket = () => {
       where("isSold", "==", false)
     );
     const productSnapshot = await getDocs(productQuery);
-    const productOnSale: ProductType[] = [];
+    const productOnSale: MyMarketProductList[] = [];
     productSnapshot.forEach((doc) =>
-      productOnSale.push(doc.data() as ProductType)
+      productOnSale.push(doc.data() as MyMarketProductList)
     );
     setProductOnSale(productOnSale);
   };

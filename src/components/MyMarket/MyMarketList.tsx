@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import MarketProducts from "./MarketProducts";
 
-interface ProductList {
+export interface MyMarketProductList {
   city: string;
   district: string;
   imgURL: string;
@@ -14,12 +14,13 @@ interface ProductList {
   isChosenBySeller?: boolean;
   isClosed?: boolean;
   likeCount?: string;
+  closeDate?:string;
 }
 
 interface MyMarketListProps {
   title: string;
   link: string;
-  list: ProductList[];
+  list: MyMarketProductList[];
 }
 
 const MyMarketList: React.FC<MyMarketListProps> = ({ title, link, list }) => {
@@ -34,8 +35,9 @@ const MyMarketList: React.FC<MyMarketListProps> = ({ title, link, list }) => {
         </span>
       </Link>
       <div>
-        {list.map((item) => (
+        {list.map((item, index) => (
           <MarketProducts
+            key={index}
             imgURL={item.imgURL}
             title={item.title}
             price={item.price}
