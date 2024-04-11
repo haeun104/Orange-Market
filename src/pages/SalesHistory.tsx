@@ -5,7 +5,7 @@ import { DataContext } from "../App";
 import { fetchRequestData } from "../store/request-slice";
 import { AppDispatch, RootState } from "../store";
 import Loader from "../components/Loader";
-import RequestHistory from "../components/history/RequestHistory";
+import RequestHistory from "../components/requests/RequestHistory";
 
 const SalesHistory = () => {
   const selling = useSelector(

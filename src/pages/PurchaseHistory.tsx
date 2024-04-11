@@ -3,7 +3,7 @@ import MyMarketMenu from "../components/myMarket/MyMarketMenu";
 import { useContext, useEffect } from "react";
 import { DataContext } from "../App";
 import { fetchRequestData } from "../store/request-slice";
-import RequestHistory from "../components/history/RequestHistory";
+import RequestHistory from "../components/requests/RequestHistory";
 import Loader from "../components/Loader";
 import { AppDispatch, RootState } from "../store";
 

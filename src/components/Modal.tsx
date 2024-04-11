@@ -41,7 +41,7 @@ const Modal: React.FC<ModalProps> = ({
         updateProductList();
       }
     }
-    if (type === "favorite") {
+    if (type === "favorite" || type === "requests") {
       if (updateProductList !== undefined) {
         updateProductList();
       }
