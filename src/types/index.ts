@@ -53,4 +53,5 @@ export interface RequestType {
   seller: string;
   sellerName: string | undefined;
   title: string;
+  id?: string;
 }

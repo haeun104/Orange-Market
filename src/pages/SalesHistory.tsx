@@ -4,30 +4,26 @@ import { useContext, useEffect } from "react";
 import { DataContext } from "../App";
 import { fetchRequestData } from "../store/request-slice";
 import { Link } from "react-router-dom";
+import { AppDispatch, RootState } from "../store";
+import Loader from "../components/Loader";
+import { RequestType } from "../types";
 
 const SalesHistory = () => {
-  const selling = useSelector((state) => state.request.closedSellingRequest);
-  const dispatch = useDispatch();
+  const selling = useSelector(
+    (state: RootState) => state.request.closedSellingRequest
+  );
+  const dispatch: AppDispatch = useDispatch();
 
   const currentUser = useContext(DataContext);
 
   useEffect(() => {
     if (currentUser) {
-      dispatch(fetchRequestData(currentUser.id, "sellerClosed"));
+      dispatch(fetchRequestData(currentUser.id, "sellerClosed") as AppDispatch);
     }
   }, [currentUser, dispatch]);
 
   if (!selling) {
-    return (
-      <div
-        className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-        role="status"
-      >
-        <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-          Loading...
-        </span>
-      </div>
-    );
+    return <Loader />;
   } else {
     return (
       <div className="container max-w-[1280px] px-[40px]">
@@ -40,18 +36,18 @@ const SalesHistory = () => {
             <div className="flex-1">Request Date</div>
             <div className="flex-1">Status</div>
           </div>
-          {selling.map((item) => (
+          {selling.map((item: RequestType) => (
             <div
               key={item.id}
               className="flex flex-col justify-center sm:flex-row sm:text-center mb-2"
             >
               <Link to={`/products/${item.product}`} className="sm:w-1/5">
                 <div className="flex flex-col sm:flex-row sm:justify-center">
-                  <div className="h-[120px] w-[120px] sm:h-[40px] sm:w-[70px]">
+                  <div className="h-[120px] w-[120px] sm:h-[40px] sm:w-[70px] mr-[10px]">
                     <img
                       src={item.imgURL}
                       alt={item.title}
-                      className="h-[100%]"
+                      className="h-full w-full rounded-md"
                     />
                   </div>
                   <div className="flex flex-1">
