@@ -14,7 +14,8 @@ export interface MyMarketProductList {
   isChosenBySeller?: boolean;
   isClosed?: boolean;
   likeCount?: string;
-  closeDate?:string;
+  closeDate?: string;
+  date?: string;
 }
 
 interface MyMarketListProps {
@@ -46,6 +47,7 @@ const MyMarketList: React.FC<MyMarketListProps> = ({ title, link, list }) => {
             isChosenBySeller={item.isChosenBySeller}
             isClosed={item.isClosed}
             listType={link}
+            requestDate={item.date}
           />
         ))}
         {list.length === 0 && (

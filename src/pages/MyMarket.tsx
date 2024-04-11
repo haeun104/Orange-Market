@@ -114,7 +114,7 @@ const MyMarket = () => {
 
   return (
     <>
-      <div className="container max-w-[640px] py-[40px] px-[10px]">
+      <div className="container max-w-[800px] py-[40px] px-[10px]">
         <h2 className="uppercase text-lg font-bold text-center text-main-orange">
           My Market
         </h2>
