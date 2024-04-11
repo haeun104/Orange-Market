@@ -328,7 +328,7 @@ const ProductForm: React.FC<FormType> = ({ type }) => {
               ? "successfully updated a product!"
               : "successfully registered a product!"
           }
-          type="goToHome"
+          type={type === "new" ? "goToHome" : "myproducts"}
         />
       </>
     );

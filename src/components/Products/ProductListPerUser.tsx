@@ -64,7 +64,7 @@ const ProductListPerUser: React.FC<ProductPerUser> = ({ id, type }) => {
     navigate(`/products/edit/${id}`);
   };
 
-  //
+  // Open modal for deletion confirmation
   const handleDeleteClick = (id: string) => {
     setProductToDelete(id);
     setOpenModal(true);
@@ -79,7 +79,9 @@ const ProductListPerUser: React.FC<ProductPerUser> = ({ id, type }) => {
           {products.map((item) => (
             <div
               key={item.id}
-              className="flex flex-col mx-auto w-[250px] cursor-pointer"
+              className={`flex flex-col w-[250px] cursor-pointer ${
+                type !== "myproduct" && "mx-auto"
+              }`}
             >
               <div className="h-[200px]">
                 <img

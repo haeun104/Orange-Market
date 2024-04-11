@@ -88,7 +88,7 @@ const Nav = () => {
                         </Link>
                         {currentUser && (
                           <Link to="/products/new">
-                            <div className="text-blue-700 hover:bg-slate-200 rounded-md px-[12px] py-[8px] text-sm font-bold">
+                            <div className="text-black-300 hover:bg-slate-200 rounded-md px-[12px] py-[8px] text-sm font-bold">
                               Add Products
                             </div>
                           </Link>

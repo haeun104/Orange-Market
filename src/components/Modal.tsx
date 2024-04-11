@@ -35,7 +35,7 @@ const Modal: React.FC<ModalProps> = ({
     if (type === "goToHome") {
       navigate("/", { replace: true });
     }
-    if (type === "delete") {
+    if (type === "delete" || type === "myproducts") {
       navigate("/my-products", { replace: true });
       if (updateProductList !== undefined) {
         updateProductList();
