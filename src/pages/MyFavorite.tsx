@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import MyMarketMenu from "../components/myMarket/MyMarketMenu";
 import Button from "../components/Button";
 import {
@@ -10,15 +10,35 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
-import { useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import Modal from "../components/Modal";
 import Loader from "../components/Loader";
 import { FavoriteType } from "../types";
+import { AppDispatch, RootState } from "../store";
+import {} from "react-redux";
+import { fetchFavoriteData } from "../store/favorite-slice";
+import { DataContext } from "../App";
 
 const MyFavorite = () => {
   const [openModal, setOpenModal] = useState(false);
-  const favoriteList = useSelector((state) => state.favorite.favoriteItem);
+  const favoriteList = useSelector(
+    (state: RootState) => state.favorite.favoriteItem
+  );
   const navigate = useNavigate();
+
+  const dispatch: AppDispatch = useDispatch();
+
+  const currentUser = useContext(DataContext);
+
+  const updateFavorites = useCallback(() => {
+    if (currentUser) {
+      dispatch(fetchFavoriteData(currentUser.id));
+    }
+  }, [currentUser, dispatch]);
+
+  useEffect(() => {
+    updateFavorites();
+  }, [updateFavorites]);
 
   const goToProductDetail = (productId: string) => {
     navigate(`/products/${productId}`);
@@ -70,6 +90,7 @@ const MyFavorite = () => {
                   <h4 className="text-black font-bold">{item.title}</h4>
                   <span className="text-black font-bold">{item.price} PLN</span>
                   <span>{`${item.city}, ${item.district}`}</span>
+                  <span>{item.isSold ? "Sold" : "On sale"}</span>
                 </div>
                 <Button
                   title="Delete"
@@ -90,6 +111,8 @@ const MyFavorite = () => {
           openModal={openModal}
           closeModal={() => setOpenModal(false)}
           message="successfully deleted favorite!"
+          updateProductList={updateFavorites}
+          type="favorite"
         />
       </>
     );
