@@ -47,11 +47,11 @@ export interface RequestType {
   isChosenBySeller: boolean;
   isClosed: boolean;
   price: string;
-  product: string | undefined;
+  product: string;
   requestor: string;
   requestorName: string;
   seller: string;
-  sellerName: string | undefined;
+  sellerName: string;
   title: string;
-  id?: string;
+  id: string;
 }

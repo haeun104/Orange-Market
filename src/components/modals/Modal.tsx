@@ -1,6 +1,6 @@
 import { deleteDoc, doc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { db } from "../firebase/firebase-config";
+import { db } from "../../firebase/firebase-config";
 import { useState } from "react";
 
 type ModalProps = {

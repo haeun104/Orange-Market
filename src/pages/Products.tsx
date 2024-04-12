@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DataContext } from "../App";
 import { productFilterCategories } from "./../utils";
-import Modal from "../components/Modal";
+import Modal from "../components/modals/Modal";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import { IoMdAddCircle } from "react-icons/io";

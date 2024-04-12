@@ -14,7 +14,7 @@ import {
   Firestore,
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
-import Modal from "../Modal";
+import Modal from "../modals/Modal";
 import { getFormattedDate } from "../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchFavoriteData } from "../../store/favorite-slice";

@@ -11,7 +11,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import { useCallback, useContext, useEffect, useState } from "react";
-import Modal from "../components/Modal";
+import Modal from "../components/modals/Modal";
 import Loader from "../components/Loader";
 import { FavoriteType } from "../types";
 import { AppDispatch, RootState } from "../store";

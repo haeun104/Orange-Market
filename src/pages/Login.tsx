@@ -2,7 +2,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { FormEvent, MouseEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../firebase/firebase-config";
-import Modal from "../components/Modal";
+import Modal from "../components/modals/Modal";
 import Button from "../components/Button";
 
 const Login = () => {
