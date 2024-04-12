@@ -8,7 +8,7 @@ interface InputProps {
   disabled?: boolean;
   onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   label: string;
-  required: boolean;
+  required?: boolean;
   max?: string;
   placeholder?: string;
   textarea?: boolean;
