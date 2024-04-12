@@ -302,6 +302,11 @@ const ProductDetail = () => {
     }
   };
 
+  const handleChatClick = () => {
+    setModalMsg("Sorry, chat is temporarily unavailable");
+    setOpenModal(true);
+  };
+
   if (!product) {
     return <Loader />;
   } else {
@@ -358,6 +363,7 @@ const ProductDetail = () => {
                 title="Chat with a seller"
                 btnColor="orange"
                 disabled={product.isSold ? true : false}
+                onClick={handleChatClick}
               />
               <Button
                 title={existingRequest ? requestBtn : "Make a purchase request"}
