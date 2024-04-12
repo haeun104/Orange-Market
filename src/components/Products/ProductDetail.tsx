@@ -19,8 +19,35 @@ import { getFormattedDate } from "../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchFavoriteData } from "../../store/favorite-slice";
 import Button from "../Button";
-import { ProductType, FavoriteType, RequestType } from "../../types";
 import Loader from "../Loader";
+import { AppDispatch, RootState } from "../../store";
+import { FavoriteType, ProductType, RequestType } from "../../types";
+
+interface NewFavorite {
+  city: string;
+  district: string;
+  imgURL: string;
+  isSold: boolean;
+  price: string;
+  productId: string;
+  title: string;
+  userId: string;
+}
+
+interface NewRequest {
+  closeDate: string;
+  date: string;
+  imgURL: string;
+  isChosenBySeller: boolean;
+  isClosed: boolean;
+  price: string;
+  product: string;
+  requestor: string;
+  requestorName: string;
+  seller: string;
+  sellerName: string;
+  title: string;
+}
 
 const ProductDetail = () => {
   const [product, setProduct] = useState<ProductType>();
@@ -33,8 +60,10 @@ const ProductDetail = () => {
   const [requestBtn, setRequestBtn] = useState("");
 
   const { productId } = useParams();
-  const favorite = useSelector((state) => state.favorite.favoriteItem);
-  const dispatch = useDispatch();
+  const favorite: FavoriteType[] = useSelector(
+    (state: RootState) => state.favorite.favoriteItem
+  );
+  const dispatch: AppDispatch = useDispatch();
   const currentUser = useContext(DataContext);
 
   const navigate = useNavigate();
@@ -105,10 +134,10 @@ const ProductDetail = () => {
   // Check if favorite exists in DB
   useEffect(() => {
     const checkUserFavorite = (productId: string) => {
-      const existingFavorite = favorite.find(
+      const existingFavorite: FavoriteType | undefined = favorite.find(
         (item: FavoriteType) => item.productId === productId
       );
-      if (existingFavorite) {
+      if (existingFavorite !== undefined) {
         setExistingFavorite(true);
         setExistingFavoriteId(existingFavorite.id);
       }
@@ -162,7 +191,7 @@ const ProductDetail = () => {
   };
 
   // Add a product to favorites in DB
-  async function addFavoriteInDb(favorite: FavoriteType) {
+  async function addFavoriteInDb(favorite: NewFavorite) {
     try {
       await addDoc(collection(db, "favorite"), favorite);
 
@@ -215,8 +244,8 @@ const ProductDetail = () => {
       setOpenModal(true);
       return;
     }
-    if (product) {
-      const favorite: FavoriteType = {
+    if (product && productId) {
+      const favorite: NewFavorite = {
         city: product.city,
         district: product.district,
         imgURL: product.imgURL,
@@ -235,7 +264,7 @@ const ProductDetail = () => {
   };
 
   // Create a purchase request in DB
-  async function createPurchaseRequestInDb(request: RequestType) {
+  async function createPurchaseRequestInDb(request: NewRequest) {
     try {
       await addDoc(collection(db, "purchase request"), request);
       setModalMsg("successfully send a purchase request!");
@@ -254,8 +283,8 @@ const ProductDetail = () => {
       setOpenModal(true);
       return;
     }
-    if (product) {
-      const request: RequestType = {
+    if (product && productId && product.sellerName) {
+      const request: NewRequest = {
         imgURL: product.imgURL,
         price: product.price,
         title: product.title,
