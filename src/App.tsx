@@ -9,7 +9,7 @@ import MyProfile from "./pages/MyProfile";
 import MyMarket from "./pages/MyMarket";
 import Products from "./pages/Products";
 import AddProduct from "./pages/AddProduct";
-import ProductDetail from "./components/products/ProductDetail";
+import ProductDetail from "../src/components/products/ProductDetail";
 import ProductsBySeller from "./pages/ProductsBySeller";
 import MyFavorite from "./pages/MyFavorite";
 import PurchaseHistory from "./pages/PurchaseHistory";
@@ -19,7 +19,7 @@ import MyProducts from "./pages/MyProducts";
 import EditProduct from "./pages/EditProduct";
 import { UserType } from "./types/index";
 import { fetchUserData } from "./firebase/firebase-action";
-import Nav from "./components/home/Nav";
+import Nav from "../src/components/home/Nav";
 
 export const DataContext = React.createContext<UserType | undefined>(undefined);
 
