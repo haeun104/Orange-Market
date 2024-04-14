@@ -18,7 +18,7 @@ import SalesHistory from "./pages/SalesHistory";
 import PurchaseRequest from "./pages/PurchaseRequest";
 import MyProducts from "./pages/MyProducts";
 import EditProduct from "./pages/EditProduct";
-import { UserType } from "./types";
+import { UserType } from "./types/index";
 import { fetchUserData } from "./firebase/firebase-action";
 
 export const DataContext = React.createContext<UserType | undefined>(undefined);

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { db } from "../../firebase/firebase-config";
 import Modal from "../modals/Modal";
-import { ProductType } from "../../types";
+import { ProductType } from "../../types/index";
 import Loader from "../Loader";
 import Button from "../Button";
 

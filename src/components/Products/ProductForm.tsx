@@ -6,7 +6,7 @@ import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import Modal from "../modals/Modal";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useNavigate, useParams } from "react-router-dom";
-import { ProductType } from "../../types";
+import { ProductType } from "../../types/index";
 import Loader from "../Loader";
 import Input from "../inputs/Input";
 import Button from "../Button";

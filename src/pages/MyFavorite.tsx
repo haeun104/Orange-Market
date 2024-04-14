@@ -13,7 +13,7 @@ import { db } from "../firebase/firebase-config";
 import { useCallback, useContext, useEffect, useState } from "react";
 import Modal from "../components/modals/Modal";
 import Loader from "../components/Loader";
-import { FavoriteType } from "../types";
+import { FavoriteType } from "../types/index";
 import { AppDispatch, RootState } from "../store";
 import {} from "react-redux";
 import { fetchFavoriteData } from "../store/favorite-slice";

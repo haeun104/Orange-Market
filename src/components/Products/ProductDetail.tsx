@@ -21,7 +21,7 @@ import { fetchFavoriteData } from "../../store/favorite-slice";
 import Button from "../Button";
 import Loader from "../Loader";
 import { AppDispatch, RootState } from "../../store";
-import { FavoriteType, ProductType, RequestType } from "../../types";
+import { FavoriteType, ProductType, RequestType } from "../../types/index";
 
 interface NewFavorite {
   city: string;
