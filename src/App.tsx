@@ -19,6 +19,7 @@ import MyProducts from "./pages/MyProducts";
 import EditProduct from "./pages/EditProduct";
 import { UserType } from "./types/index";
 import { fetchUserData } from "./firebase/firebase-action";
+import Nav from "./components/home/Nav";
 
 export const DataContext = React.createContext<UserType | undefined>(undefined);
 
@@ -55,6 +56,7 @@ function App() {
     <>
       <BrowserRouter>
         <DataContext.Provider value={currentUser}>
+          <Nav />
           <Outlet />
           <Routes>
             <Route path="/" element={<Home />} />
