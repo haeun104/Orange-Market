@@ -50,7 +50,9 @@ const MyProfile = () => {
   };
 
   // Update state of user data
-  const handleOnChangeUserData = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleOnChangeUserData = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setUpdatedUserData(
       (prev) =>
         ({
