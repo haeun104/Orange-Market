@@ -3,10 +3,10 @@ import { Disclosure, Menu } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
-import { auth } from "../../firebase/firebase-config";
-import Modal from "../modals/Modal";
-import { DataContext } from "../../App";
-import Avatar from "../Avatar";
+import { auth } from "../firebase/firebase-config";
+import Modal from "./modals/Modal";
+import { DataContext } from "../App";
+import Avatar from "./Avatar";
 
 const Nav = () => {
   const [openModal, setOpenModal] = useState(false);
