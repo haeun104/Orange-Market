@@ -21,6 +21,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*.tsx", "src/**/*.ts", "src/components/**/*.tsx"],
+  "include": ["src/**/*.tsx", "src/**/*.ts", "Orange-Market/src/components/**/*.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
