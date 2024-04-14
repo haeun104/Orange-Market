@@ -2,7 +2,6 @@ import Home from "./pages/Home";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
-import Nav from "./components/home/Nav";
 import React, { useEffect, useState } from "react";
 import { auth } from "./firebase/firebase-config";
 import { onAuthStateChanged } from "firebase/auth";
@@ -56,7 +55,6 @@ function App() {
     <>
       <BrowserRouter>
         <DataContext.Provider value={currentUser}>
-          <Nav />
           <Outlet />
           <Routes>
             <Route path="/" element={<Home />} />
