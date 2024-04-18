@@ -1,12 +1,9 @@
 import { Link } from "react-router-dom";
-// import heroImage from '../../assets/hero-bg-image-lg.jpg';
 
 const Hero = () => {
   return (
     <>
-      <section
-        className={`bg-[url('src/assets/hero-bg-image-lg.jpg')] bg-cover h-calc-vh-minus-64`}
-      >
+      <section className="bg-hero-bg-image bg-cover h-calc-vh-minus-64">
         <div className="max-h-[600px]">
           <div className="flex flex-col space-y-5 align-middle pt-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
             <h2 className="text-center text-lg  text-main-orange font-bold sm:text-2xl lg:text-4xl text-nowrap">

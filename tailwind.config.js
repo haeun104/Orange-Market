@@ -14,16 +14,16 @@ export default {
         "accent-grey": "#C7C8CC",
       },
       backgroundImage: {
-        "hero-bg-image": "url('src/assets/hero-bg-image-lg.jpg')",
+        "hero-bg-image": "url('hero-bg-image-lg.jpg')",
       },
       height: {
         "calc-vh-minus-64": "calc(100vh - 64px)",
       },
       keyframes: {
         homeImages: {
-          "0%, 100%": { backgroundImage: "url('src/assets/laptop.jpg')" },
-          "33.33%": { backgroundImage: "url('src/assets/photobymobile.jpg')" },
-          "66.66%": { backgroundImage: "url('src/assets/parcel.jpg')" },
+          "0%, 100%": { backgroundImage: "url('/laptop.jpg')" },
+          "33.33%": { backgroundImage: "url('/photobymobile.jpg')" },
+          "66.66%": { backgroundImage: "url('/parcel.jpg')" },
         },
       },
       animation: {
