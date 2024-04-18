@@ -9,7 +9,7 @@ import MyProfile from "./pages/MyProfile";
 import MyMarket from "./pages/MyMarket";
 import Products from "./pages/Products";
 import AddProduct from "./pages/AddProduct";
-import ProductDetail from "./components/products/ProductDetail";
+import ProductDetail from "./components/products/ProductDetail.tsx";
 import ProductsBySeller from "./pages/ProductsBySeller";
 import MyFavorite from "./pages/MyFavorite";
 import PurchaseHistory from "./pages/PurchaseHistory";
