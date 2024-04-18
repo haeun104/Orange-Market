@@ -14,7 +14,7 @@ export default {
         "accent-grey": "#C7C8CC",
       },
       backgroundImage: {
-        "hero-bg-image": "url('hero-bg-image-lg.jpg')",
+        "hero-bg-image": "url('/hero-bg-image-lg.jpg')",
       },
       height: {
         "calc-vh-minus-64": "calc(100vh - 64px)",
