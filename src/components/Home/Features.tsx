@@ -1,3 +1,6 @@
+import buyer from "../../assets/buyer.png";
+import seller from "../../assets/seller.png";
+
 const Features = () => {
   return (
     <>
@@ -44,7 +47,7 @@ const Features = () => {
             Are you a seller?
           </h3>
           <div className="h-[70px] w-[70px] mx-auto mb-[20px]">
-            <img src="/src/assets/seller.png" alt="seller" />
+            <img src={seller} alt="seller" />
           </div>
           <div className="flex space-x-2 justify-center align-middle">
             <span className="text-center text-[13px] sm:text-[16px] my-auto">
@@ -73,7 +76,7 @@ const Features = () => {
             Are you a buyer?
           </h3>
           <div className="h-[70px] w-[70px] mx-auto mb-[20px]">
-            <img src="/src/assets/buyer.png" alt="buyer" />
+            <img src={buyer} alt="buyer" />
           </div>
           <div className="flex space-x-2 justify-center align-middle">
             <span className="text-center text-[13px] sm:text-[16px] my-auto">

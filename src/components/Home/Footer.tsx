@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import logo from "../../assets/logo_orange.png";
 
 const Footer = () => {
   return (
@@ -8,7 +9,7 @@ const Footer = () => {
           <Link to="/" className="flex">
             <img
               className="h-[22px] w-auto size-5"
-              src="src\assets\logo_orange.png"
+              src={logo}
               alt="company logo"
             />
             <h1 className="text-[18px] font-semibold">Orange Market</h1>
