@@ -7,6 +7,7 @@ import { auth } from "../firebase/firebase-config";
 import Modal from "./modals/Modal";
 import { DataContext } from "../App";
 import Avatar from "./Avatar";
+import logo from "../assets/logo_orange.png";
 
 const Nav = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -69,7 +70,7 @@ const Nav = () => {
                     <Link to="/" className="flex">
                       <img
                         className="h-8 w-auto size-5"
-                        src="src\assets\logo_orange.png"
+                        src={logo}
                         alt="company logo"
                       />
                       <h1 className="text-xl sm:text-2xl font-semibold">
