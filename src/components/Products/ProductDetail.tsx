@@ -303,8 +303,14 @@ const ProductDetail = () => {
   };
 
   const handleChatClick = () => {
-    setModalMsg("Sorry, chat is temporarily unavailable");
-    setOpenModal(true);
+    if (!currentUser) {
+      setModalMsg("Please login first");
+      setOpenModal(true);
+      return;
+    }
+    if (product) {
+      navigate(`/chat/${product.seller}`);
+    }
   };
 
   if (!product) {
