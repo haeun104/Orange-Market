@@ -1,6 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import { DataContext } from "../../App";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
+import {
+  Timestamp,
+  collection,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
 
 interface ChatHistoryProps {
@@ -9,7 +15,7 @@ interface ChatHistoryProps {
 
 interface MessageType {
   text: string;
-  createdAt: string;
+  createdAt: Timestamp;
   user: string;
   room: string[];
   id: string;
@@ -33,20 +39,45 @@ const ChatHistoryPerUser: React.FC<ChatHistoryProps> = ({ chatPartner }) => {
           id: doc.id,
         } as MessageType);
       });
-      console.log(messages);
       setMessages(messages);
     });
 
     return () => unsubscribe();
   }, [chatPartner, currentUser]);
 
-  return (
-    <div>
-      {messages.map((message) => (
-        <div key={message.id}>{message.text}</div>
-      ))}
-    </div>
-  );
+  if (messages.length === 0) {
+    return <div>There is no chat history</div>;
+  }
+  if (currentUser) {
+    return (
+      <div className="mb-4 min-h-[30vh] flex flex-col justify-end gap-2">
+        {messages.map((message) => {
+          const timestamp = message.createdAt;
+          const date = timestamp.toDate();
+          const dateString = date.toLocaleString("en-US", { timeZone: "UTC" });
+          return (
+            <div
+              key={message.id}
+              className={`h-full flex gap-2 items-center ${
+                message.user === currentUser.id && "justify-end"
+              }`}
+            >
+              <div
+                className={`text-right ${
+                  message.user === currentUser.id
+                    ? "bg-[#FFEC9E]"
+                    : "bg-[#EEEEEE]"
+                } rounded-xl py-1 px-3`}
+              >
+                {message.text}
+              </div>
+              <div className="text-[12px] text-accent-grey">{dateString}</div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
 };
 
 export default ChatHistoryPerUser;
