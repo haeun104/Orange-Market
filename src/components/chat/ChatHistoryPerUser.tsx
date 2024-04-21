@@ -1,8 +1,8 @@
 interface ChatHistoryProps {
-  seller: string | undefined;
+  chatPartner: string;
 }
 
-const ChatHistoryPerUser: React.FC<ChatHistoryProps> = ({ seller }) => {
+const ChatHistoryPerUser: React.FC<ChatHistoryProps> = ({ chatPartner }) => {
   return <div></div>;
 };
 

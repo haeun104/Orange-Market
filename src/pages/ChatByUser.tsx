@@ -5,15 +5,17 @@ import ChatInput from "../components/chat/ChatInput";
 const ChatByUser = () => {
   const { chatPartner } = useParams();
 
-  return (
-    <div className="max-w-[600px] px-4">
-      <h2 className="text-lg font-bold text-center mb-8">
-        Chat with {chatPartner}
-      </h2>
-      <ChatHistoryPerUser seller={chatPartner} />
-      <ChatInput />
-    </div>
-  );
+  if (chatPartner) {
+    return (
+      <div className="max-w-[600px] px-4 mx-auto">
+        <h2 className="text-lg font-bold text-center mb-8">
+          Chat with {chatPartner}
+        </h2>
+        <ChatHistoryPerUser chatPartner={chatPartner} />
+        <ChatInput chatPartner={chatPartner} />
+      </div>
+    );
+  }
 };
 
 export default ChatByUser;

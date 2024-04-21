@@ -1,14 +1,45 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useContext, useState } from "react";
+import { DataContext } from "../../App";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { db } from "../../firebase/firebase-config";
 
-const ChatInput = () => {
+interface ChatInputProps {
+  chatPartner: string;
+}
+
+const ChatInput: React.FC<ChatInputProps> = ({ chatPartner }) => {
   const [newMessage, setNewMessage] = useState("");
+  const currentUser = useContext(DataContext);
 
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNewMessage(e.target.value);
   };
 
+  const createChat = async (partner: string, userID: string, text: string) => {
+    const message = {
+      text,
+      createdAt: serverTimestamp(),
+      user: userID,
+      room: [userID, partner],
+    };
+    try {
+      if (text === "") return;
+      await addDoc(collection(db, "chat"), message);
+      setNewMessage("");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (currentUser) {
+      createChat(chatPartner, currentUser.id, newMessage);
+    }
+  };
+
   return (
-    <form className="flex gap-2">
+    <form className="flex gap-2" onSubmit={handleSubmit}>
       <input
         type="text"
         value={newMessage}
