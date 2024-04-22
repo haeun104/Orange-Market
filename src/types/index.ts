@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface ProductType {
   title: string;
   description: string;
@@ -53,5 +55,13 @@ export interface RequestType {
   seller: string;
   sellerName: string;
   title: string;
+  id: string;
+}
+
+export interface MessageType {
+  text: string;
+  createdAt: Timestamp;
+  user: string;
+  room: string[];
   id: string;
 }

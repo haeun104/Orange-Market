@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { DataContext } from "../../App";
 import {
-  Timestamp,
   collection,
   onSnapshot,
   orderBy,
@@ -10,17 +9,10 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
 import Loader from "../Loader";
+import { MessageType } from "../../types";
 
 interface ChatHistoryProps {
   chatPartner: string;
-}
-
-interface MessageType {
-  text: string;
-  createdAt: Timestamp;
-  user: string;
-  room: string[];
-  id: string;
 }
 
 const ChatHistoryPerUser: React.FC<ChatHistoryProps> = ({ chatPartner }) => {
