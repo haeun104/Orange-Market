@@ -60,7 +60,8 @@ const ChatHistoryPerUser: React.FC<ChatHistoryProps> = ({ chatPartner }) => {
             <div
               key={message.id}
               className={`h-full flex gap-2 items-center ${
-                message.user === currentUser.id && "justify-end"
+                message.user === currentUser.id &&
+                "justify-start flex-row-reverse"
               }`}
             >
               <div
@@ -72,7 +73,9 @@ const ChatHistoryPerUser: React.FC<ChatHistoryProps> = ({ chatPartner }) => {
               >
                 {message.text}
               </div>
-              <div className="text-[12px] text-accent-grey">{dateString}</div>
+              <div className="text-[12px] text-accent-grey self-end">
+                {dateString}
+              </div>
             </div>
           );
         })}
