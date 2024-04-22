@@ -9,6 +9,7 @@ const ChatRoom = () => {
   const { partner } = useParams();
   const [partnerName, setPartnerName] = useState("");
 
+  // Get chat partner's nickname
   useEffect(() => {
     if (partner) {
       const getPartnerName = async (name: string) => {

@@ -11,6 +11,7 @@ const MyChat = () => {
   const [chatPartners, setChatPartners] = useState<string[]>();
   const currentUser = useContext(DataContext);
 
+  //Fetch messages sent or received by a current user and make a separate list of chat partners
   useEffect(() => {
     const fetchMessages = async (user: string) => {
       try {

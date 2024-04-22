@@ -15,6 +15,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ chatPartner }) => {
     setNewMessage(e.target.value);
   };
 
+  // Create chat message in DB
   const createChat = async (partner: string, userID: string, text: string) => {
     const message = {
       text,

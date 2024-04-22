@@ -15,17 +15,17 @@ interface ChatHistoryProps {
   chatPartner: string;
 }
 
-const ChatHistoryPerUser: React.FC<ChatHistoryProps> = ({ chatPartner}) => {
+const ChatHistoryPerUser: React.FC<ChatHistoryProps> = ({ chatPartner }) => {
   const [messages, setMessages] = useState<MessageType[]>();
   const currentUser = useContext(DataContext);
 
+  // Fetch messages sent or received by a current user
   useEffect(() => {
     if (!chatPartner || !currentUser) return;
 
     const queryMessages = query(
       collection(db, "chat"),
-      where("user", "==", currentUser.id),
-      where("room", "array-contains", chatPartner),
+      where("room", "array-contains", currentUser.id),
       orderBy("createdAt")
     );
     const unsubscribe = onSnapshot(queryMessages, (snapshot) => {
@@ -36,7 +36,10 @@ const ChatHistoryPerUser: React.FC<ChatHistoryProps> = ({ chatPartner}) => {
           id: doc.id,
         } as MessageType);
       });
-      setMessages(messages);
+      const filteredMessage = messages.filter((message) =>
+        message.room.includes(chatPartner)
+      );
+      setMessages(filteredMessage);
     });
 
     return () => unsubscribe();
