@@ -15,7 +15,7 @@ interface ChatHistoryProps {
   chatPartner: string;
 }
 
-const ChatHistoryPerUser: React.FC<ChatHistoryProps> = ({ chatPartner }) => {
+const ChatHistoryPerUser: React.FC<ChatHistoryProps> = ({ chatPartner}) => {
   const [messages, setMessages] = useState<MessageType[]>();
   const currentUser = useContext(DataContext);
 

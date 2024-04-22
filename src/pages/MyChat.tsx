@@ -51,7 +51,7 @@ const MyChat = () => {
       <h2 className="uppercase text-lg font-bold text-center text-main-orange">
         My Chat
       </h2>
-      <div className="mt-[40px]">
+      <div className="mt-[40px] flex flex-col gap-4">
         {chatPartners.length === 0 && <div>There is no chat history</div>}
         {chatPartners.map((partner, index) => {
           const filteredMessage = messages.filter((message) =>

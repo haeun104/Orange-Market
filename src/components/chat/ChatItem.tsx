@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { MessageType } from "../../types";
 import { Timestamp, doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
+import { useNavigate } from "react-router-dom";
 
 interface ChatItemProps {
   chatPartner: string;
@@ -10,6 +11,7 @@ interface ChatItemProps {
 
 const ChatItem: React.FC<ChatItemProps> = ({ chatPartner, lastMessage }) => {
   const [partnerName, setPartnerName] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (chatPartner) {
@@ -35,9 +37,16 @@ const ChatItem: React.FC<ChatItemProps> = ({ chatPartner, lastMessage }) => {
     return dateString;
   };
 
+  const handleChatClick = () => {
+    navigate(`/chat/${chatPartner}`);
+  };
+
   return (
-    <div className="border-[1px] border-solid border-accent-grey rounded-md px-4 py-2 cursor-pointer">
-      <h3>Chat with {partnerName}</h3>
+    <div
+      className="border-[1px] border-solid border-accent-grey rounded-md px-4 py-2 cursor-pointer shadow-md hover:bg-[#EEEEEE] hover:opacity-80 group"
+      onClick={handleChatClick}
+    >
+      <h3 className="group-hover:font-bold">{partnerName}</h3>
       <div className="text-accent-grey flex justify-between">
         <p>{lastMessage.text}</p>
         <p>{getTime(lastMessage.createdAt)}</p>
