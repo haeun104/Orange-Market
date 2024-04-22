@@ -4,10 +4,12 @@ import {
   Timestamp,
   collection,
   onSnapshot,
+  orderBy,
   query,
   where,
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
+import Loader from "../Loader";
 
 interface ChatHistoryProps {
   chatPartner: string;
@@ -26,10 +28,13 @@ const ChatHistoryPerUser: React.FC<ChatHistoryProps> = ({ chatPartner }) => {
   const currentUser = useContext(DataContext);
 
   useEffect(() => {
+    if (!chatPartner || !currentUser) return;
+
     const queryMessages = query(
       collection(db, "chat"),
-      where("user", "==", currentUser?.id),
-      where("room", "array-contains", chatPartner)
+      where("user", "==", currentUser.id),
+      where("room", "array-contains", chatPartner),
+      orderBy("createdAt")
     );
     const unsubscribe = onSnapshot(queryMessages, (snapshot) => {
       const messages: MessageType[] = [];
@@ -48,12 +53,15 @@ const ChatHistoryPerUser: React.FC<ChatHistoryProps> = ({ chatPartner }) => {
   if (messages.length === 0) {
     return <div>There is no chat history</div>;
   }
-  if (currentUser) {
+  if (!messages) {
+    return <Loader />;
+  }
+  if (currentUser && messages) {
     return (
       <div className="mb-4 min-h-[30vh] flex flex-col justify-end gap-2">
         {messages.map((message) => {
           const timestamp = message.createdAt;
-          const date = timestamp.toDate();
+          const date = timestamp ? timestamp.toDate() : new Date();
           const dateString = date.toLocaleString("en-US", { timeZone: "UTC" });
           return (
             <div
