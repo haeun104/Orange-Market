@@ -24,7 +24,7 @@ interface MessageType {
 }
 
 const ChatHistoryPerUser: React.FC<ChatHistoryProps> = ({ chatPartner }) => {
-  const [messages, setMessages] = useState<MessageType[]>([]);
+  const [messages, setMessages] = useState<MessageType[]>();
   const currentUser = useContext(DataContext);
 
   useEffect(() => {
@@ -50,12 +50,10 @@ const ChatHistoryPerUser: React.FC<ChatHistoryProps> = ({ chatPartner }) => {
     return () => unsubscribe();
   }, [chatPartner, currentUser]);
 
-  if (messages.length === 0) {
-    return <div>There is no chat history</div>;
-  }
   if (!messages) {
     return <Loader />;
   }
+
   if (currentUser && messages) {
     return (
       <div className="mb-4 min-h-[30vh] flex flex-col justify-end gap-2">
@@ -83,6 +81,11 @@ const ChatHistoryPerUser: React.FC<ChatHistoryProps> = ({ chatPartner }) => {
             </div>
           );
         })}
+        {messages.length === 0 && (
+          <div className="mb-4 min-h-[30vh] flex justify-center items-center text-accent-grey">
+            There is no chat history
+          </div>
+        )}
       </div>
     );
   }

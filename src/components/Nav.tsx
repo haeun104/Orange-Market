@@ -44,6 +44,11 @@ const Nav = () => {
     navigate(`/my-market`);
   };
 
+  // Go to chat page
+  const goToChat = () => {
+    navigate("/my-chat");
+  };
+
   function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
   }
@@ -150,6 +155,19 @@ const Nav = () => {
                               onClick={goToUserMarket}
                             >
                               My Market
+                            </div>
+                          )}
+                        </Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
+                            <div
+                              className={classNames(
+                                active ? "bg-gray-100" : "",
+                                "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
+                              )}
+                              onClick={goToChat}
+                            >
+                              My Chat
                             </div>
                           )}
                         </Menu.Item>

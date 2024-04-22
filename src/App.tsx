@@ -20,7 +20,8 @@ import EditProduct from "./pages/EditProduct";
 import { UserType } from "./types/index";
 import { fetchUserData } from "./firebase/firebase-action";
 import Nav from "./components/Nav";
-import ChatByUser from "./pages/ChatByUser";
+import ChatWithSeller from "./pages/ChatWithSeller";
+import MyChat from "./pages/MyChat";
 
 export const DataContext = React.createContext<UserType | undefined>(undefined);
 
@@ -78,7 +79,8 @@ function App() {
             <Route path="/purchase-history" element={<PurchaseHistory />} />
             <Route path="/purchase-request" element={<PurchaseRequest />} />
             <Route path="/sales-history" element={<SalesHistory />} />
-            <Route path="/chat/:chatPartner" element={<ChatByUser />} />
+            <Route path="/chat/:seller" element={<ChatWithSeller />} />
+            <Route path="/my-chat" element={<MyChat />} />
           </Routes>
         </DataContext.Provider>
       </BrowserRouter>
