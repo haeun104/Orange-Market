@@ -77,7 +77,7 @@ const ChatHistoryPerUser: React.FC<ChatHistoryProps> = ({ chatPartner }) => {
                   message.user === currentUser.id
                     ? "bg-[#FFEC9E]"
                     : "bg-[#EEEEEE]"
-                } rounded-xl py-1 px-3 max-w-[250px] break-words`}
+                } rounded-xl py-1 px-3 break-words`}
               >
                 {message.text}
               </div>

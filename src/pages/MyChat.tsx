@@ -34,6 +34,9 @@ const MyChat = () => {
           });
           const partnersUnique = [...new Set(partners)];
           setChatPartners(partnersUnique);
+        } else {
+          setChatPartners([]);
+          setMessages([]);
         }
       } catch (error) {
         console.log(error);
@@ -53,20 +56,25 @@ const MyChat = () => {
         My Chat
       </h2>
       <div className="mt-[40px] flex flex-col gap-4">
-        {chatPartners.length === 0 && <div>There is no chat history</div>}
-        {chatPartners.map((partner, index) => {
-          const filteredMessage = messages.filter((message) =>
-            message.room.includes(partner)
-          );
-          const lastMessage = filteredMessage[filteredMessage.length - 1];
-          return (
-            <ChatItem
-              key={index}
-              chatPartner={partner}
-              lastMessage={lastMessage}
-            />
-          );
-        })}
+        {chatPartners.length === 0 ? (
+          <div className="text-center text-accent-grey">
+            There is no chat history
+          </div>
+        ) : (
+          chatPartners.map((partner, index) => {
+            const filteredMessage = messages.filter((message) =>
+              message.room.includes(partner)
+            );
+            const lastMessage = filteredMessage[filteredMessage.length - 1];
+            return (
+              <ChatItem
+                key={index}
+                chatPartner={partner}
+                lastMessage={lastMessage}
+              />
+            );
+          })
+        )}
       </div>
     </div>
   );
