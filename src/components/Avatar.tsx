@@ -1,5 +1,7 @@
+import placeholder from "../assets/placeholder.jpg";
+
 const Avatar = () => {
-  return <img src="/src/assets/placeholder.jpg" alt="avatar" className="object-cover"/>;
+  return <img src={placeholder} alt="avatar" className="object-cover" />;
 };
 
 export default Avatar;
