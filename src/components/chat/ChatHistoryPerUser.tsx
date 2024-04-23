@@ -55,7 +55,15 @@ const ChatHistoryPerUser: React.FC<ChatHistoryProps> = ({ chatPartner }) => {
         {messages.map((message) => {
           const timestamp = message.createdAt;
           const date = timestamp ? timestamp.toDate() : new Date();
-          const dateString = date.toLocaleString("en-US", { timeZone: "UTC" });
+          const dateString = date.toLocaleString("en-US", {
+            timeZone: "UTC",
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            hour12: false,
+          });
           return (
             <div
               key={message.id}
@@ -69,11 +77,11 @@ const ChatHistoryPerUser: React.FC<ChatHistoryProps> = ({ chatPartner }) => {
                   message.user === currentUser.id
                     ? "bg-[#FFEC9E]"
                     : "bg-[#EEEEEE]"
-                } rounded-xl py-1 px-3`}
+                } rounded-xl py-1 px-3 max-w-[250px] break-words`}
               >
                 {message.text}
               </div>
-              <div className="text-[12px] text-accent-grey self-end">
+              <div className="text-[12px] text-accent-grey self-end text-right">
                 {dateString}
               </div>
             </div>
