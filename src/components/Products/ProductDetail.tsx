@@ -244,6 +244,11 @@ const ProductDetail = () => {
       setOpenModal(true);
       return;
     }
+    if (product && currentUser.id === product.seller) {
+      setModalMsg("This is your product. You can't add favorite.");
+      setOpenModal(true);
+      return;
+    }
     if (product && productId) {
       const favorite: NewFavorite = {
         city: product.city,
@@ -283,6 +288,11 @@ const ProductDetail = () => {
       setOpenModal(true);
       return;
     }
+    if (product && currentUser.id === product.seller) {
+      setModalMsg("This is your product. Request is not available.");
+      setOpenModal(true);
+      return;
+    }
     if (product && productId && product.sellerName) {
       const request: NewRequest = {
         imgURL: product.imgURL,
@@ -305,6 +315,11 @@ const ProductDetail = () => {
   const handleChatClick = () => {
     if (!currentUser) {
       setModalMsg("Please login first");
+      setOpenModal(true);
+      return;
+    }
+    if (product && currentUser.id === product.seller) {
+      setModalMsg("This is your product. Chat is not available.");
       setOpenModal(true);
       return;
     }
