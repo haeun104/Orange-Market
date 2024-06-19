@@ -3,9 +3,9 @@ import logo from "../../assets/logo_orange.png";
 
 const Footer = () => {
   return (
-    <footer className="p-[20px]">
+    <footer className="p-[20px] flex flex-col sm:items-center sm:text-center">
       <div>
-        <div className="flex flex-shrink-0 items-center">
+        <div className="flex flex-shrink-0 items-center sm:justify-center">
           <Link to="/" className="flex">
             <img
               className="h-[22px] w-auto size-5"
@@ -27,7 +27,7 @@ const Footer = () => {
           &nbsp;&nbsp;service@orangemarket.com
         </div>
       </div>
-      <div className="text-[12px] sm:text-center text-gray-400 mt-[20px]">
+      <div className="text-[12px] text-gray-400 mt-[20px]">
         Copyright &copy; 2024 Orange Market. All rights reserved
       </div>
     </footer>

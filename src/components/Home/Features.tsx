@@ -101,7 +101,7 @@ const Features = () => {
           </div>
         </div>
       </section>
-      <section className="h-[90vh] bg-cover bg-center animate-homeImages flex justify-center align-middle">
+      <section className="h-[90vh] bg-cover bg-center animate-homeImagesSm md:animate-homeImages flex justify-center align-middle">
         <h2 className="uppercase text-white font-bold text-[22px] md:text-[32px] text-center my-auto">
           Register your first product now <br />
           and <br />

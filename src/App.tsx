@@ -26,15 +26,16 @@ import MyChat from "./pages/MyChat";
 export const DataContext = React.createContext<UserType | undefined>(undefined);
 
 function App() {
-  const [loggedInUser, setLoggedInUser] = useState<string | null>();
+  const [userEmail, setUserEmail] = useState<string | null>();
   const [currentUser, setCurrentUser] = useState<UserType | undefined>();
 
   // Update user data whenever login status is changed
-  onAuthStateChanged(auth, (currentUser) => {
-    if (currentUser) {
-      setLoggedInUser(currentUser.email);
+  onAuthStateChanged(auth, (user) => {
+    console.log("auth state checking");
+    if (user) {
+      setUserEmail(user.email);
     } else {
-      setLoggedInUser(null);
+      setUserEmail(null);
       setCurrentUser(undefined);
     }
   });
@@ -43,8 +44,8 @@ function App() {
   useEffect(() => {
     async function fetchData() {
       try {
-        if (loggedInUser !== undefined && typeof loggedInUser === "string") {
-          const currentUserData = await fetchUserData(loggedInUser);
+        if (userEmail !== undefined && typeof userEmail === "string") {
+          const currentUserData = await fetchUserData(userEmail);
           setCurrentUser(currentUserData as UserType);
         }
       } catch (error) {
@@ -52,7 +53,7 @@ function App() {
       }
     }
     fetchData();
-  }, [loggedInUser]);
+  }, [userEmail]);
 
   return (
     <>
