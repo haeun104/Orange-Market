@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { DataContext } from "../App";
 import { productFilterCategories } from "./../utils";
 import Modal from "../components/modals/Modal";
@@ -8,68 +8,35 @@ import { db } from "../firebase/firebase-config";
 import { IoMdAddCircle } from "react-icons/io";
 import Loader from "../components/Loader";
 import { ProductType } from "../types";
+import queryString from "query-string";
+import { fetchOnSalesProducts } from "../firebase/firebase-action";
 
 interface ProductsFromDB extends ProductType {
   id: string;
 }
 
 const Products = () => {
-  const [category, setCategory] = useState("All");
-  const [filteredProducts, setFilteredProducts] = useState<ProductsFromDB[]>();
-  const [products, setProducts] = useState<ProductsFromDB[]>();
-  const [message, setMessage] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState<ProductsFromDB[]>(
+    []
+  );
   const [openModal, setOpenModal] = useState(false);
+  const [searchParams] = useSearchParams();
 
   const navigate = useNavigate();
   const currentUser = useContext(DataContext);
 
-  //Fetch product data from DB
+  // Fetch products from the selected category by using query string
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "product"), (snapshot) => {
-      const productList: ProductsFromDB[] = [];
-      snapshot.docs.forEach((doc) => {
-        const data = doc.data() as ProductsFromDB;
-        productList.push({
-          ...data,
-          id: doc.id,
-        });
-      });
-      const unsoldProducts = productList.filter((item) => !item.isSold);
-      setProducts(unsoldProducts);
+    const unsubscribe = onSnapshot(collection(db, "product"), async () => {
+      const selectedCategory =
+        queryString.parse(searchParams.toString()).sort || "All";
+      const city = currentUser && currentUser.city;
+      const products = await fetchOnSalesProducts(selectedCategory, city);
+      setFilteredProducts(products as ProductsFromDB[]);
     });
-    return () => unsubscribe();
-  }, []);
 
-  // Filter a product list as per a selected category
-  useEffect(() => {
-    setMessage("There is no product registered yet.");
-    if (category === "All") {
-      setFilteredProducts(products);
-    } else if (category === "My Location") {
-      if (!currentUser) {
-        setOpenModal(true);
-      } else {
-        const isExistingAddress = currentUser.city;
-        if (products !== undefined) {
-          const userLocationProduct = products.filter(
-            (item: ProductType) =>
-              item.city.toLowerCase() === currentUser.city.toLowerCase()
-          );
-          if (!isExistingAddress) {
-            setMessage("Update your address in My Profile first");
-          }
-          setFilteredProducts(userLocationProduct);
-        }
-      }
-    } else {
-      if (products !== undefined) {
-        const filteredProducts = products.filter(
-          (item: ProductType) => item.category === category
-        );
-        setFilteredProducts(filteredProducts);
-      }
-    }
-  }, [category, products, currentUser]);
+    return () => unsubscribe();
+  }, [searchParams, currentUser]);
 
   // Go to the product register page
   const goToNewProductPage = () => {
@@ -87,7 +54,15 @@ const Products = () => {
 
   // Update state as per a selected category
   const handleCategoryClick = (category: string) => {
-    setCategory(category);
+    if (category === "My Location" && !currentUser) {
+      setOpenModal(true);
+    }
+    const url = queryString.stringifyUrl({
+      url: "/products",
+      query: { sort: category },
+    });
+
+    navigate(url);
   };
 
   // Go to my profile
@@ -107,9 +82,10 @@ const Products = () => {
               {productFilterCategories.map((item, index) => (
                 <li
                   key={index}
-                  className={`cursor-pointer ${
-                    category === item.value && "font-bold border-black"
-                  } border-white border-solid border-b-[2px] hover:border-black active:border-black`}
+                  className={`cursor-pointer border-b-white border-solid border-b-2 hover:border-black ${
+                    searchParams.get("sort") === item.value &&
+                    "font-bold border-b-black"
+                  }`}
                   onClick={() => handleCategoryClick(item.value)}
                 >
                   {item.value}
@@ -117,42 +93,53 @@ const Products = () => {
               ))}
             </ul>
           </div>
-          {filteredProducts.length === 0 && (
-            <div className="text-center">
-              <div className="mb-[10px]">{message}</div>
-              {message === "Update your address in My Profile first" && (
+          {searchParams.get("sort") === "My Location" &&
+            currentUser &&
+            currentUser.city === "" && (
+              <div className="text-center">
+                <div className="mb-[10px]">
+                  Update your address in My Profile first
+                </div>
                 <button className="btn-purple" onClick={goToMyProfile}>
                   Go to My Profile
                 </button>
-              )}
+              </div>
+            )}
+          {filteredProducts.length === 0 &&
+          searchParams.get("sort") !== "My Location" ? (
+            <div className="text-center">
+              <div className="mb-[10px]">
+                There is no product registered yet
+              </div>
             </div>
-          )}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8 lg:px-[150px]">
-            {filteredProducts.map((item: ProductsFromDB) => (
-              <div
-                key={item.id}
-                className="flex flex-col justify-center mx-auto w-[250px] cursor-pointer"
-                onClick={() => goToProductDetailPage(item.id)}
-              >
-                <div className="h-[200px]">
-                  <img
-                    src={item.imgURL}
-                    alt={item.title}
-                    className="h-full w-full rounded-lg"
-                  />
-                </div>
-                <div className="flex flex-col text-gray-400">
-                  <h4 className="text-black">{item.title}</h4>
-                  <span className="text-black">{item.price} PLN</span>
-                  <span>{`${item.city}, ${item.district}`}</span>
-                  <div className="flex space-x-2 text-sm">
-                    <span>Click {item.clickCount}</span>
-                    <span>Like {item.likeCount}</span>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8 lg:px-[150px]">
+              {filteredProducts.map((item: ProductsFromDB) => (
+                <div
+                  key={item.id}
+                  className="flex flex-col justify-center mx-auto w-[250px] cursor-pointer"
+                  onClick={() => goToProductDetailPage(item.id)}
+                >
+                  <div className="h-[200px]">
+                    <img
+                      src={item.imgURL}
+                      alt={item.title}
+                      className="h-full w-full rounded-lg"
+                    />
+                  </div>
+                  <div className="flex flex-col text-gray-400">
+                    <h4 className="text-black">{item.title}</h4>
+                    <span className="text-black">{item.price} PLN</span>
+                    <span>{`${item.city}, ${item.district}`}</span>
+                    <div className="flex space-x-2 text-sm">
+                      <span>Click {item.clickCount}</span>
+                      <span>Like {item.likeCount}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
           <div
             className="absolute top-[10px] right-[5px] md:top-0 md:right-[40px] text-center cursor-pointer"
             onClick={goToNewProductPage}
@@ -170,7 +157,7 @@ const Products = () => {
         <Modal
           openModal={openModal}
           closeModal={() => setOpenModal(false)}
-          resetCategory={() => setCategory("All")}
+          resetCategory={() => navigate("/products")}
           message="Please login first"
           type="unauthorized"
         />

@@ -1,4 +1,10 @@
-import { collection, getDocs, where, query, addDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  where,
+  query,
+  addDoc,
+} from "firebase/firestore";
 import { db } from "./firebase-config";
 
 // Create a new user in DB
@@ -77,6 +83,43 @@ export const fetchUserData = async (email) => {
     }));
     const user = userList[0];
     return user;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// Fetch unsold products from a selected category
+export const fetchOnSalesProducts = async (category, city) => {
+  try {
+    let productQuery;
+
+    if (category === "My Location" && city) {
+      productQuery = query(
+        collection(db, "product"),
+        where("city", "==", city),
+        where("isSold", "==", false)
+      );
+    } else if (category === "All") {
+      productQuery = query(
+        collection(db, "product"),
+        where("isSold", "==", false)
+      );
+    } else {
+      productQuery = query(
+        collection(db, "product"),
+        where("category", "==", category),
+        where("isSold", "==", false)
+      );
+    }
+
+    const productsSnapshot = await getDocs(productQuery);
+    const productsList = productsSnapshot.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id,
+    }));
+
+    return productsList;
+
   } catch (error) {
     console.log(error);
   }
