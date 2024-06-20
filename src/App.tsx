@@ -40,7 +40,6 @@ function App() {
   // Update user data whenever login status is changed
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log("auth state checking");
       if (user && user.email !== null) {
         fetchData(user.email);
       } else {
