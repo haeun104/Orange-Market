@@ -23,37 +23,33 @@ import Nav from "./components/Nav";
 import ChatRoom from "./pages/ChatRoom";
 import MyChat from "./pages/MyChat";
 
-export const DataContext = React.createContext<UserType | undefined>(undefined);
+export const DataContext = React.createContext<UserType | null>(null);
 
 function App() {
-  const [userEmail, setUserEmail] = useState<string | null>();
-  const [currentUser, setCurrentUser] = useState<UserType | undefined>();
+  const [currentUser, setCurrentUser] = useState<UserType | null>(null);
+
+  async function fetchData(email: string) {
+    try {
+      const currentUserData = await fetchUserData(email);
+      setCurrentUser(currentUserData as UserType);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   // Update user data whenever login status is changed
-  onAuthStateChanged(auth, (user) => {
-    console.log("auth state checking");
-    if (user) {
-      setUserEmail(user.email);
-    } else {
-      setUserEmail(null);
-      setCurrentUser(undefined);
-    }
-  });
-
-  // Fetch user data from DB
   useEffect(() => {
-    async function fetchData() {
-      try {
-        if (userEmail !== undefined && typeof userEmail === "string") {
-          const currentUserData = await fetchUserData(userEmail);
-          setCurrentUser(currentUserData as UserType);
-        }
-      } catch (error) {
-        console.error(error);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log("auth state checking");
+      if (user && user.email !== null) {
+        fetchData(user.email);
+      } else {
+        setCurrentUser(null);
       }
-    }
-    fetchData();
-  }, [userEmail]);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   return (
     <>
