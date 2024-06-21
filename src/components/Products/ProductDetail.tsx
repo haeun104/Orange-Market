@@ -22,6 +22,7 @@ import Button from "../Button";
 import Loader from "../Loader";
 import { AppDispatch, RootState } from "../../store";
 import { FavoriteType, ProductType, RequestType } from "../../types/index";
+import { fetchProductDetails } from "../../firebase/firebase-action";
 
 interface NewFavorite {
   city: string;
@@ -51,7 +52,6 @@ interface NewRequest {
 
 const ProductDetail = () => {
   const [product, setProduct] = useState<ProductType>();
-  const [sellerName, setSellerName] = useState("");
   const [existingFavorite, setExistingFavorite] = useState(false);
   const [existingFavoriteId, setExistingFavoriteId] = useState("");
   const [existingRequest, setExistingRequest] = useState(false);
@@ -68,11 +68,16 @@ const ProductDetail = () => {
 
   const navigate = useNavigate();
 
+  // Fetch product details from DB
   useEffect(() => {
     if (productId) {
-      fetchProductData(productId);
+      const productDetail = async () => {
+        const details = await fetchProductDetails(productId);
+        setProduct(details as ProductType);
+      };
+      productDetail();
     }
-  }, [productId, existingFavorite]);
+  }, [productId]);
 
   // Add click count in DB when user open product details
   useEffect(() => {
@@ -102,34 +107,6 @@ const ProductDetail = () => {
       dispatch(fetchFavoriteData(currentUser.id));
     }
   }, [existingFavorite, currentUser, dispatch]);
-
-  // Fetch product and seller data from DB
-  async function fetchProductData(id: string) {
-    try {
-      const productRef = doc(db, "product", id);
-      const productSnapshot = await getDoc(productRef);
-
-      if (productSnapshot.exists()) {
-        const productData = productSnapshot.data() as ProductType;
-        setProduct(productData);
-
-        const sellerId = productData.seller;
-        const userRef = doc(db, "user", sellerId);
-        const userSnapshot = await getDoc(userRef);
-
-        if (userSnapshot.exists()) {
-          const userData = userSnapshot.data();
-          setSellerName(userData.nickname);
-        } else {
-          console.log("There is no seller data");
-        }
-      } else {
-        console.log("There is no product data");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   // Check if favorite exists in DB
   useEffect(() => {
@@ -353,7 +330,7 @@ const ProductDetail = () => {
                   className="cursor-pointer underline"
                   onClick={() => goToSellerProductList(product.seller)}
                 >
-                  {sellerName}
+                  {product.sellerName}
                 </span>
               </div>
               <span>{`${product.city}, ${product.district}`}</span>

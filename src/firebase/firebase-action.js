@@ -4,6 +4,8 @@ import {
   where,
   query,
   addDoc,
+  doc,
+  getDoc,
 } from "firebase/firestore";
 import { db } from "./firebase-config";
 
@@ -119,8 +121,22 @@ export const fetchOnSalesProducts = async (category, city) => {
     }));
 
     return productsList;
-
   } catch (error) {
     console.log(error);
+  }
+};
+
+// Fetch product details
+export const fetchProductDetails = async (productId) => {
+  try {
+    const productRef = doc(db, "product", productId);
+    const productSnapshot = await getDoc(productRef);
+
+    if (productSnapshot.exists()) {
+      const productDetails = productSnapshot.data();
+      return productDetails;
+    }
+  } catch (error) {
+    console.error(error);
   }
 };
