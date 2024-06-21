@@ -10,6 +10,7 @@ import { ProductType } from "../../types/index";
 import Loader from "../Loader";
 import Input from "../inputs/Input";
 import Button from "../Button";
+import { fetchProductDetails } from "../../firebase/firebase-action";
 
 const initialProduct: ProductType = {
   title: "",
@@ -66,24 +67,16 @@ const ProductForm: React.FC<FormType> = ({ type }) => {
   }, [currentUser, type]);
 
   // Fetch product data from DB
-  const fetchProductData = async (productId: string) => {
-    try {
-      const productRef = doc(db, "product", productId);
-      const productSnapshot = await getDoc(productRef);
-
-      if (productSnapshot.exists()) {
-        const productData = productSnapshot.data() as ProductType;
-        setProduct(productData);
-        setTempImage(productData.imgURL);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
     if (productId && type === "edit") {
-      fetchProductData(productId);
+      const productDetails = async () => {
+        const product = await fetchProductDetails(productId);
+        if (product) {
+          setProduct(product as ProductType);
+          setTempImage(product.imgURL);
+        }
+      };
+      productDetails();
     }
     if (type === "new") {
       setProduct(initialProduct);
