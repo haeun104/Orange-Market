@@ -6,6 +6,7 @@ import {
   addDoc,
   doc,
   getDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "./firebase-config";
 
@@ -135,6 +136,21 @@ export const fetchProductDetails = async (productId) => {
     if (productSnapshot.exists()) {
       const productDetails = productSnapshot.data();
       return productDetails;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// Add click count in DB when user open product details from products page
+export const addClickCount = async (productId) => {
+  try {
+    const productRef = doc(db, "product", productId);
+    const productSnap = await getDoc(productRef);
+    const product = productSnap.data();
+    if (product) {
+      const currentClick = parseInt(product.clickCount);
+      await updateDoc(productRef, { clickCount: currentClick + 1 });
     }
   } catch (error) {
     console.error(error);

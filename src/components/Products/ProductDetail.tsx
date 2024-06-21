@@ -11,7 +11,6 @@ import {
   query,
   where,
   updateDoc,
-  Firestore,
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
 import Modal from "../modals/Modal";
@@ -77,29 +76,6 @@ const ProductDetail = () => {
       };
       productDetail();
     }
-  }, [productId]);
-
-  // Add click count in DB when user open product details
-  useEffect(() => {
-    const increaseClickCount = async (
-      db: Firestore,
-      productId: string | undefined
-    ) => {
-      if (productId !== undefined) {
-        try {
-          const productRef = doc(db, "product", productId);
-          const productSnap = await getDoc(productRef);
-          const product = productSnap.data();
-          if (product !== undefined) {
-            const currentClick = parseInt(product.clickCount);
-            await updateDoc(productRef, { clickCount: currentClick + 1 });
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      }
-    };
-    increaseClickCount(db, productId);
   }, [productId]);
 
   useEffect(() => {

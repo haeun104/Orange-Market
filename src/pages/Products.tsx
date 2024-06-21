@@ -9,7 +9,10 @@ import { IoMdAddCircle } from "react-icons/io";
 import Loader from "../components/Loader";
 import { ProductType } from "../types";
 import queryString from "query-string";
-import { fetchOnSalesProducts } from "../firebase/firebase-action";
+import {
+  addClickCount,
+  fetchOnSalesProducts,
+} from "../firebase/firebase-action";
 
 interface ProductsFromDB extends ProductType {
   id: string;
@@ -49,6 +52,7 @@ const Products = () => {
 
   // Go to product details
   const goToProductDetailPage = (id: string) => {
+    addClickCount(id);
     navigate(`/products/${id}`);
   };
 
