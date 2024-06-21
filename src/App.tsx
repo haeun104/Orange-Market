@@ -22,6 +22,7 @@ import { fetchUserData } from "./firebase/firebase-action";
 import Nav from "./components/Nav";
 import ChatRoom from "./pages/ChatRoom";
 import MyChat from "./pages/MyChat";
+import NotFound from "./components/NotFount";
 
 export const DataContext = React.createContext<UserType | null>(null);
 
@@ -77,6 +78,7 @@ function App() {
             <Route path="/sales-history" element={<SalesHistory />} />
             <Route path="/chat/:partner" element={<ChatRoom />} />
             <Route path="/my-chat" element={<MyChat />} />
+            <Route path="*" element={<NotFound />}></Route>
           </Routes>
         </DataContext.Provider>
       </BrowserRouter>
