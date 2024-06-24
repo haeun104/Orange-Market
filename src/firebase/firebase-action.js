@@ -156,3 +156,15 @@ export const addClickCount = async (productId) => {
     console.error(error);
   }
 };
+
+// Create a purchase request in DB
+export async function createPurchaseRequest(orderList) {
+  try {
+    const collectionRef = collection(db, "purchase request");
+    const createAll = orderList.map((order) => addDoc(collectionRef, order));
+    await Promise.all(createAll);
+    console.log("successfully created purchase requests.");
+  } catch (error) {
+    console.error(error);
+  }
+}

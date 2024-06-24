@@ -14,7 +14,6 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
 import Modal from "../modals/Modal";
-import { getFormattedDate } from "../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchFavoriteData } from "../../store/favorite-slice";
 import Button from "../Button";
@@ -33,21 +32,6 @@ interface NewFavorite {
   productId: string;
   title: string;
   userId: string;
-}
-
-interface NewRequest {
-  closeDate: string;
-  date: string;
-  imgURL: string;
-  isChosenBySeller: boolean;
-  isClosed: boolean;
-  price: string;
-  product: string;
-  requestor: string;
-  requestorName: string;
-  seller: string;
-  sellerName: string;
-  title: string;
 }
 
 const ProductDetail = () => {
@@ -222,51 +206,12 @@ const ProductDetail = () => {
     }
   };
 
-  // Create a purchase request in DB
-  async function createPurchaseRequestInDb(request: NewRequest) {
-    try {
-      await addDoc(collection(db, "purchase request"), request);
-      setModalMsg("successfully send a purchase request!");
-      setOpenModal(true);
-      setExistingRequest(true);
-      setRequestBtn("Waiting for response on request");
-      console.log("successfully created a purchase request.");
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  // Send a purchase request to DB
-  const sendPurchaseRequest = () => {
-    // if (!currentUser) {
-    //   setModalMsg("Please login first");
-    //   setOpenModal(true);
-    //   return;
-    // }
-    // if (product && currentUser.id === product.seller) {
-    //   setModalMsg("This is your product. Request is not available.");
-    //   setOpenModal(true);
-    //   return;
-    // }
-    // if (product && productId && product.sellerName) {
-    //   const request: NewRequest = {
-    //     imgURL: product.imgURL,
-    //     price: product.price,
-    //     title: product.title,
-    //     product: productId,
-    //     requestor: currentUser.id,
-    //     requestorName: currentUser.nickname,
-    //     seller: product.seller,
-    //     sellerName: product.sellerName,
-    //     isClosed: false,
-    //     isChosenBySeller: false,
-    //     closeDate: "",
-    //     date: getFormattedDate(new Date()),
-    //   };
-    //   createPurchaseRequestInDb(request);
-    // }
+  // Add the selected product to user's cart
+  const addProductToCart = () => {
     dispatch(cartActions.addToCart({ ...product, id: productId }));
   };
 
+  // Open chat page
   const handleChatClick = () => {
     if (!currentUser) {
       setModalMsg("Please login first");
@@ -328,8 +273,8 @@ const ProductDetail = () => {
               <Button
                 title={
                   existingFavorite
-                    ? "Remove from my favorite list"
-                    : "Add to your favorite list"
+                    ? "Remove from favorites"
+                    : "Add to favorites"
                 }
                 onClick={addToFavorites}
                 btnColor="orange"
@@ -342,8 +287,8 @@ const ProductDetail = () => {
                 onClick={handleChatClick}
               />
               <Button
-                title={existingRequest ? requestBtn : "Make a purchase request"}
-                onClick={sendPurchaseRequest}
+                title={existingRequest ? requestBtn : "Add to cart"}
+                onClick={addProductToCart}
                 btnColor="purple"
                 disabled={product.isSold || existingRequest ? true : false}
               />

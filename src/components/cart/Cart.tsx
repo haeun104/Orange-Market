@@ -3,19 +3,36 @@ import { TiShoppingCart } from "react-icons/ti";
 import CartItem from "./CartItem";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
-import { CartItems } from "../../store/cart-slice";
+import { CartItems, cartActions } from "../../store/cart-slice";
 import { DataContext } from "../../App";
 import Modal from "../modals/Modal";
+import { getFormattedDate } from "../../utils";
+import { createPurchaseRequest } from "../../firebase/firebase-action";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
+interface OrderList {
+  product: string;
+  requestor: string;
+  requestorName: string;
+  isClosed: boolean;
+  date: string;
+}
 
 const Cart = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [modalMsg, setModalMsg] = useState("");
   const cartRef = useRef<HTMLDivElement>(null);
   const currentUser = useContext(DataContext);
 
   const cartItems: CartItems[] = useSelector(
     (state: RootState) => state.cart.cartItems
   );
+
+  const dispatch = useDispatch();
+
+  const navigate = useNavigate();
 
   const handleClickOutside = (e: MouseEvent) => {
     if (cartRef.current && !cartRef.current.contains(e.target as Node)) {
@@ -28,9 +45,33 @@ const Cart = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleOrderCreation = () => {
-    if (!currentUser) {
+  const handleOrderCreation = async () => {
+    try {
+      if (!currentUser) {
+        setModalMsg("Login first!");
+        setOpenModal(true);
+        return;
+      }
+      const orderList: OrderList[] = [];
+      cartItems.forEach((item) => {
+        const itemToRequest = {
+          product: item.id,
+          requestor: currentUser.id,
+          requestorName: currentUser.nickname,
+          isClosed: false,
+          // closeDate: "",
+          // status: "",
+          date: getFormattedDate(new Date()),
+        };
+        orderList.push(itemToRequest);
+      });
+      await createPurchaseRequest(orderList);
+      setModalMsg("successfully send a purchase request!");
       setOpenModal(true);
+      dispatch(cartActions.resetCart());
+      navigate("/");
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -83,7 +124,7 @@ const Cart = () => {
       <Modal
         openModal={openModal}
         closeModal={() => setOpenModal(false)}
-        message="Please login first"
+        message={modalMsg}
       />
     </>
   );
