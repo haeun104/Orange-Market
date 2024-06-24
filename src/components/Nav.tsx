@@ -117,11 +117,10 @@ const Nav = () => {
                     </div>
                   </div>
                 </div>
-                {currentUser && (
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                    <Cart />
-                    {/* Profile dropdown */}
-
+                <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                  <Cart />
+                  {/* Profile dropdown */}
+                  {currentUser && (
                     <Menu as="div" className="relative ml-3">
                       <div>
                         <Menu.Button className="relative flex flex-col sm:flex-row-reverse sm:gap-2">
@@ -188,8 +187,8 @@ const Nav = () => {
                         </Menu.Item>
                       </Menu.Items>
                     </Menu>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
             <Disclosure.Panel className="sm:hidden">

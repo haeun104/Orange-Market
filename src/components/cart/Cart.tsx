@@ -1,13 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { TiShoppingCart } from "react-icons/ti";
 import CartItem from "./CartItem";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { CartItems } from "../../store/cart-slice";
+import { DataContext } from "../../App";
+import Modal from "../modals/Modal";
 
 const Cart = () => {
   const [cartOpen, setCartOpen] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const cartRef = useRef<HTMLDivElement>(null);
+  const currentUser = useContext(DataContext);
 
   const cartItems: CartItems[] = useSelector(
     (state: RootState) => state.cart.cartItems
@@ -24,9 +28,15 @@ const Cart = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleOrderCreation = () => {
+    if (!currentUser) {
+      setOpenModal(true);
+    }
+  };
+
   return (
     <>
-      <div className="sm:pr-2">
+      <div className="sm:px-2">
         <div
           className="relative cursor-pointer"
           onClick={() => setCartOpen(!cartOpen)}
@@ -59,7 +69,10 @@ const Cart = () => {
                 />
               ))}
               <div className="flex justify-end pr-2 py-2">
-                <button className="bg-accent-purple text-white px-2 py-1 rounded-md text-sm">
+                <button
+                  className="bg-accent-purple text-white px-2 py-1 rounded-md text-sm"
+                  onClick={handleOrderCreation}
+                >
                   Place an order
                 </button>
               </div>
@@ -67,6 +80,11 @@ const Cart = () => {
           )}
         </div>
       )}
+      <Modal
+        openModal={openModal}
+        closeModal={() => setOpenModal(false)}
+        message="Please login first"
+      />
     </>
   );
 };
