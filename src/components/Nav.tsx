@@ -8,6 +8,7 @@ import Modal from "./modals/Modal";
 import { DataContext } from "../App";
 import Avatar from "./Avatar";
 import logo from "../assets/logo_orange.png";
+import Cart from "./cart/Cart";
 
 const Nav = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -116,19 +117,19 @@ const Nav = () => {
                     </div>
                   </div>
                 </div>
-                {currentUser && (
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                    {/* Profile dropdown */}
-
+                <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                  <Cart />
+                  {/* Profile dropdown */}
+                  {currentUser && (
                     <Menu as="div" className="relative ml-3">
                       <div>
                         <Menu.Button className="relative flex flex-col sm:flex-row-reverse sm:gap-2">
                           <div className="h-[30px] w-[30px] md:h-[40px] md:w-[40px] rounded-full overflow-hidden shrink-0 mx-auto">
                             <Avatar />
                           </div>
-                          <span className="text-[9px] text-wrap sm:text-[14px] sm:w-[100%] sm:my-auto">
+                          {/* <span className="text-[9px] text-wrap sm:text-[14px] sm:w-[100%] sm:my-auto">
                             {currentUser && currentUser.nickname}
-                          </span>
+                          </span> */}
                         </Menu.Button>
                       </div>
                       <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
@@ -186,8 +187,8 @@ const Nav = () => {
                         </Menu.Item>
                       </Menu.Items>
                     </Menu>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
             <Disclosure.Panel className="sm:hidden">

@@ -14,14 +14,14 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
 import Modal from "../modals/Modal";
-import { getFormattedDate } from "../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchFavoriteData } from "../../store/favorite-slice";
 import Button from "../Button";
 import Loader from "../Loader";
 import { AppDispatch, RootState } from "../../store";
-import { FavoriteType, ProductType, RequestType } from "../../types/index";
+import { FavoriteType, ProductType } from "../../types/index";
 import { fetchProductDetails } from "../../firebase/firebase-action";
+import { cartActions } from "../../store/cart-slice";
 
 interface NewFavorite {
   city: string;
@@ -34,26 +34,11 @@ interface NewFavorite {
   userId: string;
 }
 
-interface NewRequest {
-  closeDate: string;
-  date: string;
-  imgURL: string;
-  isChosenBySeller: boolean;
-  isClosed: boolean;
-  price: string;
-  product: string;
-  requestor: string;
-  requestorName: string;
-  seller: string;
-  sellerName: string;
-  title: string;
-}
-
 const ProductDetail = () => {
   const [product, setProduct] = useState<ProductType>();
   const [existingFavorite, setExistingFavorite] = useState(false);
   const [existingFavoriteId, setExistingFavoriteId] = useState("");
-  const [existingRequest, setExistingRequest] = useState(false);
+  const [availableForOrder, setAvailableForOrder] = useState<boolean>();
   const [openModal, setOpenModal] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
   const [requestBtn, setRequestBtn] = useState("");
@@ -73,10 +58,38 @@ const ProductDetail = () => {
       const productDetail = async () => {
         const details = await fetchProductDetails(productId);
         setProduct(details as ProductType);
+        if (details && details.isSold) {
+          setAvailableForOrder(false);
+          setRequestBtn("Product is already sold");
+        } else {
+          checkRequestStatus(productId);
+        }
       };
       productDetail();
     }
   }, [productId]);
+
+  // Fetch status if the product is available for ordering
+  async function checkRequestStatus(productId: string) {
+    try {
+      const requestQuery = query(
+        collection(db, "purchase request"),
+        where("product", "==", productId),
+        where("isClosed", "==", false)
+      );
+      const requestSnapshot = await getDocs(requestQuery);
+
+      if (!requestSnapshot.empty) {
+        setRequestBtn("Waiting for response on purchase request");
+        setAvailableForOrder(false);
+      } else {
+        setRequestBtn("Add to cart");
+        setAvailableForOrder(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
     if (currentUser) {
@@ -97,46 +110,10 @@ const ProductDetail = () => {
     };
     if (currentUser && productId) {
       checkUserFavorite(productId);
-      checkUserRequest(productId);
     } else {
       setExistingFavorite(false);
-      setExistingRequest(false);
     }
   }, [currentUser, productId, favorite]);
-
-  // Check if the product already exists on the request list
-  async function checkUserRequest(productId: string) {
-    try {
-      const requestQuery = query(
-        collection(db, "purchase request"),
-        where("product", "==", productId)
-      );
-      const requestSnapshot = await getDocs(requestQuery);
-      if (!requestSnapshot.empty) {
-        const requests: RequestType[] = [];
-        requestSnapshot.forEach((doc) =>
-          requests.push(doc.data() as RequestType)
-        );
-        const closedRequest = requests.find(
-          (item) => item.isClosed && item.isChosenBySeller
-        );
-        const pendingRequest = requests.find(
-          (item) => !item.isClosed && !item.isChosenBySeller
-        );
-        if (closedRequest) {
-          setRequestBtn("Request is unavailable");
-          setExistingRequest(true);
-        } else if (pendingRequest) {
-          setRequestBtn("Waiting for response on purchase request");
-          setExistingRequest(true);
-        } else {
-          setExistingRequest(false);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   // Go to seller's product list
   const goToSellerProductList = (sellerId: string) => {
@@ -221,50 +198,12 @@ const ProductDetail = () => {
     }
   };
 
-  // Create a purchase request in DB
-  async function createPurchaseRequestInDb(request: NewRequest) {
-    try {
-      await addDoc(collection(db, "purchase request"), request);
-      setModalMsg("successfully send a purchase request!");
-      setOpenModal(true);
-      setExistingRequest(true);
-      setRequestBtn("Waiting for response on request");
-      console.log("successfully created a purchase request.");
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  // Send a purchase request to DB
-  const sendPurchaseRequest = () => {
-    if (!currentUser) {
-      setModalMsg("Please login first");
-      setOpenModal(true);
-      return;
-    }
-    if (product && currentUser.id === product.seller) {
-      setModalMsg("This is your product. Request is not available.");
-      setOpenModal(true);
-      return;
-    }
-    if (product && productId && product.sellerName) {
-      const request: NewRequest = {
-        imgURL: product.imgURL,
-        price: product.price,
-        title: product.title,
-        product: productId,
-        requestor: currentUser.id,
-        requestorName: currentUser.nickname,
-        seller: product.seller,
-        sellerName: product.sellerName,
-        isClosed: false,
-        isChosenBySeller: false,
-        closeDate: "",
-        date: getFormattedDate(new Date()),
-      };
-      createPurchaseRequestInDb(request);
-    }
+  // Add the selected product to user's cart
+  const addProductToCart = () => {
+    dispatch(cartActions.addToCart({ ...product, product: productId }));
   };
 
+  // Open chat page
   const handleChatClick = () => {
     if (!currentUser) {
       setModalMsg("Please login first");
@@ -326,8 +265,8 @@ const ProductDetail = () => {
               <Button
                 title={
                   existingFavorite
-                    ? "Remove from my favorite list"
-                    : "Add to your favorite list"
+                    ? "Remove from favorites"
+                    : "Add to favorites"
                 }
                 onClick={addToFavorites}
                 btnColor="orange"
@@ -340,10 +279,10 @@ const ProductDetail = () => {
                 onClick={handleChatClick}
               />
               <Button
-                title={existingRequest ? requestBtn : "Make a purchase request"}
-                onClick={sendPurchaseRequest}
+                title={requestBtn}
+                onClick={addProductToCart}
                 btnColor="purple"
-                disabled={product.isSold || existingRequest ? true : false}
+                disabled={product.isSold || !availableForOrder ? true : false}
               />
             </div>
           </div>
