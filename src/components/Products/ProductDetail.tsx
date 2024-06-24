@@ -22,6 +22,7 @@ import Loader from "../Loader";
 import { AppDispatch, RootState } from "../../store";
 import { FavoriteType, ProductType, RequestType } from "../../types/index";
 import { fetchProductDetails } from "../../firebase/firebase-action";
+import { cartActions } from "../../store/cart-slice";
 
 interface NewFavorite {
   city: string;
@@ -236,33 +237,34 @@ const ProductDetail = () => {
   }
   // Send a purchase request to DB
   const sendPurchaseRequest = () => {
-    if (!currentUser) {
-      setModalMsg("Please login first");
-      setOpenModal(true);
-      return;
-    }
-    if (product && currentUser.id === product.seller) {
-      setModalMsg("This is your product. Request is not available.");
-      setOpenModal(true);
-      return;
-    }
-    if (product && productId && product.sellerName) {
-      const request: NewRequest = {
-        imgURL: product.imgURL,
-        price: product.price,
-        title: product.title,
-        product: productId,
-        requestor: currentUser.id,
-        requestorName: currentUser.nickname,
-        seller: product.seller,
-        sellerName: product.sellerName,
-        isClosed: false,
-        isChosenBySeller: false,
-        closeDate: "",
-        date: getFormattedDate(new Date()),
-      };
-      createPurchaseRequestInDb(request);
-    }
+    // if (!currentUser) {
+    //   setModalMsg("Please login first");
+    //   setOpenModal(true);
+    //   return;
+    // }
+    // if (product && currentUser.id === product.seller) {
+    //   setModalMsg("This is your product. Request is not available.");
+    //   setOpenModal(true);
+    //   return;
+    // }
+    // if (product && productId && product.sellerName) {
+    //   const request: NewRequest = {
+    //     imgURL: product.imgURL,
+    //     price: product.price,
+    //     title: product.title,
+    //     product: productId,
+    //     requestor: currentUser.id,
+    //     requestorName: currentUser.nickname,
+    //     seller: product.seller,
+    //     sellerName: product.sellerName,
+    //     isClosed: false,
+    //     isChosenBySeller: false,
+    //     closeDate: "",
+    //     date: getFormattedDate(new Date()),
+    //   };
+    //   createPurchaseRequestInDb(request);
+    // }
+    dispatch(cartActions.addToCart({ ...product, id: productId }));
   };
 
   const handleChatClick = () => {
