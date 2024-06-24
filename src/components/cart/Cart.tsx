@@ -12,11 +12,18 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 interface OrderList {
+  closeDate: string;
+  date: string;
+  imgURL: string;
+  status: string;
+  isClosed: boolean;
+  price: string;
   product: string;
   requestor: string;
   requestorName: string;
-  isClosed: boolean;
-  date: string;
+  seller: string;
+  sellerName: string;
+  title: string;
 }
 
 const Cart = () => {
@@ -55,12 +62,17 @@ const Cart = () => {
       const orderList: OrderList[] = [];
       cartItems.forEach((item) => {
         const itemToRequest = {
-          product: item.id,
+          imgURL: item.imgURL,
+          price: item.price,
+          title: item.title,
+          product: item.product,
           requestor: currentUser.id,
           requestorName: currentUser.nickname,
+          seller: item.seller,
+          sellerName: item.sellerName,
           isClosed: false,
-          // closeDate: "",
-          // status: "",
+          status: "",
+          closeDate: "",
           date: getFormattedDate(new Date()),
         };
         orderList.push(itemToRequest);
@@ -101,8 +113,8 @@ const Cart = () => {
             <>
               {cartItems.map((item) => (
                 <CartItem
-                  key={item.id}
-                  id={item.id}
+                  key={item.product}
+                  id={item.product}
                   title={item.title}
                   price={item.price}
                   imgURL={item.imgURL}

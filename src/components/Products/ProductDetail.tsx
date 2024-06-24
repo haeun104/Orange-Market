@@ -200,7 +200,7 @@ const ProductDetail = () => {
 
   // Add the selected product to user's cart
   const addProductToCart = () => {
-    dispatch(cartActions.addToCart({ ...product, id: productId }));
+    dispatch(cartActions.addToCart({ ...product, product: productId }));
   };
 
   // Open chat page

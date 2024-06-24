@@ -1,10 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface CartItems {
-  id: string;
-  title: string;
-  price: string;
+  closeDate: string;
+  date: string;
   imgURL: string;
+  status: string;
+  isClosed: boolean;
+  price: string;
+  product: string;
+  requestor: string;
+  requestorName: string;
+  seller: string;
+  sellerName: string;
+  title: string;
 }
 
 interface CartState {
@@ -20,15 +28,17 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     addToCart(state, action) {
-      const { id } = action.payload;
-      const isExistingItem = state.cartItems.find((item) => item.id === id);
+      const { product } = action.payload;
+      const isExistingItem = state.cartItems.find(
+        (item) => item.product === product
+      );
       if (!isExistingItem) {
         state.cartItems.push(action.payload);
       }
     },
     removeItem(state, action) {
       const id = action.payload;
-      const updatedList = state.cartItems.filter((item) => item.id !== id);
+      const updatedList = state.cartItems.filter((item) => item.product !== id);
       state.cartItems = updatedList;
     },
     resetCart(state) {
