@@ -19,7 +19,7 @@ import { fetchFavoriteData } from "../../store/favorite-slice";
 import Button from "../Button";
 import Loader from "../Loader";
 import { AppDispatch, RootState } from "../../store";
-import { FavoriteType, ProductType, RequestType } from "../../types/index";
+import { FavoriteType, ProductType } from "../../types/index";
 import { fetchProductDetails } from "../../firebase/firebase-action";
 import { cartActions } from "../../store/cart-slice";
 
@@ -38,7 +38,7 @@ const ProductDetail = () => {
   const [product, setProduct] = useState<ProductType>();
   const [existingFavorite, setExistingFavorite] = useState(false);
   const [existingFavoriteId, setExistingFavoriteId] = useState("");
-  const [existingRequest, setExistingRequest] = useState(false);
+  const [availableForOrder, setAvailableForOrder] = useState<boolean>();
   const [openModal, setOpenModal] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
   const [requestBtn, setRequestBtn] = useState("");
@@ -58,10 +58,38 @@ const ProductDetail = () => {
       const productDetail = async () => {
         const details = await fetchProductDetails(productId);
         setProduct(details as ProductType);
+        if (details && details.isSold) {
+          setAvailableForOrder(false);
+          setRequestBtn("Product is already sold");
+        } else {
+          checkRequestStatus(productId);
+        }
       };
       productDetail();
     }
   }, [productId]);
+
+  // Fetch status if the product is available for ordering
+  async function checkRequestStatus(productId: string) {
+    try {
+      const requestQuery = query(
+        collection(db, "purchase request"),
+        where("product", "==", productId),
+        where("isClosed", "==", false)
+      );
+      const requestSnapshot = await getDocs(requestQuery);
+
+      if (!requestSnapshot.empty) {
+        setRequestBtn("Waiting for response on purchase request");
+        setAvailableForOrder(false);
+      } else {
+        setRequestBtn("Add to cart");
+        setAvailableForOrder(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
     if (currentUser) {
@@ -82,46 +110,10 @@ const ProductDetail = () => {
     };
     if (currentUser && productId) {
       checkUserFavorite(productId);
-      checkUserRequest(productId);
     } else {
       setExistingFavorite(false);
-      setExistingRequest(false);
     }
   }, [currentUser, productId, favorite]);
-
-  // Check if the product already exists on the request list
-  async function checkUserRequest(productId: string) {
-    try {
-      const requestQuery = query(
-        collection(db, "purchase request"),
-        where("product", "==", productId)
-      );
-      const requestSnapshot = await getDocs(requestQuery);
-      if (!requestSnapshot.empty) {
-        const requests: RequestType[] = [];
-        requestSnapshot.forEach((doc) =>
-          requests.push(doc.data() as RequestType)
-        );
-        const closedRequest = requests.find(
-          (item) => item.isClosed && item.isChosenBySeller
-        );
-        const pendingRequest = requests.find(
-          (item) => !item.isClosed && !item.isChosenBySeller
-        );
-        if (closedRequest) {
-          setRequestBtn("Request is unavailable");
-          setExistingRequest(true);
-        } else if (pendingRequest) {
-          setRequestBtn("Waiting for response on purchase request");
-          setExistingRequest(true);
-        } else {
-          setExistingRequest(false);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   // Go to seller's product list
   const goToSellerProductList = (sellerId: string) => {
@@ -287,10 +279,10 @@ const ProductDetail = () => {
                 onClick={handleChatClick}
               />
               <Button
-                title={existingRequest ? requestBtn : "Add to cart"}
+                title={requestBtn}
                 onClick={addProductToCart}
                 btnColor="purple"
-                disabled={product.isSold || existingRequest ? true : false}
+                disabled={product.isSold || !availableForOrder ? true : false}
               />
             </div>
           </div>
