@@ -13,6 +13,7 @@ import Button from "../Button";
 import { fetchProductDetails } from "../../firebase/firebase-action";
 
 const initialProduct: ProductType = {
+  id: "",
   title: "",
   description: "",
   price: "",
