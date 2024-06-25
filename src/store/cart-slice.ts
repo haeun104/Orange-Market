@@ -19,8 +19,10 @@ interface CartState {
   cartItems: CartItems[];
 }
 
+const storedCartItems = localStorage.getItem("cart");
+
 const initialState: CartState = {
-  cartItems: [],
+  cartItems: storedCartItems !== null ? JSON.parse(storedCartItems) : [],
 };
 
 const cartSlice = createSlice({
@@ -33,6 +35,11 @@ const cartSlice = createSlice({
         (item) => item.product === product
       );
       if (!isExistingItem) {
+        const itemsToSave =
+          state.cartItems.length === 0
+            ? [action.payload]
+            : [...state.cartItems, action.payload];
+        localStorage.setItem("cart", JSON.stringify(itemsToSave));
         state.cartItems.push(action.payload);
       }
     },
@@ -40,9 +47,11 @@ const cartSlice = createSlice({
       const id = action.payload;
       const updatedList = state.cartItems.filter((item) => item.product !== id);
       state.cartItems = updatedList;
+      localStorage.setItem("cart", JSON.stringify(updatedList));
     },
     resetCart(state) {
       state.cartItems = [];
+      localStorage.removeItem("cart");
     },
   },
 });
