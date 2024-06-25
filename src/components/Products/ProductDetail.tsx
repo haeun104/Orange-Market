@@ -2,52 +2,38 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { DataContext } from "../../App";
 import {
-  addDoc,
   collection,
   doc,
-  deleteDoc,
   getDoc,
   getDocs,
   query,
   where,
   updateDoc,
+  arrayUnion,
+  arrayRemove,
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
 import Modal from "../modals/Modal";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchFavoriteData } from "../../store/favorite-slice";
+import { useDispatch } from "react-redux";
 import Button from "../Button";
 import Loader from "../Loader";
-import { AppDispatch, RootState } from "../../store";
-import { FavoriteType, ProductType } from "../../types/index";
+import { AppDispatch } from "../../store";
+import { ProductType } from "../../types/index";
 import { fetchProductDetails } from "../../firebase/firebase-action";
 import { cartActions } from "../../store/cart-slice";
 
-interface NewFavorite {
-  city: string;
-  district: string;
-  imgURL: string;
-  isSold: boolean;
-  price: string;
-  productId: string;
-  title: string;
-  userId: string;
-}
-
 const ProductDetail = () => {
   const [product, setProduct] = useState<ProductType>();
-  const [existingFavorite, setExistingFavorite] = useState(false);
-  const [existingFavoriteId, setExistingFavoriteId] = useState("");
+  const [existingFavorite, setExistingFavorite] = useState<boolean>();
   const [availableForOrder, setAvailableForOrder] = useState<boolean>();
   const [openModal, setOpenModal] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
   const [requestBtn, setRequestBtn] = useState("");
 
   const { productId } = useParams();
-  const favorite: FavoriteType[] = useSelector(
-    (state: RootState) => state.favorite.favoriteItem
-  );
+
   const dispatch: AppDispatch = useDispatch();
+
   const currentUser = useContext(DataContext);
 
   const navigate = useNavigate();
@@ -92,51 +78,56 @@ const ProductDetail = () => {
   }
 
   useEffect(() => {
-    if (currentUser) {
-      dispatch(fetchFavoriteData(currentUser.id));
+    if (currentUser && productId) {
+      const fetchFavoriteStatus = async () => {
+        const isExistingFavorite = await checkFavoritesStatus(
+          currentUser.id,
+          productId
+        );
+        setExistingFavorite(isExistingFavorite);
+      };
+      fetchFavoriteStatus();
     }
-  }, [existingFavorite, currentUser, dispatch]);
+  }, [currentUser, productId]);
 
   // Check if favorite exists in DB
-  useEffect(() => {
-    const checkUserFavorite = (productId: string) => {
-      const existingFavorite: FavoriteType | undefined = favorite.find(
-        (item: FavoriteType) => item.productId === productId
-      );
-      if (existingFavorite !== undefined) {
-        setExistingFavorite(true);
-        setExistingFavoriteId(existingFavorite.id);
-      }
-    };
-    if (currentUser && productId) {
-      checkUserFavorite(productId);
-    } else {
-      setExistingFavorite(false);
-    }
-  }, [currentUser, productId, favorite]);
+  async function checkFavoritesStatus(userId: string, itemId: string) {
+    try {
+      const userRef = doc(db, "user", userId);
+      const docSnap = await getDoc(userRef);
 
-  // Go to seller's product list
-  const goToSellerProductList = (sellerId: string) => {
-    navigate(`/products/seller/${sellerId}`);
-  };
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        if (userData && Array.isArray(userData.favorites)) {
+          return userData.favorites.includes(itemId);
+        }
+      }
+
+      return false;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   // Add a product to favorites in DB
-  async function addFavoriteInDb(favorite: NewFavorite) {
+  async function addFavorites(userId: string, itemId: string) {
     try {
-      await addDoc(collection(db, "favorite"), favorite);
+      const userRef = doc(collection(db, "user"), userId);
+      await updateDoc(userRef, { favorites: arrayUnion(itemId) });
 
-      const productRef = doc(collection(db, "product"), productId);
+      const productRef = doc(collection(db, "product"), itemId);
       const docSnap = await getDoc(productRef);
       const product = docSnap.data();
+
       if (product) {
-        const currentLike = parseInt(product.likeCount);
+        const currentLike = product.likeCount ? parseInt(product.likeCount) : 0;
 
         await updateDoc(productRef, { likeCount: currentLike + 1 });
 
         setModalMsg("successfully added favorite!");
         setOpenModal(true);
-        setExistingFavorite(true);
-        console.log("successfully added favorite.");
+        const favoriteStatus = await checkFavoritesStatus(userId, itemId);
+        setExistingFavorite(favoriteStatus);
       }
     } catch (error) {
       console.error(error);
@@ -144,56 +135,42 @@ const ProductDetail = () => {
   }
 
   // Remove a product from favorites in DB
-  async function deleteFavoriteInDb(id: string) {
+  async function deleteFavorites(userId: string, itemId: string) {
     try {
-      const docRef = doc(db, "favorite", id);
-      await deleteDoc(docRef);
+      const userRef = doc(collection(db, "user"), userId);
+      await updateDoc(userRef, { favorites: arrayRemove(itemId) });
 
-      const productRef = doc(collection(db, "product"), productId);
+      const productRef = doc(collection(db, "product"), itemId);
       const docSnap = await getDoc(productRef);
       const product = docSnap.data();
+
       if (product) {
-        const currentLike = parseInt(product.likeCount);
+        const currentLike = product.likeCount ? parseInt(product.likeCount) : 0;
 
         await updateDoc(productRef, { likeCount: currentLike - 1 });
 
-        setExistingFavorite(false);
         setModalMsg("successfully deleted favorite!");
         setOpenModal(true);
-        console.log("successfully deleted favorite.");
+        const favoriteStatus = await checkFavoritesStatus(userId, itemId);
+        setExistingFavorite(favoriteStatus);
       }
     } catch (error) {
       console.error(error);
     }
   }
 
-  // Send favorite to DB
-  const addToFavorites = () => {
+  // Add or remove favorites depending on its existence
+  const handleFavoriteClick = () => {
     if (!currentUser) {
       setModalMsg("Please login first");
       setOpenModal(true);
       return;
     }
-    if (product && currentUser.id === product.seller) {
-      setModalMsg("This is your product. You can't add favorite.");
-      setOpenModal(true);
-      return;
-    }
-    if (product && productId) {
-      const favorite: NewFavorite = {
-        city: product.city,
-        district: product.district,
-        imgURL: product.imgURL,
-        isSold: product.isSold,
-        price: product.price,
-        title: product.title,
-        userId: currentUser.id,
-        productId: productId,
-      };
-      if (existingFavorite) {
-        deleteFavoriteInDb(existingFavoriteId);
+    if (productId) {
+      if (!existingFavorite) {
+        addFavorites(currentUser.id, productId);
       } else {
-        addFavoriteInDb(favorite);
+        deleteFavorites(currentUser.id, productId);
       }
     }
   };
@@ -201,6 +178,11 @@ const ProductDetail = () => {
   // Add the selected product to user's cart
   const addProductToCart = () => {
     dispatch(cartActions.addToCart({ ...product, product: productId }));
+  };
+
+  // Go to seller's product list
+  const goToSellerProductList = (sellerId: string) => {
+    navigate(`/products/seller/${sellerId}`);
   };
 
   // Open chat page
@@ -268,7 +250,7 @@ const ProductDetail = () => {
                     ? "Remove from favorites"
                     : "Add to favorites"
                 }
-                onClick={addToFavorites}
+                onClick={handleFavoriteClick}
                 btnColor="orange"
                 disabled={product.isSold ? true : false}
               />
