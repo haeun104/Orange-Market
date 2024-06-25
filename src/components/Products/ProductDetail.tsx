@@ -10,7 +10,6 @@ import {
   where,
   updateDoc,
   arrayUnion,
-  arrayRemove,
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
 import Modal from "../modals/Modal";
@@ -19,7 +18,10 @@ import Button from "../Button";
 import Loader from "../Loader";
 import { AppDispatch } from "../../store";
 import { ProductType } from "../../types/index";
-import { fetchProductDetails } from "../../firebase/firebase-action";
+import {
+  deleteFavorites,
+  fetchProductDetails,
+} from "../../firebase/firebase-action";
 import { cartActions } from "../../store/cart-slice";
 
 const ProductDetail = () => {
@@ -110,7 +112,7 @@ const ProductDetail = () => {
   }
 
   // Add a product to favorites in DB
-  async function addFavorites(userId: string, itemId: string) {
+  async function handleAddFavorites(userId: string, itemId: string) {
     try {
       const userRef = doc(collection(db, "user"), userId);
       await updateDoc(userRef, { favorites: arrayUnion(itemId) });
@@ -135,25 +137,13 @@ const ProductDetail = () => {
   }
 
   // Remove a product from favorites in DB
-  async function deleteFavorites(userId: string, itemId: string) {
+  async function handleDeleteFavorites(userId: string, itemId: string) {
     try {
-      const userRef = doc(collection(db, "user"), userId);
-      await updateDoc(userRef, { favorites: arrayRemove(itemId) });
-
-      const productRef = doc(collection(db, "product"), itemId);
-      const docSnap = await getDoc(productRef);
-      const product = docSnap.data();
-
-      if (product) {
-        const currentLike = product.likeCount ? parseInt(product.likeCount) : 0;
-
-        await updateDoc(productRef, { likeCount: currentLike - 1 });
-
-        setModalMsg("successfully deleted favorite!");
-        setOpenModal(true);
-        const favoriteStatus = await checkFavoritesStatus(userId, itemId);
-        setExistingFavorite(favoriteStatus);
-      }
+      await deleteFavorites(userId, itemId);
+      setModalMsg("successfully deleted favorite!");
+      setOpenModal(true);
+      const favoriteStatus = await checkFavoritesStatus(userId, itemId);
+      setExistingFavorite(favoriteStatus);
     } catch (error) {
       console.error(error);
     }
@@ -168,9 +158,9 @@ const ProductDetail = () => {
     }
     if (productId) {
       if (!existingFavorite) {
-        addFavorites(currentUser.id, productId);
+        handleAddFavorites(currentUser.id, productId);
       } else {
-        deleteFavorites(currentUser.id, productId);
+        handleDeleteFavorites(currentUser.id, productId);
       }
     }
   };

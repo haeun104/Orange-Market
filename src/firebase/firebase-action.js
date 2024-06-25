@@ -7,6 +7,7 @@ import {
   doc,
   getDoc,
   updateDoc,
+  arrayRemove,
 } from "firebase/firestore";
 import { db } from "./firebase-config";
 
@@ -164,6 +165,53 @@ export async function createPurchaseRequest(orderList) {
     const createAll = orderList.map((order) => addDoc(collectionRef, order));
     await Promise.all(createAll);
     console.log("successfully created purchase requests.");
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Fetch products list from user's favorites
+export const fetchFavorites = async (userId) => {
+  try {
+    const userRef = doc(db, "user", userId);
+    const docSnap = await getDoc(userRef);
+    if (docSnap.exists()) {
+      const userData = docSnap.data();
+      if (userData && Array.isArray(userData.favorites)) {
+        const favorites = userData.favorites;
+
+        const productPromises = favorites.map((item) =>
+          getDoc(doc(db, "product", item))
+        );
+        const documentSnapshots = await Promise.all(productPromises);
+
+        const products = documentSnapshots.map((snapshot) => ({
+          id: snapshot.id,
+          ...snapshot.data(),
+        }));
+        return products;
+      }
+    }
+    return [];
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// Delete a product from favorites
+export async function deleteFavorites(userId, itemId) {
+  try {
+    const userRef = doc(collection(db, "user"), userId);
+    await updateDoc(userRef, { favorites: arrayRemove(itemId) });
+
+    const productRef = doc(collection(db, "product"), itemId);
+    const docSnap = await getDoc(productRef);
+    const product = docSnap.data();
+
+    if (product) {
+      const currentLike = product.likeCount ? parseInt(product.likeCount) : 0;
+      await updateDoc(productRef, { likeCount: currentLike - 1 });
+    }
   } catch (error) {
     console.error(error);
   }

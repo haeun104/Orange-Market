@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { DataContext } from "../App";
-import { fetchFavoriteData } from "../store/favorite-slice";
 import { fetchRequestData } from "../store/request-slice";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
@@ -10,14 +9,26 @@ import MyMarketList, {
 } from "../components/myMarket/MyMarketList";
 import Loader from "../components/Loader";
 import { AppDispatch, RootState } from "../store";
+import { fetchFavorites } from "../firebase/firebase-action";
 
 const MyMarket = () => {
   const [recentSelling, setRecentSelling] = useState<MyMarketProductList[]>();
   const [recentPurchase, setRecentPurchase] = useState<MyMarketProductList[]>();
   const [productOnSale, setProductOnSale] = useState<MyMarketProductList[]>();
-  const favoriteList = useSelector(
-    (state: RootState) => state.favorite.favoriteItem
-  );
+  const [favoriteList, setFavoriteList] = useState<MyMarketProductList[]>();
+
+  const currentUser = useContext(DataContext);
+
+  useEffect(() => {
+    if (currentUser) {
+      const updateFavoriteList = async () => {
+        const favorites = await fetchFavorites(currentUser.id);
+        setFavoriteList(favorites as MyMarketProductList[]);
+      };
+      updateFavoriteList();
+    }
+  }, [currentUser]);
+
   const sellingList = useSelector(
     (state: RootState) => state.request.sellingRequest
   );
@@ -34,8 +45,6 @@ const MyMarket = () => {
   );
 
   const dispatch: AppDispatch = useDispatch();
-
-  const currentUser = useContext(DataContext);
 
   // Filter requests closed within a month
   const filterRecentDates = (list: MyMarketProductList[]) => {
@@ -75,7 +84,6 @@ const MyMarket = () => {
       dispatch(
         fetchRequestData(currentUser.id, "requestorClosed") as AppDispatch
       );
-      dispatch(fetchFavoriteData(currentUser.id));
     }
   }, [currentUser, dispatch]);
 

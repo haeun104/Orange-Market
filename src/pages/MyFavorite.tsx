@@ -1,72 +1,49 @@
 import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
 import MyMarketMenu from "../components/myMarket/MyMarketMenu";
 import Button from "../components/Button";
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  updateDoc,
-} from "firebase/firestore";
-import { db } from "../firebase/firebase-config";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Modal from "../components/modals/Modal";
 import Loader from "../components/Loader";
-import { FavoriteType } from "../types/index";
-import { AppDispatch, RootState } from "../store";
-import {} from "react-redux";
-import { fetchFavoriteData } from "../store/favorite-slice";
+import { ProductType } from "../types/index";
 import { DataContext } from "../App";
+import { deleteFavorites, fetchFavorites } from "../firebase/firebase-action";
 
 const MyFavorite = () => {
   const [openModal, setOpenModal] = useState(false);
-  const favoriteList = useSelector(
-    (state: RootState) => state.favorite.favoriteItem
-  );
-  const navigate = useNavigate();
+  const [favoriteList, setFavoriteList] = useState<ProductType[]>();
 
-  const dispatch: AppDispatch = useDispatch();
+  const navigate = useNavigate();
 
   const currentUser = useContext(DataContext);
 
-  const updateFavorites = useCallback(() => {
-    if (currentUser) {
-      dispatch(fetchFavoriteData(currentUser.id));
-    }
-  }, [currentUser, dispatch]);
-
+  // Fetch products list from user's favorites
   useEffect(() => {
-    updateFavorites();
-  }, [updateFavorites]);
-
-  const goToProductDetail = (productId: string) => {
-    navigate(`/products/${productId}`);
-  };
+    if (currentUser) {
+      const updateFavoriteList = async () => {
+        const favorites = await fetchFavorites(currentUser.id);
+        setFavoriteList(favorites as ProductType[]);
+      };
+      updateFavoriteList();
+    }
+  }, [currentUser]);
 
   // Remove a product from favorites in DB
-  async function deleteFavoriteInDb(id: string, productId: string) {
+  async function handleDeleteFavorites(userId: string, itemId: string) {
     try {
-      const docRef = doc(db, "favorite", id);
-      await deleteDoc(docRef);
-
-      const productRef = doc(collection(db, "product"), productId);
-      const docSnap = await getDoc(productRef);
-      const product = docSnap.data();
-      if (product) {
-        const currentLike = parseInt(product.likeCount);
-
-        await updateDoc(productRef, { likeCount: currentLike - 1 });
-
-        setOpenModal(true);
-        console.log("successfully deleted favorite.");
-      }
+      await deleteFavorites(userId, itemId);
+      setOpenModal(true);
+      const updatedFavorites = await fetchFavorites(userId);
+      setFavoriteList(updatedFavorites as ProductType[]);
     } catch (error) {
       console.error(error);
     }
   }
 
-  if (!favoriteList) {
+  const goToProductDetail = (productId: string) => {
+    navigate(`/products/${productId}`);
+  };
+
+  if (!favoriteList || !currentUser) {
     return <Loader />;
   } else {
     return (
@@ -74,7 +51,7 @@ const MyFavorite = () => {
         <div className="container max-w-[1280px] px-[40px]">
           <MyMarketMenu />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mt-[20px]">
-            {favoriteList.map((item: FavoriteType) => (
+            {favoriteList.map((item) => (
               <div key={item.id}>
                 <div className="h-[200px] w-[250px] lg:w-full">
                   <img
@@ -85,7 +62,7 @@ const MyFavorite = () => {
                 </div>
                 <div
                   className="flex flex-col text-gray-400 cursor-pointer"
-                  onClick={() => goToProductDetail(item.productId)}
+                  onClick={() => goToProductDetail(item.id)}
                 >
                   <h4 className="text-black font-bold">{item.title}</h4>
                   <span className="text-black font-bold">{item.price} PLN</span>
@@ -94,7 +71,7 @@ const MyFavorite = () => {
                 </div>
                 <Button
                   title="Delete"
-                  onClick={() => deleteFavoriteInDb(item.id, item.productId)}
+                  onClick={() => handleDeleteFavorites(currentUser.id, item.id)}
                   btnColor="orange"
                   style="mt-[10px]"
                 />
@@ -111,7 +88,6 @@ const MyFavorite = () => {
           openModal={openModal}
           closeModal={() => setOpenModal(false)}
           message="successfully deleted favorite!"
-          updateProductList={updateFavorites}
           type="favorite"
         />
       </>
