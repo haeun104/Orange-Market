@@ -206,7 +206,7 @@ const ProductDetail = () => {
               <img
                 src={product.imgURL}
                 alt={product.title}
-                className="rounded-lg object-cover"
+                className="rounded-lg max-h-[500px] w-full"
               />
             </div>
             <div className="flex flex-col text-gray-400">
