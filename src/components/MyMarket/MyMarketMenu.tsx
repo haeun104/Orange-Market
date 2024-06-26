@@ -8,16 +8,16 @@ const links = [
   { link: "/purchase-request", title: "Purchase Request Status" },
 ];
 
-const MyMarketMenu= () => {
+const MyMarketMenu = () => {
   return (
-    <ul className="sm:flex sm:space-x-4 sm:flex-wrap">
+    <ul className="sm:flex sm:space-x-4 sm:flex-wrap mt-8 mb-16">
       {links.map((item, index) => (
         <NavLink
           key={index}
           to={item.link}
           className={({ isActive }) =>
             isActive
-              ? "font-bold text-blue-500 border-b-2 border-blue-500 border-solid"
+              ? "font-bold text-main-orange border-b-2 border-main-orange border-solid"
               : undefined
           }
         >

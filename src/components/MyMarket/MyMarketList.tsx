@@ -27,7 +27,7 @@ interface MyMarketListProps {
 const MyMarketList: React.FC<MyMarketListProps> = ({ title, link, list }) => {
   return (
     <div className="relative mt-[40px]">
-      <h3 className="uppercase font-bold border-black border-solid border-b-[2px]">
+      <h3 className="uppercase font-bold border-black border-solid border-b-[1px]">
         {title}
       </h3>
       <Link to={`/${link}`}>
@@ -51,7 +51,7 @@ const MyMarketList: React.FC<MyMarketListProps> = ({ title, link, list }) => {
           />
         ))}
         {list.length === 0 && (
-          <div className="text-center text-accent-grey">
+          <div className="text-center text-accent-grey mt-8">
             There are no items to display
           </div>
         )}

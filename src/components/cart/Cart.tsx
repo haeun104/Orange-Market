@@ -126,7 +126,7 @@ const Cart = () => {
                   className="bg-accent-purple text-white px-2 py-1 rounded-md text-sm"
                   onClick={handleOrderCreation}
                 >
-                  Place an order
+                  Submit purchase request
                 </button>
               </div>
             </>
