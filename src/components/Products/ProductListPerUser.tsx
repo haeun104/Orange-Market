@@ -12,12 +12,8 @@ interface ProductPerUser {
   type?: string;
 }
 
-interface ProductWithId extends ProductType {
-  id: string;
-}
-
 const ProductListPerUser: React.FC<ProductPerUser> = ({ id, type }) => {
-  const [products, setProducts] = useState<ProductWithId[]>();
+  const [products, setProducts] = useState<ProductType[]>();
   const [openModal, setOpenModal] = useState(false);
   const [productToDelete, setProductToDelete] = useState("");
 
@@ -43,11 +39,11 @@ const ProductListPerUser: React.FC<ProductPerUser> = ({ id, type }) => {
         where("seller", "==", sellerId)
       );
       const productSnapshot = await getDocs(productQuery);
-
       const productList = productSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      })) as ProductWithId[];
+      })) as ProductType[];
+      productList.sort((a, b) => Number(a.isSold) - Number(b.isSold));
       setProducts(productList);
     } catch (error) {
       console.log(error);
