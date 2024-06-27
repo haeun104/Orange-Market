@@ -12,8 +12,7 @@ import Input from "../inputs/Input";
 import Button from "../Button";
 import { fetchProductDetails } from "../../firebase/firebase-action";
 
-const initialProduct: ProductType = {
-  id: "",
+const initialProduct = {
   title: "",
   description: "",
   price: "",
