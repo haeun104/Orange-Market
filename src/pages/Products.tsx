@@ -7,19 +7,15 @@ import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import { IoMdAddCircle } from "react-icons/io";
 import Loader from "../components/Loader";
-import { ProductType } from "../types";
+import { ProductWithId } from "../types";
 import queryString from "query-string";
 import {
   addClickCount,
   fetchOnSalesProducts,
 } from "../firebase/firebase-action";
 
-interface ProductsFromDB extends ProductType {
-  id: string;
-}
-
 const Products = () => {
-  const [filteredProducts, setFilteredProducts] = useState<ProductsFromDB[]>(
+  const [filteredProducts, setFilteredProducts] = useState<ProductWithId[]>(
     []
   );
   const [openModal, setOpenModal] = useState(false);
@@ -35,7 +31,7 @@ const Products = () => {
         queryString.parse(searchParams.toString()).sort || "All";
       const city = currentUser && currentUser.city;
       const products = await fetchOnSalesProducts(selectedCategory, city);
-      setFilteredProducts(products as ProductsFromDB[]);
+      setFilteredProducts(products as ProductWithId[]);
     });
 
     return () => unsubscribe();
@@ -118,7 +114,7 @@ const Products = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8 lg:px-[150px]">
-              {filteredProducts.map((item: ProductsFromDB) => (
+              {filteredProducts.map((item: ProductWithId) => (
                 <div
                   key={item.id}
                   className="flex flex-col justify-center mx-auto w-[250px] cursor-pointer"
