@@ -68,6 +68,8 @@ const ProductListPerUser: React.FC<ProductPerUser> = ({ id, type }) => {
 
   if (!products) {
     return <Loader />;
+  } else if (products.length === 0) {
+    return <div>There are no products for sale</div>;
   } else {
     return (
       <>

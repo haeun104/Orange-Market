@@ -50,13 +50,11 @@ const MyFavorite = () => {
       <>
         <div className="container max-w-[1280px] px-[40px]">
           <MyMarketMenu />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mt-[20px]">
-            {favoriteList.length === 0 ? (
-              <div className="text-center">
-                There are no products added to favorites
-              </div>
-            ) : (
-              favoriteList.map((item) => (
+          {favoriteList.length === 0 ? (
+            <div>There are no products added to favorites</div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mt-[20px]">
+              {favoriteList.map((item) => (
                 <div key={item.id}>
                   <div className="h-[200px] w-[250px] lg:w-full">
                     <img
@@ -85,9 +83,9 @@ const MyFavorite = () => {
                     style="mt-[10px]"
                   />
                 </div>
-              ))
-            )}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
         <Modal
           openModal={openModal}
