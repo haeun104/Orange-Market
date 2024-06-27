@@ -51,38 +51,43 @@ const MyFavorite = () => {
         <div className="container max-w-[1280px] px-[40px]">
           <MyMarketMenu />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mt-[20px]">
-            {favoriteList.map((item) => (
-              <div key={item.id}>
-                <div className="h-[200px] w-[250px] lg:w-full">
-                  <img
-                    src={item.imgURL}
-                    alt={item.title}
-                    className="h-full w-full rounded-lg"
+            {favoriteList.length === 0 ? (
+              <div className="text-center">
+                There are no products added to favorites
+              </div>
+            ) : (
+              favoriteList.map((item) => (
+                <div key={item.id}>
+                  <div className="h-[200px] w-[250px] lg:w-full">
+                    <img
+                      src={item.imgURL}
+                      alt={item.title}
+                      className="h-full w-full rounded-lg"
+                    />
+                  </div>
+                  <div
+                    className="flex flex-col text-gray-400 cursor-pointer"
+                    onClick={() => goToProductDetail(item.id as string)}
+                  >
+                    <h4 className="text-black font-bold">{item.title}</h4>
+                    <span className="text-black font-bold">
+                      {item.price} PLN
+                    </span>
+                    <span>{`${item.city}, ${item.district}`}</span>
+                    <span>{item.isSold ? "Sold" : "On sale"}</span>
+                  </div>
+                  <Button
+                    title="Delete"
+                    onClick={() =>
+                      handleDeleteFavorites(currentUser.id, item.id as string)
+                    }
+                    btnColor="orange"
+                    style="mt-[10px]"
                   />
                 </div>
-                <div
-                  className="flex flex-col text-gray-400 cursor-pointer"
-                  onClick={() => goToProductDetail(item.id)}
-                >
-                  <h4 className="text-black font-bold">{item.title}</h4>
-                  <span className="text-black font-bold">{item.price} PLN</span>
-                  <span>{`${item.city}, ${item.district}`}</span>
-                  <span>{item.isSold ? "Sold" : "On sale"}</span>
-                </div>
-                <Button
-                  title="Delete"
-                  onClick={() => handleDeleteFavorites(currentUser.id, item.id)}
-                  btnColor="orange"
-                  style="mt-[10px]"
-                />
-              </div>
-            ))}
+              ))
+            )}
           </div>
-          {favoriteList.length === 0 && (
-            <div className="text-center">
-              There are no products added to favorites
-            </div>
-          )}
         </div>
         <Modal
           openModal={openModal}
