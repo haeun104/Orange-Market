@@ -1,14 +1,7 @@
-import {
-  ChangeEvent,
-  MouseEvent,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { ChangeEvent, MouseEvent, useContext, useState } from "react";
 import { DataContext } from "../App";
 import Modal from "../components/modals/Modal";
 import { db } from "../firebase/firebase-config";
-import { useNavigate } from "react-router-dom";
 import { updateDoc, collection, doc } from "firebase/firestore";
 import Input from "../components/inputs/Input";
 import Button from "../components/Button";
@@ -28,20 +21,12 @@ interface UpdatedUser {
 }
 
 const MyProfile = () => {
-  const [editClicked, setEditClicked] = useState(false);
   const currentUser = useContext(DataContext);
-  const [updatedUserData, setUpdatedUserData] = useState<
-    UpdatedUser | undefined
-  >();
+  const [updatedUserData, setUpdatedUserData] = useState<UpdatedUser | null>(
+    currentUser
+  );
+  const [editClicked, setEditClicked] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (currentUser) {
-      setUpdatedUserData(currentUser);
-    }
-  }, [currentUser]);
 
   // Switch to edit mode
   const handleEditClick = (e: MouseEvent<HTMLButtonElement>) => {
@@ -62,37 +47,30 @@ const MyProfile = () => {
     );
   };
 
-  // Update user data changes in DB
+  // Update user data changes
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  async function updateUserProfile(userData: UpdatedUser) {
+  const handleSubmitUserData = async () => {
     try {
-      const docRef = doc(collection(db, "user"), userData.id);
-      await updateDoc(docRef, userData as { [x: string]: any });
-      setOpenModal(true);
-      console.log("successfully updated user data.");
+      if (updatedUserData) {
+        const docRef = doc(collection(db, "user"), updatedUserData.id);
+        await updateDoc(docRef, updatedUserData as { [x: string]: any });
+        setOpenModal(true);
+        setEditClicked(false);
+        console.log("successfully updated user data.");
+      }
     } catch (error) {
       console.error(error);
     }
-  }
+  };
   /* eslint-enable @typescript-eslint/no-explicit-any */
 
-  // Send update commend to DB
-  const handleSubmitUserData = () => {
-    if (updatedUserData) {
-      updateUserProfile(updatedUserData);
-    }
-  };
-
   // Go back to a previous page
-  const handleCancelClick = (type: string) => {
-    if (type === "edit") {
-      navigate(-1);
-    } else {
-      setEditClicked(false);
-    }
+  const handleCancelClick = () => {
+    setUpdatedUserData(currentUser);
+    setEditClicked(false);
   };
 
-  if (!currentUser || !updatedUserData) {
+  if (!updatedUserData) {
     return <Loader />;
   } else {
     return (
@@ -169,35 +147,29 @@ const MyProfile = () => {
               />
             </div>
           </form>
-          <div className="flex flex-row justify-between gap-2 py-[40px] md:gap-10">
-            {!editClicked ? (
-              <>
-                <Button
-                  title="Edit"
-                  onClick={handleEditClick}
-                  btnColor="purple"
-                />
-                <Button
-                  title="Cancel"
-                  onClick={() => handleCancelClick("edit")}
-                  btnColor="orange"
-                />
-              </>
-            ) : (
-              <>
-                <Button
-                  title="Save"
-                  btnColor="purple"
-                  onClick={handleSubmitUserData}
-                />
-                <Button
-                  title="Cancel"
-                  btnColor="orange"
-                  onClick={() => handleCancelClick("submit")}
-                />
-              </>
-            )}
-          </div>
+          {!editClicked ? (
+            <div className="flex py-[40px] w-1/2 mx-auto">
+              <Button
+                title="Edit"
+                onClick={handleEditClick}
+                btnColor="purple"
+                style="w-full"
+              />
+            </div>
+          ) : (
+            <div className="flex flex-row justify-between gap-2 py-[40px] md:gap-10">
+              <Button
+                title="Save"
+                btnColor="purple"
+                onClick={handleSubmitUserData}
+              />
+              <Button
+                title="Cancel"
+                btnColor="orange"
+                onClick={() => handleCancelClick()}
+              />
+            </div>
+          )}
         </div>
         <Modal
           openModal={openModal}
