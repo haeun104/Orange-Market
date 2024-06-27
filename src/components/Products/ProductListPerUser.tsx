@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { db } from "../../firebase/firebase-config";
 import Modal from "../modals/Modal";
-import { ProductType } from "../../types/index";
+import { ProductWithId } from "../../types/index";
 import Loader from "../Loader";
 import Button from "../Button";
 
@@ -13,7 +13,7 @@ interface ProductPerUser {
 }
 
 const ProductListPerUser: React.FC<ProductPerUser> = ({ id, type }) => {
-  const [products, setProducts] = useState<ProductType[]>();
+  const [products, setProducts] = useState<ProductWithId[]>();
   const [openModal, setOpenModal] = useState(false);
   const [productToDelete, setProductToDelete] = useState("");
 
@@ -42,7 +42,7 @@ const ProductListPerUser: React.FC<ProductPerUser> = ({ id, type }) => {
       const productList = productSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      })) as ProductType[];
+      })) as ProductWithId[];
       productList.sort((a, b) => Number(a.isSold) - Number(b.isSold));
       setProducts(productList);
     } catch (error) {

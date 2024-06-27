@@ -4,13 +4,13 @@ import Button from "../components/Button";
 import { useContext, useEffect, useState } from "react";
 import Modal from "../components/modals/Modal";
 import Loader from "../components/Loader";
-import { ProductType } from "../types/index";
+import { ProductWithId } from "../types/index";
 import { DataContext } from "../App";
 import { deleteFavorites, fetchFavorites } from "../firebase/firebase-action";
 
 const MyFavorite = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [favoriteList, setFavoriteList] = useState<ProductType[]>();
+  const [favoriteList, setFavoriteList] = useState<ProductWithId[]>();
 
   const navigate = useNavigate();
 
@@ -21,7 +21,7 @@ const MyFavorite = () => {
     if (currentUser) {
       const updateFavoriteList = async () => {
         const favorites = await fetchFavorites(currentUser.id);
-        setFavoriteList(favorites as ProductType[]);
+        setFavoriteList(favorites as ProductWithId[]);
       };
       updateFavoriteList();
     }
@@ -33,7 +33,7 @@ const MyFavorite = () => {
       await deleteFavorites(userId, itemId);
       setOpenModal(true);
       const updatedFavorites = await fetchFavorites(userId);
-      setFavoriteList(updatedFavorites as ProductType[]);
+      setFavoriteList(updatedFavorites as ProductWithId[]);
     } catch (error) {
       console.error(error);
     }
@@ -67,7 +67,7 @@ const MyFavorite = () => {
                   </div>
                   <div
                     className="flex flex-col text-gray-400 cursor-pointer"
-                    onClick={() => goToProductDetail(item.id as string)}
+                    onClick={() => goToProductDetail(item.id)}
                   >
                     <h4 className="text-black font-bold">{item.title}</h4>
                     <span className="text-black font-bold">
@@ -79,7 +79,7 @@ const MyFavorite = () => {
                   <Button
                     title="Delete"
                     onClick={() =>
-                      handleDeleteFavorites(currentUser.id, item.id as string)
+                      handleDeleteFavorites(currentUser.id, item.id)
                     }
                     btnColor="orange"
                     style="mt-[10px]"
