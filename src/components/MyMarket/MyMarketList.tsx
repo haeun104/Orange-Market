@@ -11,7 +11,7 @@ export interface MyMarketProductList {
   title: string;
   userId: string;
   id?: string;
-  isChosenBySeller?: boolean;
+  status?: string;
   isClosed?: boolean;
   likeCount?: string;
   closeDate?: string;
@@ -44,7 +44,7 @@ const MyMarketList: React.FC<MyMarketListProps> = ({ title, link, list }) => {
             price={item.price}
             isSold={item.isSold}
             likeCount={item.likeCount}
-            isChosenBySeller={item.isChosenBySeller}
+            status={item.status}
             isClosed={item.isClosed}
             listType={link}
             requestDate={item.date}

@@ -4,7 +4,7 @@ interface MarketProductsProps {
   price: string;
   isSold: boolean;
   likeCount?: string;
-  isChosenBySeller?: boolean;
+  status?: string;
   isClosed?: boolean;
   listType: string;
   requestDate?: string;
@@ -16,7 +16,7 @@ const MarketProducts: React.FC<MarketProductsProps> = ({
   price,
   isSold,
   likeCount,
-  isChosenBySeller,
+  status,
   isClosed,
   listType,
   requestDate,
@@ -62,9 +62,7 @@ const MarketProducts: React.FC<MarketProductsProps> = ({
         </li>
       )}
       {listType === "sales-history" || listType === "purchase-history" ? (
-        <li className="w-[70px] flex justify-end items-center">
-          {isChosenBySeller ? "Accepted" : "Rejected"}
-        </li>
+        <li className="w-[70px] flex justify-end items-center">{status}</li>
       ) : null}
       {listType === "purchase-request" && (
         <li className="w-[70px] flex justify-end items-center">
