@@ -1,12 +1,4 @@
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-} from "firebase/firestore";
+import { collection, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db } from "../../firebase/firebase-config";
 import { getFormattedDate } from "../../utils";
@@ -64,37 +56,18 @@ const RequestConfirmModal: React.FC<RequestConfirmModalProps> = ({
     try {
       const requestRef = doc(collection(db, "purchase request"), id);
       const productRef = doc(collection(db, "product"), product);
-      const favoriteQuery = query(
-        collection(db, "favorite"),
-        where("productId", "==", product)
-      );
-      const favoriteSnapshot = await getDocs(favoriteQuery);
-      const favorites = favoriteSnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
+
+      await updateDoc(requestRef, {
+        isClosed: true,
+        status: response === "accept" ? "accepted" : "rejected",
+        closeDate: getFormattedDate(new Date()),
+      });
+
       if (response === "accept") {
-        await updateDoc(requestRef, {
-          isClosed: true,
-          isChosenBySeller: true,
-          closeDate: getFormattedDate(new Date()),
-        });
         await updateDoc(productRef, {
           isSold: true,
         });
-        await Promise.all(
-          favorites.map(async (favorite) => {
-            const favoriteDocRef = doc(db, "favorite", favorite.id);
-            await updateDoc(favoriteDocRef, { isSold: true });
-          })
-        );
-      } else {
-        await updateDoc(requestRef, {
-          isClosed: true,
-          closeDate: getFormattedDate(new Date()),
-        });
       }
-
       onUpdate();
       console.log("successfully updated request");
     } catch (error) {

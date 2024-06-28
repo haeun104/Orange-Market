@@ -46,8 +46,8 @@ export interface RequestType {
   closeDate: string;
   date: string;
   imgURL: string;
-  isChosenBySeller: boolean;
   isClosed: boolean;
+  status: string;
   price: string;
   product: string;
   requestor: string;

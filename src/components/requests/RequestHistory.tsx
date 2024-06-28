@@ -15,18 +15,16 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ data, type }) => {
   useEffect(() => {
     if (filterValue === "all") {
       setFilteredRequests(data);
-    } else if (filterValue === "rejected") {
-      const rejectedRequests = data.filter((item) => !item.isChosenBySeller);
-      setFilteredRequests(rejectedRequests);
     } else {
-      const acceptedRequests = data.filter((item) => item.isChosenBySeller);
-      setFilteredRequests(acceptedRequests);
+      const requests = data.filter((item) => item.status === filterValue);
+      setFilteredRequests(requests);
     }
   }, [filterValue, data]);
 
   const handleOnchange = (e: ChangeEvent<HTMLSelectElement>) => {
     setFilterValue(e.target.value);
   };
+
   if (!filteredRequests) {
     return <Loader />;
   }
@@ -42,57 +40,62 @@ const RequestHistory: React.FC<RequestHistoryProps> = ({ data, type }) => {
         <div className="flex-1">Request Date</div>
         <div className="flex-1">Status</div>
       </div>
-      {filteredRequests.map((item) => (
-        <div
-          key={item.id}
-          className="flex flex-col justify-center sm:flex-row sm:text-center mb-2"
-        >
-          <Link to={`/products/${item.product}`} className="sm:w-1/5">
-            <div className="flex flex-col sm:flex-row sm:justify-center">
-              <div className="h-[120px] w-[120px] sm:h-[40px] sm:w-[70px] mr-[10px]">
-                <img
-                  src={item.imgURL}
-                  alt={item.title}
-                  className="h-full w-full rounded-md"
-                />
+      {filteredRequests.length === 0 ? (
+        <div className="text-center text-accent-grey">There are no history</div>
+      ) : (
+        <>
+          {filteredRequests.map((item) => (
+            <div
+              key={item.id}
+              className="flex flex-col justify-center sm:flex-row sm:text-center mb-2"
+            >
+              <Link to={`/products/${item.product}`} className="sm:w-1/5">
+                <div className="flex flex-col sm:flex-row sm:justify-center">
+                  <div className="h-[120px] w-[120px] sm:h-[40px] sm:w-[70px] mr-[10px]">
+                    <img
+                      src={item.imgURL}
+                      alt={item.title}
+                      className="h-full w-full rounded-md"
+                    />
+                  </div>
+                  <div className="flex flex-1">
+                    <div className="sm:hidden w-[120px]">Title:</div>
+                    <div className="sm:text-center flex justify-center items-center">
+                      {item.title}
+                    </div>
+                  </div>
+                </div>
+              </Link>
+              <div className="sm:w-1/5 flex sm:justify-center">
+                <div className="sm:hidden w-[120px]">Price:</div>
+                <div className="flex justify-center items-center">
+                  {item.price} PLN
+                </div>
               </div>
-              <div className="flex flex-1">
-                <div className="sm:hidden w-[120px]">Title:</div>
-                <div className="sm:text-center flex justify-center items-center">
-                  {item.title}
+              <div className="sm:w-1/5 flex sm:justify-center">
+                <div className="sm:hidden w-[120px]">
+                  {" "}
+                  {type === "sales" ? "Requestor:" : "Seller:"}
+                </div>
+                <div className="flex justify-center items-center">
+                  {type === "sales" ? item.requestorName : item.sellerName}
+                </div>
+              </div>
+              <div className="sm:w-1/5 flex sm:justify-center">
+                <div className="sm:hidden w-[120px]">Request Date:</div>
+                <div className="flex justify-center items-center">
+                  {item.date}
+                </div>
+              </div>
+              <div className="sm:w-1/5 flex sm:justify-center">
+                <div className="sm:hidden w-[120px]">Status</div>
+                <div className="flex justify-center items-center">
+                  {item.status}
                 </div>
               </div>
             </div>
-          </Link>
-          <div className="sm:w-1/5 flex sm:justify-center">
-            <div className="sm:hidden w-[120px]">Price:</div>
-            <div className="flex justify-center items-center">
-              {item.price} PLN
-            </div>
-          </div>
-          <div className="sm:w-1/5 flex sm:justify-center">
-            <div className="sm:hidden w-[120px]">
-              {" "}
-              {type === "sales" ? "Requestor:" : "Seller:"}
-            </div>
-            <div className="flex justify-center items-center">
-              {type === "sales" ? item.requestorName : item.sellerName}
-            </div>
-          </div>
-          <div className="sm:w-1/5 flex sm:justify-center">
-            <div className="sm:hidden w-[120px]">Request Date:</div>
-            <div className="flex justify-center items-center">{item.date}</div>
-          </div>
-          <div className="sm:w-1/5 flex sm:justify-center">
-            <div className="sm:hidden w-[120px]">Status</div>
-            <div className="flex justify-center items-center">
-              {item.isChosenBySeller ? "Accepted" : "Rejected"}
-            </div>
-          </div>
-        </div>
-      ))}
-      {filteredRequests.length === 0 && (
-        <div className="text-center text-accent-grey">There are no history</div>
+          ))}
+        </>
       )}
       <div className="absolute top-[-30px] sm:right-0 sm:flex sm:flex-col sm:top-[-50px] text-sm">
         <label htmlFor="status">filter status </label>
