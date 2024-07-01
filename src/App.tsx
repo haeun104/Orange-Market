@@ -1,8 +1,14 @@
 import Home from "./pages/Home";
-import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+} from "react-router-dom";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
-import React, { useEffect, useState } from "react";
+import React, { ReactNode, useContext, useEffect, useState } from "react";
 import { auth } from "./firebase/firebase-config";
 import { onAuthStateChanged } from "firebase/auth";
 import MyProfile from "./pages/MyProfile";
@@ -25,6 +31,11 @@ import MyChat from "./pages/MyChat";
 import NotFound from "./components/NotFount";
 
 export const DataContext = React.createContext<UserType | null>(null);
+
+function PrivateRoute({ children }: { children: ReactNode }) {
+  const currentUser = useContext(DataContext);
+  return currentUser ? children : <Navigate to="/login" />;
+}
 
 function App() {
   const [currentUser, setCurrentUser] = useState<UserType | null>(null);
@@ -69,15 +80,78 @@ function App() {
             <Route path="/products/edit/:productId" element={<EditProduct />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/my-profile" element={<MyProfile />} />
-            <Route path="/my-market" element={<MyMarket />} />
-            <Route path="/my-favorite" element={<MyFavorite />} />
-            <Route path="/my-products" element={<MyProducts />} />
-            <Route path="/purchase-history" element={<PurchaseHistory />} />
-            <Route path="/purchase-request" element={<PurchaseRequest />} />
-            <Route path="/sales-history" element={<SalesHistory />} />
-            <Route path="/chat/:partner" element={<ChatRoom />} />
-            <Route path="/my-chat" element={<MyChat />} />
+            <Route
+              path="/my-profile"
+              element={
+                <PrivateRoute>
+                  <MyProfile />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/my-market"
+              element={
+                <PrivateRoute>
+                  <MyMarket />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/my-favorite"
+              element={
+                <PrivateRoute>
+                  <MyFavorite />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/my-products"
+              element={
+                <PrivateRoute>
+                  <MyProducts />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/purchase-history"
+              element={
+                <PrivateRoute>
+                  <PurchaseHistory />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/purchase-request"
+              element={
+                <PrivateRoute>
+                  <PurchaseRequest />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/sales-history"
+              element={
+                <PrivateRoute>
+                  <SalesHistory />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/chat/:partner"
+              element={
+                <PrivateRoute>
+                  <ChatRoom />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/my-chat"
+              element={
+                <PrivateRoute>
+                  <MyChat />
+                </PrivateRoute>
+              }
+            />
             <Route path="*" element={<NotFound />}></Route>
           </Routes>
         </DataContext.Provider>
