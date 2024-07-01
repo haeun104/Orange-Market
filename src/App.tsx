@@ -1,10 +1,5 @@
 import Home from "./pages/Home";
-import {
-  BrowserRouter,
-  Navigate,
-  Route,
-  Routes,
-} from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import React, { ReactNode, useContext, useEffect, useState } from "react";
@@ -69,7 +64,14 @@ function App() {
             <Route path="" element={<MainLayout />}>
               <Route path="/" element={<Home />} />
               <Route path="/products" element={<Products />} />
-              <Route path="/products/new" element={<AddProduct />} />
+              <Route
+                path="/products/new"
+                element={
+                  <PrivateRoute>
+                    <AddProduct />
+                  </PrivateRoute>
+                }
+              />
               <Route path="/products/:productId" element={<ProductDetail />} />
               <Route
                 path="/products/seller/:seller"
@@ -137,14 +139,7 @@ function App() {
                   </PrivateRoute>
                 }
               />
-              <Route
-                path="/chat/:partner"
-                element={
-                  <PrivateRoute>
-                    <ChatRoom />
-                  </PrivateRoute>
-                }
-              />
+              <Route path="/chat/:partner" element={<ChatRoom />} />
               <Route
                 path="/my-chat"
                 element={

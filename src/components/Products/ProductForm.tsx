@@ -7,10 +7,8 @@ import Modal from "../modals/Modal";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useNavigate, useParams } from "react-router-dom";
 import { ProductType } from "../../types/index";
-import Loader from "../Loader";
 import Input from "../inputs/Input";
 import Button from "../Button";
-import { fetchProductDetails } from "../../firebase/firebase-action";
 
 const initialProduct = {
   title: "",
@@ -40,9 +38,10 @@ interface UpdatedProduct {
 
 interface FormType {
   type: string;
+  initialData: ProductType;
 }
 
-const ProductForm: React.FC<FormType> = ({ type }) => {
+const ProductForm: React.FC<FormType> = ({ type, initialData }) => {
   const [product, setProduct] = useState<ProductType>();
   const [openModal, setOpenModal] = useState(false);
   const [imageName, setImageName] = useState<File | string>();
@@ -68,20 +67,14 @@ const ProductForm: React.FC<FormType> = ({ type }) => {
 
   // Fetch product data from DB
   useEffect(() => {
-    if (productId && type === "edit") {
-      const productDetails = async () => {
-        const product = await fetchProductDetails(productId);
-        if (product) {
-          setProduct(product as ProductType);
-          setTempImage(product.imgURL);
-        }
-      };
-      productDetails();
+    if (type === "edit") {
+      setProduct(initialData);
+      setTempImage(initialData.imgURL);
     }
     if (type === "new") {
       setProduct(initialProduct);
     }
-  }, [type, productId]);
+  }, [type, initialData]);
 
   // Update product data changes in DB
   async function updateProduct(newData: UpdatedProduct, id: string) {
@@ -198,9 +191,7 @@ const ProductForm: React.FC<FormType> = ({ type }) => {
     navigate(-1);
   };
 
-  if (!product) {
-    return <Loader />;
-  } else {
+  if (product) {
     return (
       <>
         <form className="flex flex-col space-y-2 max-w-[500px] mx-auto">

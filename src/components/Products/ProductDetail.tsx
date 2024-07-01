@@ -15,7 +15,6 @@ import { db } from "../../firebase/firebase-config";
 import Modal from "../modals/Modal";
 import { useDispatch } from "react-redux";
 import Button from "../Button";
-import Loader from "../Loader";
 import { AppDispatch } from "../../store";
 import { ProductType } from "../../types/index";
 import {
@@ -23,6 +22,7 @@ import {
   fetchProductDetails,
 } from "../../firebase/firebase-action";
 import { cartActions } from "../../store/cart-slice";
+import NotFound from "../NotFount";
 
 const ProductDetail = () => {
   const [product, setProduct] = useState<ProductType>();
@@ -193,7 +193,7 @@ const ProductDetail = () => {
   };
 
   if (!product) {
-    return <Loader />;
+    return <NotFound />;
   } else {
     return (
       <>

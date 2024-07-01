@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../firebase/firebase-config";
 import ProductListPerUser from "../components/products/ProductListPerUser";
-import Loader from "../components/Loader";
+import NotFound from "../components/NotFount";
 
 const ProductsBySeller = () => {
   const [sellerName, setSellerName] = useState("");
@@ -34,7 +34,7 @@ const ProductsBySeller = () => {
   }
 
   if (!sellerName) {
-    return <Loader />;
+    return <NotFound />;
   } else {
     return (
       <div className="container max-w-[1280px]">
