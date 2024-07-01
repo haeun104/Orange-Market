@@ -38,7 +38,7 @@ interface UpdatedProduct {
 
 interface FormType {
   type: string;
-  initialData: ProductType;
+  initialData?: ProductType;
 }
 
 const ProductForm: React.FC<FormType> = ({ type, initialData }) => {
@@ -67,7 +67,7 @@ const ProductForm: React.FC<FormType> = ({ type, initialData }) => {
 
   // Fetch product data from DB
   useEffect(() => {
-    if (type === "edit") {
+    if (type === "edit" && initialData) {
       setProduct(initialData);
       setTempImage(initialData.imgURL);
     }
