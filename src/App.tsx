@@ -2,7 +2,6 @@ import Home from "./pages/Home";
 import {
   BrowserRouter,
   Navigate,
-  Outlet,
   Route,
   Routes,
 } from "react-router-dom";
@@ -25,10 +24,10 @@ import MyProducts from "./pages/MyProducts";
 import EditProduct from "./pages/EditProduct";
 import { UserType } from "./types/index";
 import { fetchUserData } from "./firebase/firebase-action";
-import Nav from "./components/Nav";
 import ChatRoom from "./pages/ChatRoom";
 import MyChat from "./pages/MyChat";
 import NotFound from "./components/NotFount";
+import MainLayout from "./layouts/mainLayout/MainLayout";
 
 export const DataContext = React.createContext<UserType | null>(null);
 
@@ -66,93 +65,96 @@ function App() {
     <>
       <BrowserRouter>
         <DataContext.Provider value={currentUser}>
-          <Nav />
-          <Outlet />
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/products/new" element={<AddProduct />} />
-            <Route path="/products/:productId" element={<ProductDetail />} />
-            <Route
-              path="/products/seller/:seller"
-              element={<ProductsBySeller />}
-            />
-            <Route path="/products/edit/:productId" element={<EditProduct />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route
-              path="/my-profile"
-              element={
-                <PrivateRoute>
-                  <MyProfile />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/my-market"
-              element={
-                <PrivateRoute>
-                  <MyMarket />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/my-favorite"
-              element={
-                <PrivateRoute>
-                  <MyFavorite />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/my-products"
-              element={
-                <PrivateRoute>
-                  <MyProducts />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/purchase-history"
-              element={
-                <PrivateRoute>
-                  <PurchaseHistory />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/purchase-request"
-              element={
-                <PrivateRoute>
-                  <PurchaseRequest />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/sales-history"
-              element={
-                <PrivateRoute>
-                  <SalesHistory />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/chat/:partner"
-              element={
-                <PrivateRoute>
-                  <ChatRoom />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/my-chat"
-              element={
-                <PrivateRoute>
-                  <MyChat />
-                </PrivateRoute>
-              }
-            />
-            <Route path="*" element={<NotFound />}></Route>
+            <Route path="" element={<MainLayout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/products/new" element={<AddProduct />} />
+              <Route path="/products/:productId" element={<ProductDetail />} />
+              <Route
+                path="/products/seller/:seller"
+                element={<ProductsBySeller />}
+              />
+              <Route
+                path="/products/edit/:productId"
+                element={<EditProduct />}
+              />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route
+                path="/my-profile"
+                element={
+                  <PrivateRoute>
+                    <MyProfile />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/my-market"
+                element={
+                  <PrivateRoute>
+                    <MyMarket />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/my-favorite"
+                element={
+                  <PrivateRoute>
+                    <MyFavorite />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/my-products"
+                element={
+                  <PrivateRoute>
+                    <MyProducts />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/purchase-history"
+                element={
+                  <PrivateRoute>
+                    <PurchaseHistory />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/purchase-request"
+                element={
+                  <PrivateRoute>
+                    <PurchaseRequest />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/sales-history"
+                element={
+                  <PrivateRoute>
+                    <SalesHistory />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/chat/:partner"
+                element={
+                  <PrivateRoute>
+                    <ChatRoom />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/my-chat"
+                element={
+                  <PrivateRoute>
+                    <MyChat />
+                  </PrivateRoute>
+                }
+              />
+              <Route path="*" element={<NotFound />}></Route>
+            </Route>
           </Routes>
         </DataContext.Provider>
       </BrowserRouter>
